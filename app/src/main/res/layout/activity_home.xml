@@ -6,13 +6,19 @@
     android:layout_height="match_parent"
     tools:context="com.android.example.oca_808.HomeActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:srcCompat="@android:color/holo_blue_bright"
+        tools:layout_editor_absoluteX="209dp"
+        tools:layout_editor_absoluteY="125dp" />
 
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:srcCompat="@android:color/holo_blue_bright"
+        tools:layout_editor_absoluteX="71dp"
+        tools:layout_editor_absoluteY="125dp" />
 </android.support.constraint.ConstraintLayout>

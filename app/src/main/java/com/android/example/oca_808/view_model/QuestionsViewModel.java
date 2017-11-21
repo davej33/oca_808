@@ -27,6 +27,7 @@ public class QuestionsViewModel extends ViewModel {
         startTimer();
     }
 
+    // TODO: efficient?
     private void startTimer() {
         mInitialTime = SystemClock.elapsedRealtime();
         Timer timer = new Timer();

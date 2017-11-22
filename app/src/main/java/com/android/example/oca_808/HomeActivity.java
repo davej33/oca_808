@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.example.oca_808.db.AppDatabase;
@@ -21,6 +22,15 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         addQs();
+        ImageView i = findViewById(R.id.test_view);
+        i.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new QuestionsViewModel(getApplicationContext());
+                Intent intent = new Intent(getApplicationContext(), QuestionsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void addQs() {
@@ -32,12 +42,10 @@ public class HomeActivity extends AppCompatActivity {
         AppDatabase db = AppDatabase.getDb(this);
         long[] x = db.questionsDao().insertQuestions(mQuestions);
         Log.w("Home", "insert count: " + x.length);
+
     }
 
     public void startTest(View view) {
-        new QuestionsViewModel();
-        startActivity(new Intent(this, QuestionsActivity.class));
-        Toast.makeText(this, "does this run?", Toast.LENGTH_SHORT).show();
 
     }
 }

@@ -49,6 +49,7 @@ public class QuestionFragment extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static QuestionFragment newInstance(Integer param1, String param2) {
+        Log.w(LOG_TAG, "newInstance run");
         QuestionFragment fragment = new QuestionFragment();
         Bundle args = new Bundle();
         args.putInt(QUESTION_NUM, param1);
@@ -71,7 +72,7 @@ public class QuestionFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question, container, false);
-        if(mViewModel == null) mViewModel = new QuestionsViewModel();
+        if(mViewModel == null) mViewModel = new QuestionsViewModel(getContext());
         String questionText = mViewModel.getQuestion(mQuestionNum);
         Log.w(LOG_TAG,"question text ******************* : " + questionText);
         TextView tv = view.findViewById(R.id.question_view);

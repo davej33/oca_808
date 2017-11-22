@@ -73,7 +73,7 @@ public class QuestionFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question, container, false);
         if(mViewModel == null) mViewModel = new QuestionsViewModel(getContext());
-        String questionText = mViewModel.getQuestion(mQuestionNum);
+        String questionText = mViewModel.getCurrentQuestion().getQuestion();
         Log.w(LOG_TAG,"question text ******************* : " + questionText);
         TextView tv = view.findViewById(R.id.question_view);
         tv.setText(questionText);

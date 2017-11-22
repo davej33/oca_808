@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
+import android.util.Log;
 
 import com.android.example.oca_808.db.AppDatabase;
 import com.android.example.oca_808.db.entity.QuestionEntity;
@@ -16,22 +17,61 @@ import java.util.ArrayList;
 
 public class QuestionsViewModel extends ViewModel {
 
-    private ArrayList<QuestionEntity> mQuestionsList;
+    private static final String LOG_TAG = QuestionsViewModel.class.getSimpleName();
+
+    private static AppDatabase mDb;
+    private static ArrayList<QuestionEntity> mQuestionsList;
+    private static MutableLiveData<Integer> mQuestionNumber;
+    private QuestionEntity mCurrentQuestion;
+
+
     private static final int ONE_SECOND = 1;
-    private static MutableLiveData<Integer> mQuestionNumber = new MutableLiveData<>();
     private long mInitialTime;
     private MutableLiveData<Long> mElapsedTime = new MutableLiveData<>();
-    private static AppDatabase mDb;
-    private QuestionEntity mQ;
 
-
+    // constructor
     public QuestionsViewModel(Context context){
-        mDb = AppDatabase.getDb(context);
-        mQuestionNumber.setValue(0); //TODO: update to accomodate resumed test
+
+        // instantiate db if null
+        if(mDb == null) {
+            mDb = AppDatabase.getDb(context);
+            Log.w(LOG_TAG, "instantiated Db");
+        }
+
+        // set question list
         setQuestionsList();
+
+        // set question number value to 1
+        if(mQuestionNumber == null) {
+            mQuestionNumber = new MutableLiveData<>();
+            mQuestionNumber.setValue(1); //TODO: update to accommodate resumed test
+            Log.w(LOG_TAG, "set Question number to 1");
+        }
+        mCurrentQuestion = mQuestionsList.get(mQuestionNumber.getValue() - 1);
+
 
 
 //        startTimer();
+    }
+
+
+
+
+    public void setQuestionsList() {
+        mQuestionsList = (ArrayList<QuestionEntity>) mDb.questionsDao().getQuestions();
+    }
+
+    public LiveData<Integer> newQuestion(){
+        return mQuestionNumber;
+    }
+
+//    public String getQuestion(int i){
+//        QuestionEntity questionEntity = mQuestionsList.get(i);
+//        return questionEntity.getQuestion();
+//    }
+
+    public QuestionEntity getCurrentQuestion() {
+        return mCurrentQuestion;
     }
 
     // TODO: efficient?
@@ -54,18 +94,5 @@ public class QuestionsViewModel extends ViewModel {
 //                });
 //            }
 //        }, ONE_SECOND, ONE_SECOND);
-}
-
-    public void setQuestionsList() {
-        this.mQuestionsList = (ArrayList<QuestionEntity>) mDb.questionsDao().getQuestions();
-    }
-
-    public LiveData<Integer> newQuestion(){
-        return mQuestionNumber;
-    }
-
-    public String getQuestion(int i){
-        QuestionEntity questionEntity = mQuestionsList.get(i);
-        return questionEntity.getQuestion();
     }
 }

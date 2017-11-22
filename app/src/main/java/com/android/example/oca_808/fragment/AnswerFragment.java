@@ -1,14 +1,19 @@
 package com.android.example.oca_808.fragment;
 
+import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.android.example.oca_808.R;
+import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +24,17 @@ import com.android.example.oca_808.R;
  * create an instance of this fragment.
  */
 public class AnswerFragment extends Fragment {
+
+    private static final String LOG_TAG = AnswerFragment.class.getSimpleName();
+    private RadioButton radio_a;
+    private RadioButton radio_b;
+    private RadioButton radio_c;
+    private RadioButton radio_d;
+    private RadioButton radio_e;
+    private RadioButton radio_f;
+    private RadioGroup radioGroup;
+    private static QuestionsViewModel mViewModel;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -55,6 +71,10 @@ public class AnswerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(mViewModel == null) {
+            mViewModel = new QuestionsViewModel(getContext());
+            Log.w(LOG_TAG, "viewModel was null");
+        }
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -65,7 +85,29 @@ public class AnswerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_answer, container, false);
+        View view = inflater.inflate(R.layout.fragment_answer, container, false);
+
+        setViewValues(view);
+
+        return view;
+    }
+
+
+    private void setViewValues(View view) {
+        radioGroup = view.findViewById(R.id.radio_group);
+        radio_a = view.findViewById(R.id.radioButton_a);
+        radio_b = view.findViewById(R.id.radioButton_b);
+        radio_c = view.findViewById(R.id.radioButton_c);
+        radio_d = view.findViewById(R.id.radioButton_d);
+        radio_e = view.findViewById(R.id.radioButton_e);
+        radio_f = view.findViewById(R.id.radioButton_f);
+
+        radio_a.setText(mViewModel.getCurrentQuestion().getA());
+        radio_b.setText(mViewModel.getCurrentQuestion().getB());
+        radio_c.setText(mViewModel.getCurrentQuestion().getC());
+        radio_d.setText(mViewModel.getCurrentQuestion().getD());
+        radio_e.setText(mViewModel.getCurrentQuestion().getE());
+        radio_f.setText(mViewModel.getCurrentQuestion().getF());
     }
 
     // TODO: Rename method, update argument and hook method into UI event

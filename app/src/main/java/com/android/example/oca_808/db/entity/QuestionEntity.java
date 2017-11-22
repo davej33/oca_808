@@ -11,20 +11,20 @@ import android.arch.persistence.room.PrimaryKey;
 public class QuestionEntity {
 
     @PrimaryKey(autoGenerate = true)
-    int id;
+    public int id;
 
-    private int type; // single or multiple answer
-    private String question;
-    private String opt_a;
-    private String opt_b;
-    private String opt_c;
-    private String opt_d;
-    private String opt_e;
-    private String opt_f;
-    private String answer;
-    private String objectives;
-    private int status;
-    private boolean saved;
+    public int type; // single or multiple answer
+    public String question;
+    public String opt_a;
+    public String opt_b;
+    public String opt_c;
+    public String opt_d;
+    public String opt_e;
+    public String opt_f;
+    public String answer;
+    public String objectives;
+    public int status;
+    public boolean saved;
 
     public QuestionEntity(int type, String question, String a, String b, String c, String d, String e, String f,
                           String answer, String objectives, int status, boolean saved){
@@ -41,6 +41,8 @@ public class QuestionEntity {
         this.status = status;
         this.saved = saved;
     }
+    
+    public QuestionEntity(){}
 
     public int getType(){
         return type;

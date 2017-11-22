@@ -4,11 +4,14 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.example.oca_808.R;
+import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,11 +24,13 @@ import com.android.example.oca_808.R;
 public class QuestionFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String QUESTION_NUM = "question";
     private static final String ARG_PARAM2 = "param2";
+    private static final String LOG_TAG = QuestionFragment.class.getSimpleName();
 
+    private QuestionsViewModel mViewModel;
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private int mQuestionNum;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
@@ -43,10 +48,10 @@ public class QuestionFragment extends Fragment {
      * @return A new instance of fragment QuestionFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static QuestionFragment newInstance(String param1, String param2) {
+    public static QuestionFragment newInstance(Integer param1, String param2) {
         QuestionFragment fragment = new QuestionFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putInt(QUESTION_NUM, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
@@ -56,7 +61,7 @@ public class QuestionFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            mQuestionNum = getArguments().getInt(QUESTION_NUM);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
@@ -65,7 +70,14 @@ public class QuestionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_question, container, false);
+        View view = inflater.inflate(R.layout.fragment_question, container, false);
+        if(mViewModel == null) mViewModel = new QuestionsViewModel();
+        String questionText = mViewModel.getQuestion(mQuestionNum);
+        Log.w(LOG_TAG,"question text ******************* : " + questionText);
+        TextView tv = view.findViewById(R.id.question_view);
+        tv.setText(questionText);
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

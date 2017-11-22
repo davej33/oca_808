@@ -34,8 +34,9 @@ public class AnswerFragment extends Fragment {
     private RadioButton radio_e;
     private RadioButton radio_f;
     private RadioGroup radioGroup;
-    private static QuestionsViewModel mViewModel;
+    private QuestionsViewModel mViewModel;
     private static String mRadioSelection;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -50,6 +51,10 @@ public class AnswerFragment extends Fragment {
 
     public AnswerFragment() {
         // Required empty public constructor
+    }
+
+    public static String getUserAnswer() {
+        return mRadioSelection;
     }
 
     /**
@@ -88,7 +93,7 @@ public class AnswerFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_answer, container, false);
-
+        Log.w(LOG_TAG, "onCreateView answer run");
         setViewValues(view);
 
         return view;
@@ -103,6 +108,8 @@ public class AnswerFragment extends Fragment {
         radio_d = view.findViewById(R.id.radioButton_d);
         radio_e = view.findViewById(R.id.radioButton_e);
         radio_f = view.findViewById(R.id.radioButton_f);
+
+        Log.w(LOG_TAG, "radio_a: " + mViewModel.getCurrentQuestion().getA());
 
         radio_a.setText(mViewModel.getCurrentQuestion().getA());
         radio_b.setText(mViewModel.getCurrentQuestion().getB());
@@ -137,7 +144,6 @@ public class AnswerFragment extends Fragment {
                     default:
                         Log.e(LOG_TAG, "Radio selection match error");
                 }
-
                 Toast.makeText(getActivity(), "Radio Selection: " + mRadioSelection, Toast.LENGTH_SHORT).show();
             }
         });
@@ -171,7 +177,6 @@ public class AnswerFragment extends Fragment {
 
 
     }
-
 
 
     /**

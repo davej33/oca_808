@@ -19,21 +19,28 @@ public class QuestionsViewModel extends ViewModel {
 
     private static final String LOG_TAG = QuestionsViewModel.class.getSimpleName();
 
+    // database
     private static AppDatabase mDb;
+
+    // Question vars
     private static ArrayList<QuestionEntity> mQuestionsList;
     private static MutableLiveData<Integer> mQuestionNumber;
     private QuestionEntity mCurrentQuestion;
+    private static int mWhereWeAt;
 
+    // Test vars
+    private static ArrayList<String> mUserAnswerArray;
 
+    // Timer vars
     private static final int ONE_SECOND = 1;
     private long mInitialTime;
     private MutableLiveData<Long> mElapsedTime = new MutableLiveData<>();
 
     // constructor
-    public QuestionsViewModel(Context context){
+    public QuestionsViewModel(Context context) {
 
         // instantiate db if null
-        if(mDb == null) {
+        if (mDb == null) {
             mDb = AppDatabase.getDb(context);
             Log.w(LOG_TAG, "instantiated Db");
         }
@@ -42,33 +49,52 @@ public class QuestionsViewModel extends ViewModel {
         setQuestionsList();
 
         // set question number value to 1
-        if(mQuestionNumber == null) {
+        if (mQuestionNumber == null) {
+            mWhereWeAt = 1;
             mQuestionNumber = new MutableLiveData<>();
-            mQuestionNumber.setValue(1); //TODO: update to accommodate resumed test
+            mQuestionNumber.setValue(mWhereWeAt); //TODO: update to accommodate resumed test
             Log.w(LOG_TAG, "set Question number to 1");
         }
-        mCurrentQuestion = mQuestionsList.get(mQuestionNumber.getValue() - 1);
+        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
 
 
-
+        if (mUserAnswerArray == null) {
+            Log.w(LOG_TAG, "instantiated userAnswerArray");
+            mUserAnswerArray = new ArrayList<>();
+            mUserAnswerArray.add(null);
+        }
 //        startTimer();
+        int index = mQuestionsList.indexOf(mCurrentQuestion);
+        Log.w(LOG_TAG, "index / wwa: " + index + " / " + mWhereWeAt);
     }
-
-
-
 
     public void setQuestionsList() {
         mQuestionsList = (ArrayList<QuestionEntity>) mDb.questionsDao().getQuestions();
+        Log.w(LOG_TAG, "Question List size: " + mQuestionsList.size());
+        mQuestionsList.add(0, null);
+        Log.w(LOG_TAG, "2 Question List size: " + mQuestionsList.size());
     }
 
-    public LiveData<Integer> newQuestion(){
+    public int addUserAnswer(String s) {
+        // if the question we're on is
+        if (mUserAnswerArray.size() <= mWhereWeAt) {
+            mUserAnswerArray.add(s);
+            Log.w(LOG_TAG, "add ");
+        } else {
+            mUserAnswerArray.set(mWhereWeAt, s);
+            Log.w(LOG_TAG, "set ");
+        }
+        return mUserAnswerArray.size();
+    }
+    public void nextQuestion(){
+        mQuestionNumber.setValue(++mWhereWeAt);
+        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
+    }
+
+    public LiveData<Integer> newQuestion() {
         return mQuestionNumber;
     }
 
-//    public String getQuestion(int i){
-//        QuestionEntity questionEntity = mQuestionsList.get(i);
-//        return questionEntity.getQuestion();
-//    }
 
     public QuestionEntity getCurrentQuestion() {
         return mCurrentQuestion;
@@ -94,5 +120,27 @@ public class QuestionsViewModel extends ViewModel {
 //                });
 //            }
 //        }, ONE_SECOND, ONE_SECOND);
+    }
+
+    public boolean checkAnswer(String userAnswer) {
+        int check2 = addUserAnswer(userAnswer);
+        Log.w(LOG_TAG, "userAnswerList count: " + check2);
+        if (mCurrentQuestion.getType() == 1) { // 1 == single answer
+            if (userAnswer.equals(mCurrentQuestion.getAnswer())) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            String s = mCurrentQuestion.getAnswer();
+            for (int i = 0; i < mCurrentQuestion.getAnswer().length(); i++) {
+                String check = String.valueOf(userAnswer.charAt(i));
+                if (!s.contains(check)) {
+                    Log.w(LOG_TAG, check + " not in " + s);
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

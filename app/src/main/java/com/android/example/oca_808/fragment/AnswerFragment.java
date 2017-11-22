@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.android.example.oca_808.R;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
@@ -34,6 +35,7 @@ public class AnswerFragment extends Fragment {
     private RadioButton radio_f;
     private RadioGroup radioGroup;
     private static QuestionsViewModel mViewModel;
+    private static String mRadioSelection;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -71,7 +73,7 @@ public class AnswerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(mViewModel == null) {
+        if (mViewModel == null) {
             mViewModel = new QuestionsViewModel(getContext());
             Log.w(LOG_TAG, "viewModel was null");
         }
@@ -94,7 +96,7 @@ public class AnswerFragment extends Fragment {
 
 
     private void setViewValues(View view) {
-        radioGroup = view.findViewById(R.id.radio_group);
+
         radio_a = view.findViewById(R.id.radioButton_a);
         radio_b = view.findViewById(R.id.radioButton_b);
         radio_c = view.findViewById(R.id.radioButton_c);
@@ -108,6 +110,37 @@ public class AnswerFragment extends Fragment {
         radio_d.setText(mViewModel.getCurrentQuestion().getD());
         radio_e.setText(mViewModel.getCurrentQuestion().getE());
         radio_f.setText(mViewModel.getCurrentQuestion().getF());
+
+        radioGroup = view.findViewById(R.id.radio_group);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i) {
+                    case R.id.radioButton_a:
+                        mRadioSelection = "a";
+                        break;
+                    case R.id.radioButton_b:
+                        mRadioSelection = "b";
+                        break;
+                    case R.id.radioButton_c:
+                        mRadioSelection = "c";
+                        break;
+                    case R.id.radioButton_d:
+                        mRadioSelection = "d";
+                        break;
+                    case R.id.radioButton_e:
+                        mRadioSelection = "e";
+                        break;
+                    case R.id.radioButton_f:
+                        mRadioSelection = "f";
+                        break;
+                    default:
+                        Log.e(LOG_TAG, "Radio selection match error");
+                }
+
+                Toast.makeText(getActivity(), "Radio Selection: " + mRadioSelection, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -133,6 +166,13 @@ public class AnswerFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+    public void getRadioButtonSelections(View view) {
+
+
+    }
+
+
 
     /**
      * This interface must be implemented by activities that contain this

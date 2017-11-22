@@ -9,7 +9,8 @@
     <RadioGroup
         android:id="@+id/radio_group"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
 
         <RadioButton
             android:id="@+id/radioButton_a"
@@ -19,6 +20,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="RadioButton"
+            android:onClick="getRadioButtonSelections"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

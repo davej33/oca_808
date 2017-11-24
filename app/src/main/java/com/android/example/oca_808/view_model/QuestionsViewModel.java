@@ -75,22 +75,6 @@ public class QuestionsViewModel extends ViewModel {
         Log.w(LOG_TAG, "2 Question List size: " + mQuestionsList.size());
     }
 
-    public int addUserAnswer(String s) {
-        // if the question we're on is
-        if (mUserAnswerArray.size() <= mWhereWeAt) {
-            mUserAnswerArray.add(s);
-            Log.w(LOG_TAG, "add ");
-        } else {
-            mUserAnswerArray.set(mWhereWeAt, s);
-            Log.w(LOG_TAG, "set ");
-        }
-        return mUserAnswerArray.size();
-    }
-    public void nextQuestion(){
-        mQuestionNumber.setValue(++mWhereWeAt);
-        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
-    }
-
     public LiveData<Integer> newQuestion() {
         return mQuestionNumber;
     }
@@ -123,8 +107,8 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     public boolean checkAnswer(String userAnswer) {
-        int check2 = addUserAnswer(userAnswer);
-        Log.w(LOG_TAG, "userAnswerList count: " + check2);
+        int checkListSize = addUserAnswer(userAnswer);
+        Log.w(LOG_TAG, "userAnswerList count: " + checkListSize);
         if (mCurrentQuestion.getType() == 1) { // 1 == single answer
             if (userAnswer.equals(mCurrentQuestion.getAnswer())) {
                 return true;
@@ -132,15 +116,36 @@ public class QuestionsViewModel extends ViewModel {
                 return false;
             }
         } else {
-            String s = mCurrentQuestion.getAnswer();
+            String correctAnswer = mCurrentQuestion.getAnswer();
+            Log.w(LOG_TAG,"correct Answer: " + correctAnswer);
+            Log.w(LOG_TAG,"correct answer length: " + correctAnswer.length());
             for (int i = 0; i < mCurrentQuestion.getAnswer().length(); i++) {
                 String check = String.valueOf(userAnswer.charAt(i));
-                if (!s.contains(check)) {
-                    Log.w(LOG_TAG, check + " not in " + s);
+                if (!correctAnswer.contains(check)) {
+                    Log.w(LOG_TAG, check + " not in " + correctAnswer);
                     return false;
                 }
             }
         }
         return true;
+    }
+    public int addUserAnswer(String userAnswer) {
+        // add to arrayList if unanswered, if changing previous answer then set corresponding element
+        if (mUserAnswerArray.size() <= mWhereWeAt) {
+            mUserAnswerArray.add(userAnswer);
+            Log.w(LOG_TAG, "add ");
+        } else {
+            mUserAnswerArray.set(mWhereWeAt, userAnswer);
+            Log.w(LOG_TAG, "set ");
+        }
+        return mUserAnswerArray.size();
+    }
+    public void nextQuestion(){
+        mQuestionNumber.setValue(++mWhereWeAt);
+        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
+    }
+    public void previousQuestion(){
+        mQuestionNumber.setValue(--mWhereWeAt);
+        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
     }
 }

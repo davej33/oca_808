@@ -55,7 +55,7 @@
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@mipmap/ic_launcher_round" />
+        app:srcCompat="@android:drawable/ic_media_next" />
 
 
 </android.support.constraint.ConstraintLayout>

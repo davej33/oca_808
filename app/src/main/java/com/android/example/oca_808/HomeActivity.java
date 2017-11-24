@@ -34,11 +34,20 @@ public class HomeActivity extends AppCompatActivity {
 
     private void addQs() {
         ArrayList<QuestionEntity> mQuestions = new ArrayList<>();
-        mQuestions.add(new QuestionEntity(1, "1: What is \n2: Java?", "A good cup of jo", "small mammal", "large lizard", "programming language", "no idea",
+        mQuestions.add(new QuestionEntity(1, "Question 1\n1: What is \n2: Java?", "A good cup of jo", "small mammal", "large lizard", "programming language", "no idea",
                 "a fish","d","Java Basics", 0, false));
-        mQuestions.add(new QuestionEntity(0, "What else is Java?", "A programming language", "jumbo", "bear", "programming language", "fudge",
-                "a fish","a,d","Java Basics", 0, false));
+        mQuestions.add(new QuestionEntity(0, "Question 2\nWhat else is Java?", "A programming language", "jumbo", "bear", "programming language", "fudge",
+                "a fish","ad","Java Basics", 0, false));
+        mQuestions.add(new QuestionEntity(1, "Question 3\n1: what color is the sky?", "blue", "small mammal", "large lizard", "programming language", "no idea",
+                "a fish","a","Java Basics", 0, false));
+        mQuestions.add(new QuestionEntity(0, "Question 4\nWhat numbers are between 1 and 5?", "A programming language", "3", "bear", "programming language", "4",
+                "a fish","be","Java Basics", 0, false));
+        mQuestions.add(new QuestionEntity(1, "Question 5\nCubs World Series Championship Year?", "A good cup of jo", "small mammal", "large lizard", "programming language", "no idea",
+                "2016","f","Java Basics", 0, false));
+        mQuestions.add(new QuestionEntity(0, "Question 6\nFirst three letters of the alphabet?", "c", "jumbo", "bear", "programming language", "a",
+                "b","aef","Java Basics", 0, false));
         AppDatabase db = AppDatabase.getDb(this);
+
         long[] x = db.questionsDao().insertQuestions(mQuestions);
         Log.w("Home", "insert count: " + x.length);
 

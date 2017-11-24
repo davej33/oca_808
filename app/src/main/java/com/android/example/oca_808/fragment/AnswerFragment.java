@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -24,7 +25,7 @@ import com.android.example.oca_808.view_model.QuestionsViewModel;
  * Use the {@link AnswerFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AnswerFragment extends Fragment {
+public class AnswerFragment extends Fragment implements View.OnClickListener {
 
     private static final String LOG_TAG = AnswerFragment.class.getSimpleName();
     private RadioButton radio_a;
@@ -34,38 +35,38 @@ public class AnswerFragment extends Fragment {
     private RadioButton radio_e;
     private RadioButton radio_f;
     private RadioGroup radioGroup;
+    private CheckBox checkbox_a;
+    private CheckBox checkbox_b;
+    private CheckBox checkbox_c;
+    private CheckBox checkbox_d;
+    private CheckBox checkbox_e;
+    private CheckBox checkbox_f;
     private QuestionsViewModel mViewModel;
     private static String mRadioSelection;
+    private static StringBuilder mCheckboxAnswer = new StringBuilder();
+    private static int mQuestionType;
 
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
 
     public AnswerFragment() {
         // Required empty public constructor
     }
 
     public static String getUserAnswer() {
-        return mRadioSelection;
+        if (mQuestionType == 1)
+            return mRadioSelection;
+        else
+            return mCheckboxAnswer.toString();
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AnswerFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static AnswerFragment newInstance(String param1, String param2) {
         AnswerFragment fragment = new AnswerFragment();
         Bundle args = new Bundle();
@@ -93,23 +94,72 @@ public class AnswerFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_answer, container, false);
-        Log.w(LOG_TAG, "onCreateView answer run");
-        setViewValues(view);
+        mRadioSelection = "";
+        mCheckboxAnswer.delete(0, mCheckboxAnswer.length());
+        getViews(view);
+        mQuestionType = mViewModel.getCurrentQuestion().getType();
+        if (mViewModel.getCurrentQuestion().getType() == 1) {
+            radioGroup.clearCheck();
+            setRadioViewValues();
+        } else {
+            setCheckboxViews();
+        }
 
         return view;
     }
 
-
-    private void setViewValues(View view) {
-
+    private void getViews(View view) {
+        checkbox_a = view.findViewById(R.id.checkboxButton_a);
+        checkbox_b = view.findViewById(R.id.checkboxButton_b);
+        checkbox_c = view.findViewById(R.id.checkboxButton_c);
+        checkbox_d = view.findViewById(R.id.checkboxButton_d);
+        checkbox_e = view.findViewById(R.id.checkboxButton_e);
+        checkbox_f = view.findViewById(R.id.checkboxButton_f);
+        checkbox_a.setOnClickListener(this);
+        checkbox_b.setOnClickListener(this);
+        checkbox_c.setOnClickListener(this);
+        checkbox_d.setOnClickListener(this);
+        checkbox_e.setOnClickListener(this);
+        checkbox_f.setOnClickListener(this);
         radio_a = view.findViewById(R.id.radioButton_a);
         radio_b = view.findViewById(R.id.radioButton_b);
         radio_c = view.findViewById(R.id.radioButton_c);
         radio_d = view.findViewById(R.id.radioButton_d);
         radio_e = view.findViewById(R.id.radioButton_e);
         radio_f = view.findViewById(R.id.radioButton_f);
+        radioGroup = view.findViewById(R.id.radio_group);
 
-        Log.w(LOG_TAG, "radio_a: " + mViewModel.getCurrentQuestion().getA());
+    }
+
+    private void setCheckboxViews() {
+
+        radioGroup.setVisibility(View.INVISIBLE);
+
+        radioGroup.clearCheck();
+
+        checkbox_a.setText(mViewModel.getCurrentQuestion().getA());
+        checkbox_b.setText(mViewModel.getCurrentQuestion().getB());
+        checkbox_c.setText(mViewModel.getCurrentQuestion().getC());
+        checkbox_d.setText(mViewModel.getCurrentQuestion().getD());
+        checkbox_e.setText(mViewModel.getCurrentQuestion().getE());
+        checkbox_f.setText(mViewModel.getCurrentQuestion().getF());
+        checkbox_a.setChecked(false);
+        checkbox_b.setChecked(false);
+        checkbox_c.setChecked(false);
+        checkbox_d.setChecked(false);
+        checkbox_e.setChecked(false);
+        checkbox_f.setChecked(false);
+
+    }
+
+    private void setRadioViewValues() {
+        radioGroup.clearCheck();
+        checkbox_a.setVisibility(View.INVISIBLE);
+        checkbox_b.setVisibility(View.INVISIBLE);
+        checkbox_c.setVisibility(View.INVISIBLE);
+        checkbox_d.setVisibility(View.INVISIBLE);
+        checkbox_e.setVisibility(View.INVISIBLE);
+        checkbox_f.setVisibility(View.INVISIBLE);
 
         radio_a.setText(mViewModel.getCurrentQuestion().getA());
         radio_b.setText(mViewModel.getCurrentQuestion().getB());
@@ -118,10 +168,11 @@ public class AnswerFragment extends Fragment {
         radio_e.setText(mViewModel.getCurrentQuestion().getE());
         radio_f.setText(mViewModel.getCurrentQuestion().getF());
 
-        radioGroup = view.findViewById(R.id.radio_group);
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                Log.w(LOG_TAG, "int: " + i + " : " + R.id.radioButton_a);
                 switch (i) {
                     case R.id.radioButton_a:
                         mRadioSelection = "a";
@@ -144,17 +195,16 @@ public class AnswerFragment extends Fragment {
                     default:
                         Log.e(LOG_TAG, "Radio selection match error");
                 }
-                Toast.makeText(getActivity(), "Radio Selection: " + mRadioSelection, Toast.LENGTH_SHORT).show();
+
+                boolean b = onAnswerSelected();
+                Log.w(LOG_TAG, "Answer is selected: " + b);
+                mListener.answerSelected(b);
             }
         });
+
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -173,9 +223,62 @@ public class AnswerFragment extends Fragment {
         mListener = null;
     }
 
-    public void getRadioButtonSelections(View view) {
+    @Override
+    public void onClick(View v) {
+        CheckBox view = (CheckBox) v;
+        boolean isChecked = view.isChecked();
+        Log.w(LOG_TAG,"isChecked: " + isChecked);
+        String answer = null;
+        switch (view.getId()) {
+            case R.id.checkboxButton_a:
+                Log.w(LOG_TAG, "A is selected: " + view.isChecked());
+                answer = "a";
+                break;
+            case R.id.checkboxButton_b:
+                answer = "b";
+                break;
+            case R.id.checkboxButton_c:
+                answer = "c";
+                break;
+            case R.id.checkboxButton_d:
+                answer = "d";
+                break;
+            case R.id.checkboxButton_e:
+                answer = "e";
+                break;
+            case R.id.checkboxButton_f:
+                answer = "f";
+                break;
+            default:
+                Log.e(LOG_TAG, "Error matching checkbox");
+        }
+        editString(isChecked, answer);
+        boolean b = onAnswerSelected();
+        Log.w(LOG_TAG, "Answer is selected: " + b);
+        mListener.answerSelected(b);
+    }
 
-
+    public boolean onAnswerSelected() {
+        Log.w(LOG_TAG, "mType / Radio: " + mQuestionType + " / " + mCheckboxAnswer.length());
+        boolean b = false;
+        if (((mQuestionType == 1) && (mRadioSelection.length() == 1)) ||
+                (mQuestionType == 0) && (mCheckboxAnswer.length() > 0)) {
+            b = true;
+        }
+        if (mListener != null) {
+            mListener.answerSelected(b);
+        }
+        return b;
+    }
+    private void editString(boolean selected, String answer) {
+        if (selected) {
+            mCheckboxAnswer.append(answer);
+            Log.w(LOG_TAG, "string builder - add: " + mCheckboxAnswer.toString());
+        } else {
+            int i = mCheckboxAnswer.indexOf(answer);
+            mCheckboxAnswer.deleteCharAt(i);
+            Log.w(LOG_TAG, "string builder - delete: " + mCheckboxAnswer.toString());
+        }
     }
 
 
@@ -190,7 +293,7 @@ public class AnswerFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+
+        void answerSelected(boolean b);
     }
 }

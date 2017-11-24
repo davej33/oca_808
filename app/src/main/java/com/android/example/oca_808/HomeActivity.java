@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.android.example.oca_808.db.AppDatabase;
 import com.android.example.oca_808.db.entity.QuestionEntity;
@@ -22,7 +21,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         addQs();
-        ImageView i = findViewById(R.id.test_view);
+        ImageView i = findViewById(R.id.test_button);
         i.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

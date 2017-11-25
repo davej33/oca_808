@@ -1,10 +1,16 @@
 package com.android.example.oca_808;
 
+import android.annotation.TargetApi;
 import android.arch.lifecycle.Observer;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -29,11 +35,18 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
     private FloatingActionButton mFAB;
 
 
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
         mViewModel = new QuestionsViewModel(getApplicationContext());
+        View decorView = getWindow().getDecorView();
+// Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark, null)));
 
         if (mFAB == null) {
             Log.w(LOG_TAG, "new FAB");
@@ -62,12 +75,13 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             });
         }
         displayContent();
+        getSupportFragmentManager().beginTransaction().replace(R.id.progress_container, ProgressFragment.newInstance(null, null)).commit();
         subscribe();
     }
 
     private void displayContent() {
         getSupportFragmentManager().beginTransaction().replace(R.id.question_container, QuestionFragment.newInstance(questionNum, null)).commit();
-        getSupportFragmentManager().beginTransaction().replace(R.id.progress_container, ProgressFragment.newInstance(null, null)).commit();
+//        getSupportFragmentManager().beginTransaction().replace(R.id.progress_container, ProgressFragment.newInstance(null, null)).commit();
         getSupportFragmentManager().beginTransaction().replace(R.id.answer_container, AnswerFragment.newInstance(null, null)).commit();
         mFAB.setImageResource(android.R.drawable.ic_media_next);
     }

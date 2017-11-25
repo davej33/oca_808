@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backgound_rounded_corners"
+    android:background="#fff"
     tools:context="com.android.example.oca_808.fragment.AnswerFragment">
 
     <!-- TODO: Update blank fragment layout -->

@@ -25,7 +25,7 @@ public class QuestionsViewModel extends ViewModel {
     // Question vars
     private static ArrayList<QuestionEntity> mQuestionsList;
     private static MutableLiveData<Integer> mQuestionNumber;
-    private QuestionEntity mCurrentQuestion;
+    private static QuestionEntity mCurrentQuestion;
     private static int mWhereWeAt;
 
     // Test vars
@@ -147,5 +147,13 @@ public class QuestionsViewModel extends ViewModel {
     public void previousQuestion(){
         mQuestionNumber.setValue(--mWhereWeAt);
         mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
+    }
+
+    public int getmWhereWeAt(){
+        return mWhereWeAt;
+    }
+
+    public int getQuestionCount(){
+        return mQuestionsList.size();
     }
 }

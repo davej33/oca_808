@@ -7,8 +7,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.example.oca_808.R;
+import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +21,9 @@ import com.android.example.oca_808.R;
  * create an instance of this fragment.
  */
 public class ExplanationFragment extends Fragment {
+
+    private static TextView mExplanation;
+    QuestionsViewModel mViewModel;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -65,7 +70,12 @@ public class ExplanationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_explanation, container, false);
+        View view = inflater.inflate(R.layout.fragment_explanation, container, false);
+
+        mViewModel = new QuestionsViewModel(getContext());
+        mExplanation = view.findViewById(R.id.explanation_textview);
+        mExplanation.setText(mViewModel.getCurrentQuestion().explanation);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

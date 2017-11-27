@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.android.example.oca_808.fragment.AnswerFragment;
+import com.android.example.oca_808.fragment.ExplanationFragment;
 import com.android.example.oca_808.fragment.ProgressFragment;
 import com.android.example.oca_808.fragment.QuestionFragment;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
@@ -27,7 +28,7 @@ import com.android.example.oca_808.view_model.QuestionsViewModel;
  */
 
 public class QuestionsActivity extends AppCompatActivity implements QuestionFragment.OnFragmentInteractionListener,
-        ProgressFragment.OnFragmentInteractionListener, AnswerFragment.OnFragmentInteractionListener {
+        ProgressFragment.OnFragmentInteractionListener, AnswerFragment.OnFragmentInteractionListener, ExplanationFragment.OnFragmentInteractionListener {
 
     private static final String LOG_TAG = QuestionsActivity.class.getSimpleName();
     private Integer questionNum = 0;
@@ -63,7 +64,8 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
                         String solution = mViewModel.getCurrentQuestion().answer;
                         boolean correctAnswer = mViewModel.checkAnswer(userAnswer);
                         if (correctAnswer) {
-                            Toast.makeText(QuestionsActivity.this, "Correct! \nuser answer: " + userAnswer + "\n solution: " + solution, Toast.LENGTH_LONG).show();
+                            String exp = mViewModel.getCurrentQuestion().explanation;
+                            Toast.makeText(QuestionsActivity.this, "Correct! " + exp, Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(QuestionsActivity.this, "Not so much. \nuser answer: " + userAnswer + "\nsolution: " + solution, Toast.LENGTH_LONG).show();
                         }
@@ -81,7 +83,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
     private void displayContent() {
         getSupportFragmentManager().beginTransaction().replace(R.id.question_container, QuestionFragment.newInstance(questionNum, null)).commit();
-//        getSupportFragmentManager().beginTransaction().replace(R.id.progress_container, ProgressFragment.newInstance(null, null)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.explanation_container, ExplanationFragment.newInstance(null, null)).commit();
         getSupportFragmentManager().beginTransaction().replace(R.id.answer_container, AnswerFragment.newInstance(null, null)).commit();
         mFAB.setImageResource(android.R.drawable.ic_media_next);
     }

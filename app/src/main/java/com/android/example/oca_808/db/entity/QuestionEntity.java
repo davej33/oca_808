@@ -10,9 +10,10 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class QuestionEntity {
 
-    @PrimaryKey(autoGenerate = true)
-    public int id;
-
+    @PrimaryKey (autoGenerate = true)
+    public int _id;
+    public int q_map_id;
+    public int objectives;
     public int type; // single or multiple answer
     public String question;
     public String opt_a;
@@ -22,24 +23,26 @@ public class QuestionEntity {
     public String opt_e;
     public String opt_f;
     public String answer;
-    public String objectives;
     public int status;
     public boolean saved;
+    public String explanation;
 
-    public QuestionEntity(int type, String question, String a, String b, String c, String d, String e, String f,
-                          String answer, String objectives, int status, boolean saved){
-        this.type =  type;
+    public QuestionEntity(int qid, int objectives, int type, String question, String a, String b, String c, String d, String e, String f,
+                          String answer, String explanation){
+        q_map_id = qid;
+        this.type = type;
         this.question = question;
-        this.opt_a = a;
-        this.opt_b = b;
-        this.opt_c = c;
-        this.opt_d = d;
-        this.opt_e = e;
-        this.opt_f = f;
+        opt_a = a;
+        opt_b = b;
+        opt_c = c;
+        opt_d = d;
+        opt_e = e;
+        opt_f = f;
         this.answer = answer;
         this.objectives = objectives;
-        this.status = status;
-        this.saved = saved;
+        status = 0;
+        saved = false;
+        this.explanation = explanation;
     }
     
     public QuestionEntity(){}
@@ -116,11 +119,11 @@ public class QuestionEntity {
         this.answer = answer;
     }
 
-    public String getObjectives() {
+    public int getObjectives() {
         return objectives;
     }
 
-    public void setObjectives(String objectives) {
+    public void setObjectives(int objectives) {
         this.objectives = objectives;
     }
 

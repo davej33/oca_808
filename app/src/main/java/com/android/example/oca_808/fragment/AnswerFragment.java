@@ -71,7 +71,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         if (mViewModel == null) {
             mViewModel = new QuestionsViewModel(getContext());
-            Log.w(LOG_TAG, "viewModel was null");
+
         }
         if (getArguments() != null) {
             mWrongAnswers = getArguments().getStringArrayList(WRONG_ANSWERS);
@@ -83,22 +83,24 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // TODO unfuck this
+
         View view = inflater.inflate(R.layout.fragment_answer, container, false);
         mQuestionType = mViewModel.getCurrentQuestion().getType();
         mCorrectAnswers = mViewModel.getCurrentQuestion().answer;
-//        mUserAnswers = mViewModel.getmUserAnswer();
         getViews(view);
+
+        // set answers based on type of question
         if (mQuestionType == 1) {
-            radioGroup.clearCheck();
             setRadioViewValues();
         } else {
             setCheckboxViews();
         }
+
+        // if no wrong answers
         if (mWrongAnswers == null) {
             mRadioSelection = "";
             mCheckboxAnswer.delete(0, mCheckboxAnswer.length());
-
+//            radioGroup.clearCheck();
         } else {
             showAnswers();
         }
@@ -107,10 +109,11 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showAnswers() {
+
         if (mQuestionType == 1) {
             switch (mCorrectAnswers.charAt(0)) {
                 case 'a':
-                    radio_a.setTextColor(getResources().getColor(R.color.colorGreen));
+                    radio_a.setTextColor(getResources().getColor(R.color.colorGreen)); // TODO optimize
                     break;
                 case 'b':
                     radio_b.setTextColor(getResources().getColor(R.color.colorGreen));
@@ -154,32 +157,34 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                         Log.e(LOG_TAG, "Radio question wrong answer-match error");
 
                 }
-                if (mUserAnswer.length() != 0) {
-                    switch (mUserAnswer.charAt(0)) {
-                        case 'a':
-                            radio_a.setChecked(true);
-                            break;
-                        case 'b':
-                            radio_b.setChecked(true);
-                            break;
-                        case 'c':
-                            radio_c.setChecked(true);
-                            break;
-                        case 'd':
-                            radio_d.setChecked(true);
-                            break;
-                        case 'e':
-                            radio_e.setChecked(true);
-                            break;
-                        case 'f':
-                            radio_f.setChecked(true);
-                            break;
-                        default:
-                            Log.e(LOG_TAG, "Radio question wrong user-answer-match error");
+            }
 
-                    }
+            if (mUserAnswer.length() != 0) {
+                switch (mUserAnswer.charAt(0)) {
+                    case 'a':
+                        radio_a.setChecked(true);
+                        break;
+                    case 'b':
+                        radio_b.setChecked(true);
+                        break;
+                    case 'c':
+                        radio_c.setChecked(true);
+                        break;
+                    case 'd':
+                        radio_d.setChecked(true);
+                        break;
+                    case 'e':
+                        radio_e.setChecked(true);
+                        break;
+                    case 'f':
+                        radio_f.setChecked(true);
+                        break;
+                    default:
+                        Log.e(LOG_TAG, "Radio question wrong user-answer-match error");
+
                 }
             }
+
         } else {
             for (int i = 0; i < mCorrectAnswers.length(); i++) {
                 switch (mCorrectAnswers.charAt(i)) {
@@ -232,7 +237,6 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                 }
             }
             for (int i = 0; i < mUserAnswer.length(); i++) {
-                Log.w(LOG_TAG, "*************** User answer: " + mUserAnswer.charAt(i));
                 if (mUserAnswer.length() != 0) {
                     switch (mUserAnswer.charAt(i)) {
                         case 'a':

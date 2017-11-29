@@ -110,7 +110,7 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     public ArrayList<String> checkAnswer(String userAnswer) {
-        mUserAnswer = userAnswer;
+        mUserAnswer = userAnswer; // TODO update to check that all userAnswers in correct answer
         ArrayList<String> wrongAnswers = new ArrayList<>();
         if (mCurrentQuestion.getType() == 1) { // 1 == single answer
             if (!userAnswer.equals(mCurrentQuestion.getAnswer())) {

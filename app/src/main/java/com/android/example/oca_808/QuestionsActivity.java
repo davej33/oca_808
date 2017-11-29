@@ -8,19 +8,25 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.android.example.oca_808.fragment.AnswerFragment;
 import com.android.example.oca_808.fragment.ExplanationFragment;
 import com.android.example.oca_808.fragment.ProgressFragment;
 import com.android.example.oca_808.fragment.QuestionFragment;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
+
+import java.util.ArrayList;
 
 
 /**
@@ -34,20 +40,38 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
     private Integer questionNum = 0;
     private static QuestionsViewModel mViewModel;
     private FloatingActionButton mFAB;
-
+    private ToggleButton mShowAnswerButton;
+    private FrameLayout mExplanationContainer, mQuestionContainer, mAnswerContainer, mQuestionForSolutionContainer;
+    private static final String EXPLANATION_DISPLAY_TYPE = "explanation";
+    private ArrayList<String> mWrongAnswers;
+    private String mUserAnswer;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
+
+
+
         mViewModel = new QuestionsViewModel(getApplicationContext());
+        mShowAnswerButton = findViewById(R.id.show_answer);
+        mExplanationContainer = findViewById(R.id.explanation_container);
+        mQuestionContainer = findViewById(R.id.question_container);
+        mAnswerContainer = findViewById(R.id.answer_container);
+        mQuestionForSolutionContainer = findViewById(R.id.question_solution_container);
+
+
+
+        // Hide the status bar.
         View decorView = getWindow().getDecorView();
-// Hide the status bar.
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null) actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark, null)));
+        if (actionBar != null)
+            actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark, null)));
+
+
 
         if (mFAB == null) {
             Log.w(LOG_TAG, "new FAB");
@@ -55,39 +79,66 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             mFAB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String userAnswer = AnswerFragment.getUserAnswer();
-                    if (userAnswer.length() == 0) {
-                        userAnswer = "skipped";
-                        mViewModel.checkAnswer(userAnswer);
+                    mUserAnswer = AnswerFragment.getUserAnswer();
+                    if (mUserAnswer.length() == 0) {
+                        mUserAnswer = "skipped";
+                        mViewModel.checkAnswer(mUserAnswer);
                         Toast.makeText(QuestionsActivity.this, "Question Skipped", Toast.LENGTH_SHORT).show();
                     } else {
                         String solution = mViewModel.getCurrentQuestion().answer;
-                        boolean correctAnswer = mViewModel.checkAnswer(userAnswer);
-                        if (correctAnswer) {
-                            String exp = mViewModel.getCurrentQuestion().explanation;
-                            Toast.makeText(QuestionsActivity.this, "Correct! " + exp, Toast.LENGTH_LONG).show();
+                        mWrongAnswers = mViewModel.checkAnswer(mUserAnswer);
+                        if (mWrongAnswers.size() == 0) {
+                            Toast.makeText(QuestionsActivity.this, "Correct!", Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(QuestionsActivity.this, "Not so much. \nuser answer: " + userAnswer + "\nsolution: " + solution, Toast.LENGTH_LONG).show();
+                            Toast.makeText(QuestionsActivity.this, "Not so much. \nuser answer: " + mUserAnswer + "\nsolution: " + solution, Toast.LENGTH_LONG).show();
                         }
 
                         // TODO store answer in Test object, create test object
                     }
-                    mViewModel.nextQuestion();
+                    if (!mShowAnswerButton.isChecked() || (mShowAnswerButton.isChecked() && mExplanationContainer.getVisibility() == View.VISIBLE)) {
+                        mViewModel.nextQuestion();
+                    } else {
+                        displayExplanation();
+                    }
                 }
             });
         }
-        displayContent();
+
+        displayQuestion();
+
         getSupportFragmentManager().beginTransaction().replace(R.id.progress_container, ProgressFragment.newInstance(null, null)).commit();
+
         subscribe();
+
     }
 
-    private void displayContent() {
+    private void displayQuestion() {
+
+        // manage view visibilities
+        mExplanationContainer.setVisibility(View.GONE);
+        mQuestionForSolutionContainer.setVisibility(View.GONE);
+        mQuestionContainer.setVisibility(View.VISIBLE);
+
+        // set new views
         getSupportFragmentManager().beginTransaction().replace(R.id.question_container, QuestionFragment.newInstance(questionNum, null)).commit();
-        getSupportFragmentManager().beginTransaction().replace(R.id.explanation_container, ExplanationFragment.newInstance(null, null)).commit();
         getSupportFragmentManager().beginTransaction().replace(R.id.answer_container, AnswerFragment.newInstance(null, null)).commit();
+
         mFAB.setImageResource(android.R.drawable.ic_media_next);
     }
 
+
+    private void displayExplanation() {
+
+        // manage view visibilities
+        mQuestionContainer.setVisibility(View.GONE);
+        mExplanationContainer.setVisibility(View.VISIBLE);
+        mQuestionForSolutionContainer.setVisibility(View.VISIBLE);
+
+        // set new views
+        getSupportFragmentManager().beginTransaction().replace(R.id.answer_container, AnswerFragment.newInstance(mWrongAnswers, mUserAnswer)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.question_solution_container, QuestionFragment.newInstance(questionNum, null)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.explanation_container, ExplanationFragment.newInstance(null, null)).commit();
+    }
 
     private void subscribe() {
 
@@ -95,7 +146,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             @Override
             public void onChanged(@Nullable Integer qNum) {
                 questionNum = qNum;
-                displayContent();
+                displayQuestion();
             }
         };
         mViewModel.newQuestion().observe(this, questionObserver);

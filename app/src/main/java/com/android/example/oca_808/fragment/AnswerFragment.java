@@ -1,8 +1,6 @@
 package com.android.example.oca_808.fragment;
 
-import android.arch.lifecycle.ViewModel;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,10 +10,11 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.android.example.oca_808.R;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,30 +27,21 @@ import com.android.example.oca_808.view_model.QuestionsViewModel;
 public class AnswerFragment extends Fragment implements View.OnClickListener {
 
     private static final String LOG_TAG = AnswerFragment.class.getSimpleName();
-    private RadioButton radio_a;
-    private RadioButton radio_b;
-    private RadioButton radio_c;
-    private RadioButton radio_d;
-    private RadioButton radio_e;
-    private RadioButton radio_f;
+    private RadioButton radio_a, radio_b, radio_c, radio_d, radio_e, radio_f;
     private RadioGroup radioGroup;
-    private CheckBox checkbox_a;
-    private CheckBox checkbox_b;
-    private CheckBox checkbox_c;
-    private CheckBox checkbox_d;
-    private CheckBox checkbox_e;
-    private CheckBox checkbox_f;
-    private QuestionsViewModel mViewModel;
-    private static String mRadioSelection;
+    private CheckBox checkbox_a, checkbox_b, checkbox_c, checkbox_d, checkbox_e, checkbox_f;
+    private static QuestionsViewModel mViewModel;
+    private static String mRadioSelection, mCorrectAnswers;
     private static StringBuilder mCheckboxAnswer = new StringBuilder();
     private static int mQuestionType;
 
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    private String mParam1;
-    private String mParam2;
+    private static final String WRONG_ANSWERS = "display";
+    private static final String USER_ANSWER = "user_answer";
+
+    private ArrayList<String> mWrongAnswers;
+    private String mUserAnswer;
 
     private OnFragmentInteractionListener mListener;
 
@@ -67,11 +57,11 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
             return mCheckboxAnswer.toString();
     }
 
-    public static AnswerFragment newInstance(String param1, String param2) {
+    public static AnswerFragment newInstance(ArrayList<String> param1, String param2) {
         AnswerFragment fragment = new AnswerFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putStringArrayList(WRONG_ANSWERS, param1);
+        args.putString(USER_ANSWER, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -84,28 +74,191 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
             Log.w(LOG_TAG, "viewModel was null");
         }
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mWrongAnswers = getArguments().getStringArrayList(WRONG_ANSWERS);
+            mUserAnswer = getArguments().getString(USER_ANSWER);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
+        // TODO unfuck this
         View view = inflater.inflate(R.layout.fragment_answer, container, false);
-        mRadioSelection = "";
-        mCheckboxAnswer.delete(0, mCheckboxAnswer.length());
-        getViews(view);
         mQuestionType = mViewModel.getCurrentQuestion().getType();
-        if (mViewModel.getCurrentQuestion().getType() == 1) {
+        mCorrectAnswers = mViewModel.getCurrentQuestion().answer;
+//        mUserAnswers = mViewModel.getmUserAnswer();
+        getViews(view);
+        if (mQuestionType == 1) {
             radioGroup.clearCheck();
             setRadioViewValues();
         } else {
             setCheckboxViews();
         }
+        if (mWrongAnswers == null) {
+            mRadioSelection = "";
+            mCheckboxAnswer.delete(0, mCheckboxAnswer.length());
+
+        } else {
+            showAnswers();
+        }
 
         return view;
+    }
+
+    private void showAnswers() {
+        if (mQuestionType == 1) {
+            switch (mCorrectAnswers.charAt(0)) {
+                case 'a':
+                    radio_a.setTextColor(getResources().getColor(R.color.colorGreen));
+                    break;
+                case 'b':
+                    radio_b.setTextColor(getResources().getColor(R.color.colorGreen));
+                    break;
+                case 'c':
+                    radio_c.setTextColor(getResources().getColor(R.color.colorGreen));
+                    break;
+                case 'd':
+                    radio_d.setTextColor(getResources().getColor(R.color.colorGreen));
+                    break;
+                case 'e':
+                    radio_e.setTextColor(getResources().getColor(R.color.colorGreen));
+                    break;
+                case 'f':
+                    radio_f.setTextColor(getResources().getColor(R.color.colorGreen));
+                    break;
+                default:
+                    Log.e(LOG_TAG, "Radio question answer-match error");
+            }
+            if (mWrongAnswers.size() == 1) {
+                switch (mWrongAnswers.get(0)) {
+                    case "a":
+                        radio_a.setTextColor(getResources().getColor(R.color.colorAccent));
+                        break;
+                    case "b":
+                        radio_b.setTextColor(getResources().getColor(R.color.colorAccent));
+                        break;
+                    case "c":
+                        radio_c.setTextColor(getResources().getColor(R.color.colorAccent));
+                        break;
+                    case "d":
+                        radio_d.setTextColor(getResources().getColor(R.color.colorAccent));
+                        break;
+                    case "e":
+                        radio_e.setTextColor(getResources().getColor(R.color.colorAccent));
+                        break;
+                    case "f":
+                        radio_f.setTextColor(getResources().getColor(R.color.colorAccent));
+                        break;
+                    default:
+                        Log.e(LOG_TAG, "Radio question wrong answer-match error");
+
+                }
+                if (mUserAnswer.length() != 0) {
+                    switch (mUserAnswer.charAt(0)) {
+                        case 'a':
+                            radio_a.setChecked(true);
+                            break;
+                        case 'b':
+                            radio_b.setChecked(true);
+                            break;
+                        case 'c':
+                            radio_c.setChecked(true);
+                            break;
+                        case 'd':
+                            radio_d.setChecked(true);
+                            break;
+                        case 'e':
+                            radio_e.setChecked(true);
+                            break;
+                        case 'f':
+                            radio_f.setChecked(true);
+                            break;
+                        default:
+                            Log.e(LOG_TAG, "Radio question wrong user-answer-match error");
+
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < mCorrectAnswers.length(); i++) {
+                switch (mCorrectAnswers.charAt(i)) {
+                    case 'a':
+                        checkbox_a.setTextColor(getResources().getColor(R.color.colorGreen));
+                        break;
+                    case 'b':
+                        checkbox_b.setTextColor(getResources().getColor(R.color.colorGreen));
+                        break;
+                    case 'c':
+                        checkbox_c.setTextColor(getResources().getColor(R.color.colorGreen));
+                        break;
+                    case 'd':
+                        checkbox_d.setTextColor(getResources().getColor(R.color.colorGreen));
+                        break;
+                    case 'e':
+                        checkbox_e.setTextColor(getResources().getColor(R.color.colorGreen));
+                        break;
+                    case 'f':
+                        checkbox_f.setTextColor(getResources().getColor(R.color.colorGreen));
+                        break;
+                    default:
+                        Log.e(LOG_TAG, "Checkbox question correct-answer-match error");
+                }
+            }
+            if (mWrongAnswers.size() != 0) {
+                for (int i = 0; i < mWrongAnswers.size(); i++) {
+                    switch (mWrongAnswers.get(i)) {
+                        case "a":
+                            checkbox_a.setTextColor(getResources().getColor(R.color.colorAccent));
+                            break;
+                        case "b":
+                            checkbox_b.setTextColor(getResources().getColor(R.color.colorAccent));
+                            break;
+                        case "c":
+                            checkbox_c.setTextColor(getResources().getColor(R.color.colorAccent));
+                            break;
+                        case "d":
+                            checkbox_d.setTextColor(getResources().getColor(R.color.colorAccent));
+                            break;
+                        case "e":
+                            checkbox_e.setTextColor(getResources().getColor(R.color.colorAccent));
+                            break;
+                        case "f":
+                            checkbox_f.setTextColor(getResources().getColor(R.color.colorAccent));
+                            break;
+                        default:
+                            Log.e(LOG_TAG, "Checkbox question wrong-answer-match error");
+                    }
+                }
+            }
+            for (int i = 0; i < mUserAnswer.length(); i++) {
+                Log.w(LOG_TAG, "*************** User answer: " + mUserAnswer.charAt(i));
+                if (mUserAnswer.length() != 0) {
+                    switch (mUserAnswer.charAt(i)) {
+                        case 'a':
+                            checkbox_a.setChecked(true);
+                            break;
+                        case 'b':
+                            checkbox_b.setChecked(true);
+                            break;
+                        case 'c':
+                            checkbox_c.setChecked(true);
+                            break;
+                        case 'd':
+                            checkbox_d.setChecked(true);
+                            break;
+                        case 'e':
+                            checkbox_e.setChecked(true);
+                            break;
+                        case 'f':
+                            checkbox_f.setChecked(true);
+                            break;
+                        default:
+                            Log.e(LOG_TAG, "Checkbox question user-answer-match error");
+                    }
+                }
+            }
+        }
     }
 
     private void getViews(View view) {
@@ -135,8 +288,6 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
 
         radioGroup.setVisibility(View.INVISIBLE);
 
-        radioGroup.clearCheck();
-
         checkbox_a.setText(mViewModel.getCurrentQuestion().getA());
         checkbox_b.setText(mViewModel.getCurrentQuestion().getB());
         checkbox_c.setText(mViewModel.getCurrentQuestion().getC());
@@ -149,11 +300,17 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         checkbox_d.setChecked(false);
         checkbox_e.setChecked(false);
         checkbox_f.setChecked(false);
+        checkbox_a.setTextColor(getResources().getColor(R.color.colorBlack));
+        checkbox_b.setTextColor(getResources().getColor(R.color.colorBlack));
+        checkbox_c.setTextColor(getResources().getColor(R.color.colorBlack));
+        checkbox_d.setTextColor(getResources().getColor(R.color.colorBlack));
+        checkbox_e.setTextColor(getResources().getColor(R.color.colorBlack));
+        checkbox_f.setTextColor(getResources().getColor(R.color.colorBlack));
+
 
     }
 
     private void setRadioViewValues() {
-        radioGroup.clearCheck();
         checkbox_a.setVisibility(View.INVISIBLE);
         checkbox_b.setVisibility(View.INVISIBLE);
         checkbox_c.setVisibility(View.INVISIBLE);
@@ -167,6 +324,13 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         radio_d.setText(mViewModel.getCurrentQuestion().getD());
         radio_e.setText(mViewModel.getCurrentQuestion().getE());
         radio_f.setText(mViewModel.getCurrentQuestion().getF());
+
+        radio_a.setTextColor(getResources().getColor(R.color.colorBlack));
+        radio_b.setTextColor(getResources().getColor(R.color.colorBlack));
+        radio_c.setTextColor(getResources().getColor(R.color.colorBlack));
+        radio_d.setTextColor(getResources().getColor(R.color.colorBlack));
+        radio_e.setTextColor(getResources().getColor(R.color.colorBlack));
+        radio_f.setTextColor(getResources().getColor(R.color.colorBlack));
 
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -205,7 +369,6 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     }
 
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -227,7 +390,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         CheckBox view = (CheckBox) v;
         boolean isChecked = view.isChecked();
-        Log.w(LOG_TAG,"isChecked: " + isChecked);
+        Log.w(LOG_TAG, "isChecked: " + isChecked);
         String answer = null;
         switch (view.getId()) {
             case R.id.checkboxButton_a:
@@ -270,6 +433,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         }
         return b;
     }
+
     private void editString(boolean selected, String answer) {
         if (selected) {
             mCheckboxAnswer.append(answer);

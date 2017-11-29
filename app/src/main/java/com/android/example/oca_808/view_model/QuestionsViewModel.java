@@ -30,11 +30,13 @@ public class QuestionsViewModel extends ViewModel {
 
     // Test vars
     private static ArrayList<String> mUserAnswerArray;
+    private String mUserAnswer;
 
     // Timer vars
     private static final int ONE_SECOND = 1;
     private long mInitialTime;
     private MutableLiveData<Long> mElapsedTime = new MutableLiveData<>();
+
 
     // constructor
     public QuestionsViewModel(Context context) {
@@ -104,30 +106,27 @@ public class QuestionsViewModel extends ViewModel {
 //                });
 //            }
 //        }, ONE_SECOND, ONE_SECOND);
+
     }
 
-    public boolean checkAnswer(String userAnswer) {
-        int checkListSize = addUserAnswer(userAnswer);
-        Log.w(LOG_TAG, "userAnswerList count: " + checkListSize);
+    public ArrayList<String> checkAnswer(String userAnswer) {
+        mUserAnswer = userAnswer;
+        ArrayList<String> wrongAnswers = new ArrayList<>();
         if (mCurrentQuestion.getType() == 1) { // 1 == single answer
-            if (userAnswer.equals(mCurrentQuestion.getAnswer())) {
-                return true;
-            } else {
-                return false;
+            if (!userAnswer.equals(mCurrentQuestion.getAnswer())) {
+                wrongAnswers.add(userAnswer);
+                return wrongAnswers;
             }
         } else {
             String correctAnswer = mCurrentQuestion.getAnswer();
-            Log.w(LOG_TAG,"correct Answer: " + correctAnswer);
-            Log.w(LOG_TAG,"correct answer length: " + correctAnswer.length());
-            for (int i = 0; i < mCurrentQuestion.getAnswer().length(); i++) {
+            for (int i = 0; i < userAnswer.length(); i++) {
                 String check = String.valueOf(userAnswer.charAt(i));
-                if (!correctAnswer.contains(check)) {
-                    Log.w(LOG_TAG, check + " not in " + correctAnswer);
-                    return false;
+                if(!correctAnswer.contains(check)){
+                    wrongAnswers.add(check);
                 }
             }
         }
-        return true;
+        return wrongAnswers;
     }
     public int addUserAnswer(String userAnswer) {
         // add to arrayList if unanswered, if changing previous answer then set corresponding element
@@ -155,5 +154,9 @@ public class QuestionsViewModel extends ViewModel {
 
     public int getQuestionCount(){
         return mQuestionsList.size();
+    }
+
+    public String getmUserAnswer() {
+        return mUserAnswer;
     }
 }

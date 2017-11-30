@@ -4,6 +4,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.android.example.oca_808.db.AppDatabase;
@@ -30,12 +32,13 @@ public class QuestionsViewModel extends ViewModel {
 
     // Test vars
     private static ArrayList<String> mUserAnswerArray;
-    private String mUserAnswer;
+    private static StringBuilder mUserAnswer;
+    private static MutableLiveData<Integer> mUserAnswerLength;
 
     // Timer vars
-    private static final int ONE_SECOND = 1;
-    private long mInitialTime;
-    private MutableLiveData<Long> mElapsedTime = new MutableLiveData<>();
+//    private static final int ONE_SECOND = 1;
+//    private long mInitialTime;
+//    private MutableLiveData<Long> mElapsedTime = new MutableLiveData<>();
 
 
     // constructor
@@ -44,7 +47,6 @@ public class QuestionsViewModel extends ViewModel {
         // instantiate db if null
         if (mDb == null) {
             mDb = AppDatabase.getDb(context);
-            Log.w(LOG_TAG, "instantiated Db");
         }
 
         // set question list
@@ -55,32 +57,40 @@ public class QuestionsViewModel extends ViewModel {
             mWhereWeAt = 1;
             mQuestionNumber = new MutableLiveData<>();
             mQuestionNumber.setValue(mWhereWeAt); //TODO: update to accommodate resumed test
-            Log.w(LOG_TAG, "set Question number to 1");
+//            Log.w(LOG_TAG, "set Question number to 1");
         }
-        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
 
+
+        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
+        mUserAnswer = new StringBuilder();
+        mUserAnswerLength = new MutableLiveData<>();
+        mUserAnswerLength.setValue(mUserAnswer.length());
 
         if (mUserAnswerArray == null) {
-            Log.w(LOG_TAG, "instantiated userAnswerArray");
             mUserAnswerArray = new ArrayList<>();
             mUserAnswerArray.add(null);
         }
 //        startTimer();
         int index = mQuestionsList.indexOf(mCurrentQuestion);
-        Log.w(LOG_TAG, "index / wwa: " + index + " / " + mWhereWeAt);
+//        Log.w(LOG_TAG, "index / wwa: " + index + " / " + mWhereWeAt);
     }
+
+
 
     public void setQuestionsList() {
         mQuestionsList = (ArrayList<QuestionEntity>) mDb.questionsDao().getQuestions();
-        Log.w(LOG_TAG, "Question List size: " + mQuestionsList.size());
+//        Log.w(LOG_TAG, "Question List size: " + mQuestionsList.size());
         mQuestionsList.add(0, null);
-        Log.w(LOG_TAG, "2 Question List size: " + mQuestionsList.size());
+//        Log.w(LOG_TAG, "2 Question List size: " + mQuestionsList.size());
     }
 
     public LiveData<Integer> newQuestion() {
         return mQuestionNumber;
     }
 
+    public LiveData<Integer> getUsersAnswerCount() {
+        return mUserAnswerLength;
+    }
 
     public QuestionEntity getCurrentQuestion() {
         return mCurrentQuestion;
@@ -109,54 +119,85 @@ public class QuestionsViewModel extends ViewModel {
 
     }
 
-    public ArrayList<String> checkAnswer(String userAnswer) {
-        mUserAnswer = userAnswer; // TODO update to check that all userAnswers in correct answer
-        ArrayList<String> wrongAnswers = new ArrayList<>();
-        if (mCurrentQuestion.getType() == 1) { // 1 == single answer
-            if (!userAnswer.equals(mCurrentQuestion.getAnswer())) {
-                wrongAnswers.add(userAnswer);
-                return wrongAnswers;
+    // called from QuestionActivity on FAB click
+    // compares user answer and returns any wrong answers in ArrayList
+    public ArrayList<String> checkAnswer() {
+
+        ArrayList<String> wrongAnswers = new ArrayList<>(); // create arraylist to hold wrong answers
+
+        if (mCurrentQuestion.getType() == 1) { // 1 == single answer. if question type is Radio
+            if (!mUserAnswer.toString().equals(mCurrentQuestion.answer)) { // if userAnswer [is wrong] doesn't equal correct answer
+                wrongAnswers.add(mUserAnswer.toString()); // add the user's answer to the wrongAnswer arraylist
             }
-        } else {
-            String correctAnswer = mCurrentQuestion.getAnswer();
-            for (int i = 0; i < userAnswer.length(); i++) {
-                String check = String.valueOf(userAnswer.charAt(i));
-                if(!correctAnswer.contains(check)){
-                    wrongAnswers.add(check);
+        } else { // if question type is checkbox
+            String correctAnswer = mCurrentQuestion.getAnswer(); // store correct answer in String
+            for (int i = 0; i < mUserAnswer.length(); i++) { // iterate through each letter in user's answer
+                String check = String.valueOf(mUserAnswer.charAt(i)); // store each user answer in String
+                if (!correctAnswer.contains(check)) { // if user answer not in answer
+                    wrongAnswers.add(check); // add to wrongAnswer Arraylist
                 }
             }
         }
         return wrongAnswers;
     }
-    public int addUserAnswer(String userAnswer) {
-        // add to arrayList if unanswered, if changing previous answer then set corresponding element
-        if (mUserAnswerArray.size() <= mWhereWeAt) {
-            mUserAnswerArray.add(userAnswer);
-            Log.w(LOG_TAG, "add ");
-        } else {
-            mUserAnswerArray.set(mWhereWeAt, userAnswer);
-            Log.w(LOG_TAG, "set ");
-        }
-        return mUserAnswerArray.size();
-    }
-    public void nextQuestion(){
+
+    // TODO: Implement
+//    public int addUserAnswer(String userAnswer) {
+//        // add to arrayList if unanswered, if changing previous answer then set corresponding element
+//        if (mUserAnswerArray.size() <= mWhereWeAt) {
+//            mUserAnswerArray.add(userAnswer);
+////            Log.w(LOG_TAG, "add ");
+//        } else {
+//            mUserAnswerArray.set(mWhereWeAt, userAnswer);
+////            Log.w(LOG_TAG, "set ");
+//        }
+//        return mUserAnswerArray.size();
+//    }
+
+    public void nextQuestion() {
         mQuestionNumber.setValue(++mWhereWeAt);
         mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
     }
-    public void previousQuestion(){
-        mQuestionNumber.setValue(--mWhereWeAt);
-        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
-    }
+//  TODO: implement
+//    public void previousQuestion() {
+//        mQuestionNumber.setValue(--mWhereWeAt);
+//        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
+//    }
 
-    public int getmWhereWeAt(){
+    public int getmWhereWeAt() {
         return mWhereWeAt;
     }
 
-    public int getQuestionCount(){
+    public int getQuestionCount() {
         return mQuestionsList.size();
     }
 
-    public String getmUserAnswer() {
-        return mUserAnswer;
+    public String getUserAnswer() {
+        return mUserAnswer.toString();
+    }
+
+    public void setUserAnswer(char userAnswer, boolean checkState) {
+        if (mCurrentQuestion.type == 1) {
+            if (mUserAnswer.length() == 1) mUserAnswer.deleteCharAt(0);
+            mUserAnswer.append(userAnswer);
+        } else if (mCurrentQuestion.type == 0 && checkState) {
+            if (!mUserAnswer.toString().contains(String.valueOf(userAnswer)))
+                mUserAnswer.append(userAnswer);
+        } else if (mCurrentQuestion.type == 0) {
+            mUserAnswer.deleteCharAt(mUserAnswer.indexOf(String.valueOf(userAnswer)));
+        }
+
+       updateTheFuckityShit(mUserAnswer.length());
+        Log.w(LOG_TAG, "User Answer Length = " + mUserAnswerLength.getValue());
+    }
+
+    private void updateTheFuckityShit(final int i) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                mUserAnswerLength.setValue(i);
+                Log.w(LOG_TAG, "I hate this thing");
+            }
+        });
     }
 }

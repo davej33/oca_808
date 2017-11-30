@@ -3,19 +3,15 @@ package com.android.example.oca_808;
 import android.annotation.TargetApi;
 import android.arch.lifecycle.Observer;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -46,7 +42,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
     private ArrayList<String> mWrongAnswers;
     private String mUserAnswer;
 
-    @TargetApi(Build.VERSION_CODES.M)
+    @TargetApi(Build.VERSION_CODES.M) // TODO: Fix
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,14 +75,14 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             mFAB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mUserAnswer = AnswerFragment.getUserAnswer();
+                    mUserAnswer = mViewModel.getUserAnswer();
                     if (mUserAnswer.length() == 0) {
                         mUserAnswer = "skipped";
-                        mViewModel.checkAnswer(mUserAnswer);
+                        mViewModel.checkAnswer();
                         Toast.makeText(QuestionsActivity.this, "Question Skipped", Toast.LENGTH_SHORT).show();
                     } else {
                         String solution = mViewModel.getCurrentQuestion().answer;
-                        mWrongAnswers = mViewModel.checkAnswer(mUserAnswer);
+                        mWrongAnswers = mViewModel.checkAnswer();
                         if (mWrongAnswers.size() == 0) {
                             Toast.makeText(QuestionsActivity.this, "Correct!", Toast.LENGTH_LONG).show();
                         } else {
@@ -150,6 +146,8 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             }
         };
         mViewModel.newQuestion().observe(this, questionObserver);
+
+
     }
 
 
@@ -158,13 +156,13 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
     }
 
+
     @Override
-    public void answerSelected(boolean b) {
-        Log.w(LOG_TAG, "answer selected run");
-        if (b) {
-            mFAB.setImageResource(android.R.drawable.checkbox_on_background);
+    public void onAnswerSelected(int i) {
+        if(i == 0){
+            mFAB.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.ic_media_next));
         } else {
-            mFAB.setImageResource(android.R.drawable.ic_media_next);
+            mFAB.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.checkbox_on_background));
         }
     }
 }

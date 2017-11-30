@@ -366,6 +366,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                         Log.e(LOG_TAG, "Radio selection match error");
                 }
                 mViewModel.setUserAnswer(mRadioSelection, true);
+                mListener.answerSelected(true);
             }
         });
 
@@ -429,14 +430,10 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         }
 
         mViewModel.setUserAnswer(answer, vIsChecked);
-        onAnswerSelected();
+        mListener.answerSelected((mViewModel.getUserAnswer().length() > 0));
 
     }
 
-    public int onAnswerSelected() {
-        return mViewModel.getUserAnswer().length();
-
-    }
 
 
     /**
@@ -450,6 +447,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onAnswerSelected(int i);
+
+        void answerSelected(boolean b);
     }
 }

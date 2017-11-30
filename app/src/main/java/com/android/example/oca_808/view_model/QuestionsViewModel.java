@@ -33,7 +33,7 @@ public class QuestionsViewModel extends ViewModel {
     // Test vars
     private static ArrayList<String> mUserAnswerArray;
     private static StringBuilder mUserAnswer;
-    private static MutableLiveData<Integer> mUserAnswerLength;
+
 
     // Timer vars
 //    private static final int ONE_SECOND = 1;
@@ -57,14 +57,10 @@ public class QuestionsViewModel extends ViewModel {
             mWhereWeAt = 1;
             mQuestionNumber = new MutableLiveData<>();
             mQuestionNumber.setValue(mWhereWeAt); //TODO: update to accommodate resumed test
-//            Log.w(LOG_TAG, "set Question number to 1");
         }
-
 
         mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
         mUserAnswer = new StringBuilder();
-        mUserAnswerLength = new MutableLiveData<>();
-        mUserAnswerLength.setValue(mUserAnswer.length());
 
         if (mUserAnswerArray == null) {
             mUserAnswerArray = new ArrayList<>();
@@ -72,24 +68,17 @@ public class QuestionsViewModel extends ViewModel {
         }
 //        startTimer();
         int index = mQuestionsList.indexOf(mCurrentQuestion);
-//        Log.w(LOG_TAG, "index / wwa: " + index + " / " + mWhereWeAt);
     }
 
 
 
     public void setQuestionsList() {
         mQuestionsList = (ArrayList<QuestionEntity>) mDb.questionsDao().getQuestions();
-//        Log.w(LOG_TAG, "Question List size: " + mQuestionsList.size());
         mQuestionsList.add(0, null);
-//        Log.w(LOG_TAG, "2 Question List size: " + mQuestionsList.size());
     }
 
     public LiveData<Integer> newQuestion() {
         return mQuestionNumber;
-    }
-
-    public LiveData<Integer> getUsersAnswerCount() {
-        return mUserAnswerLength;
     }
 
     public QuestionEntity getCurrentQuestion() {
@@ -142,17 +131,17 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     // TODO: Implement
-//    public int addUserAnswer(String userAnswer) {
-//        // add to arrayList if unanswered, if changing previous answer then set corresponding element
-//        if (mUserAnswerArray.size() <= mWhereWeAt) {
-//            mUserAnswerArray.add(userAnswer);
-////            Log.w(LOG_TAG, "add ");
-//        } else {
-//            mUserAnswerArray.set(mWhereWeAt, userAnswer);
-////            Log.w(LOG_TAG, "set ");
-//        }
-//        return mUserAnswerArray.size();
-//    }
+    public int setUserAnswer(String userAnswer) {
+        // add to arrayList if unanswered, if changing previous answer then set corresponding element
+        if (mUserAnswerArray.size() <= mWhereWeAt) {
+            mUserAnswerArray.add(userAnswer);
+//            Log.w(LOG_TAG, "add ");
+        } else {
+            mUserAnswerArray.set(mWhereWeAt, userAnswer);
+//            Log.w(LOG_TAG, "set ");
+        }
+        return mUserAnswerArray.size();
+    }
 
     public void nextQuestion() {
         mQuestionNumber.setValue(++mWhereWeAt);
@@ -186,18 +175,5 @@ public class QuestionsViewModel extends ViewModel {
         } else if (mCurrentQuestion.type == 0) {
             mUserAnswer.deleteCharAt(mUserAnswer.indexOf(String.valueOf(userAnswer)));
         }
-
-       updateTheFuckityShit(mUserAnswer.length());
-        Log.w(LOG_TAG, "User Answer Length = " + mUserAnswerLength.getValue());
-    }
-
-    private void updateTheFuckityShit(final int i) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                mUserAnswerLength.setValue(i);
-                Log.w(LOG_TAG, "I hate this thing");
-            }
-        });
     }
 }

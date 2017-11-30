@@ -76,6 +76,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
                 @Override
                 public void onClick(View v) {
                     mUserAnswer = mViewModel.getUserAnswer();
+                    mViewModel.setUserAnswer(mUserAnswer);
                     if (mUserAnswer.length() == 0) {
                         mUserAnswer = "skipped";
                         mViewModel.checkAnswer();
@@ -158,11 +159,11 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
 
     @Override
-    public void onAnswerSelected(int i) {
-        if(i == 0){
-            mFAB.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.ic_media_next));
+    public void answerSelected(boolean b) {
+        if(b){
+            mFAB.setImageResource(android.R.drawable.checkbox_on_background);
         } else {
-            mFAB.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.checkbox_on_background));
+            mFAB.setImageResource(android.R.drawable.ic_media_next);
         }
     }
 }

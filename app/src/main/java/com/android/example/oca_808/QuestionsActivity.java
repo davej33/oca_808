@@ -70,7 +70,6 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
 
         if (mFAB == null) {
-            Log.w(LOG_TAG, "new FAB");
             mFAB = findViewById(R.id.floatingActionButton);
             mFAB.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -87,7 +86,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
                         if (mWrongAnswers.size() == 0) {
                             Toast.makeText(QuestionsActivity.this, "Correct!", Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(QuestionsActivity.this, "Not so much. \nuser answer: " + mUserAnswer + "\nsolution: " + solution, Toast.LENGTH_LONG).show();
+                            Toast.makeText(QuestionsActivity.this, "Wrong. \nuser answer: " + mUserAnswer + "\nsolution: " + solution, Toast.LENGTH_LONG).show();
                         }
 
                         // TODO store answer in Test object, create test object

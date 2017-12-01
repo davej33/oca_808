@@ -99,10 +99,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         }
 
         // if no wrong answers
-        if (mWrongAnswers == null) {
-//            mRadioSelection = ""; // TODO: remove
-//            mCheckboxAnswer.delete(0, mCheckboxAnswer.length());
-        } else {
+        if (mWrongAnswers != null) {
             showAnswers();
         }
 
@@ -110,6 +107,8 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showAnswers() {
+        disableRadioButtons();
+        disableCheckboxes();
         final int GREEN = getResources().getColor(R.color.colorGreen);
         final int RED = getResources().getColor(R.color.colorAccent);
         if (mQuestionType == 1) {
@@ -264,6 +263,21 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                     }
                 }
             }
+        }
+    }
+
+    private void disableCheckboxes() {
+        checkbox_a.setEnabled(false);
+        checkbox_b.setEnabled(false);
+        checkbox_c.setEnabled(false);
+        checkbox_d.setEnabled(false);
+        checkbox_e.setEnabled(false);
+        checkbox_f.setEnabled(false);
+    }
+
+    private void disableRadioButtons() {
+        for (int i = 0; i < radioGroup.getChildCount(); i++){
+            radioGroup.getChildAt(i).setEnabled(false);
         }
     }
 
@@ -433,7 +447,6 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         mListener.answerSelected((mViewModel.getUserAnswer().length() > 0));
 
     }
-
 
 
     /**

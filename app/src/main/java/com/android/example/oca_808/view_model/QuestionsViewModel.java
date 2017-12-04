@@ -71,7 +71,6 @@ public class QuestionsViewModel extends ViewModel {
     }
 
 
-
     public void setQuestionsList() {
         mQuestionsList = (ArrayList<QuestionEntity>) mDb.questionsDao().getQuestions();
         mQuestionsList.add(0, null);
@@ -131,14 +130,14 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     // TODO: Implement
-    public int setUserAnswer(String userAnswer) {
+    public int setUserAnswer() {
         // add to arrayList if unanswered, if changing previous answer then set corresponding element
         if (mUserAnswerArray.size() <= mWhereWeAt) {
-            mUserAnswerArray.add(userAnswer);
-//            Log.w(LOG_TAG, "add ");
+            mUserAnswerArray.add(mUserAnswer.toString());
+            Log.w(LOG_TAG, "add " + mUserAnswer.toString() + " at index " + mWhereWeAt);
         } else {
-            mUserAnswerArray.set(mWhereWeAt, userAnswer);
-//            Log.w(LOG_TAG, "set ");
+            mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
+            Log.w(LOG_TAG, "set " + mUserAnswer.toString() + " at index " + mWhereWeAt);
         }
         return mUserAnswerArray.size();
     }
@@ -147,11 +146,12 @@ public class QuestionsViewModel extends ViewModel {
         mQuestionNumber.setValue(++mWhereWeAt);
         mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
     }
-//  TODO: implement
-//    public void previousQuestion() {
-//        mQuestionNumber.setValue(--mWhereWeAt);
-//        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
-//    }
+
+    //  TODO: implement
+    public void loadPreviousQuestion() {
+        mQuestionNumber.setValue(--mWhereWeAt);
+        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
+    }
 
     public int getmWhereWeAt() {
         return mWhereWeAt;
@@ -162,10 +162,17 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     public String getUserAnswer() {
-        return mUserAnswer.toString();
+        Log.w(LOG_TAG, "@@@@@@@@ user array size = " + mUserAnswerArray.size() + " WWA = " + mWhereWeAt);
+        if (mUserAnswerArray.size() > mWhereWeAt) { // if loading a question that's already been answered
+            Log.w(LOG_TAG, "@@@@@@@@ existing user answer = " + mUserAnswerArray.get(mWhereWeAt));
+            return mUserAnswerArray.get(mWhereWeAt); // return the answer
+        } else {
+            Log.w(LOG_TAG, "@@@@@@@@ new user answer = " + mUserAnswer.toString());
+            return mUserAnswer.toString(); // otherwise, return the current user answer
+        }
     }
 
-    public void setUserAnswer(char userAnswer, boolean checkState) {
+    public void collectUserAnswer(char userAnswer, boolean checkState) {
         if (mCurrentQuestion.type == 1) {
             if (mUserAnswer.length() == 1) mUserAnswer.deleteCharAt(0);
             mUserAnswer.append(userAnswer);

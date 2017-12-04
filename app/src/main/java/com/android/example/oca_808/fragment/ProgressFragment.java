@@ -30,6 +30,7 @@ public class ProgressFragment extends Fragment {
     private QuestionsViewModel mViewModel;
     private TextView mProgressQuestionNumberDisplay;
     private TextView mQuestionCountDisplay;
+    private TextView mPreviousButton;
 
     private ProgressBar mBar;
     // TODO: Rename parameter arguments, choose names that match
@@ -84,14 +85,22 @@ public class ProgressFragment extends Fragment {
         mQuestionNumber = mViewModel.getmWhereWeAt();
         mQuestionCount = mViewModel.getQuestionCount();
 
-        mBar = view.findViewById(R.id.progressBar);
-        mBar.setMax(mQuestionCount);
-        mBar.setProgress(mQuestionNumber);
+//        mBar = view.findViewById(R.id.progressBar);
+//        mBar.setMax(mQuestionCount);
+//        mBar.setProgress(mQuestionNumber);
 
         mProgressQuestionNumberDisplay = view.findViewById(R.id.question_number_prog);
         mQuestionCountDisplay = view.findViewById(R.id.question_count_prog);
         mProgressQuestionNumberDisplay.setText(String.valueOf(mQuestionNumber));
         mQuestionCountDisplay.setText(String.valueOf(mQuestionCount));
+        mPreviousButton = view.findViewById(R.id.previous_question_view);
+        if(mQuestionNumber == 1) mPreviousButton.setVisibility(View.GONE);
+        mPreviousButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.loadPreviousQuestion();
+            }
+        });
 
         subscribe();
 
@@ -103,7 +112,7 @@ public class ProgressFragment extends Fragment {
         final Observer<Integer> questionObserver = new Observer<Integer>() {
             @Override
             public void onChanged(@Nullable Integer qNum) {
-                mBar.setProgress(qNum);
+//                mBar.setProgress(qNum);
                 mProgressQuestionNumberDisplay.setText(String.valueOf(qNum));
             }
         };
@@ -111,9 +120,9 @@ public class ProgressFragment extends Fragment {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onClickPrevious() {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.loadPreviousQuestion();
         }
     }
 
@@ -147,6 +156,6 @@ public class ProgressFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void loadPreviousQuestion();
     }
 }

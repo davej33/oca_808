@@ -89,6 +89,8 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_answer, container, false);
         mQuestionType = mViewModel.getCurrentQuestion().getType();
         mCorrectAnswers = mViewModel.getCurrentQuestion().answer;
+        mUserAnswer = mViewModel.getUserAnswer();
+        Log.w(LOG_TAG, "################## user answer: " + mUserAnswer);
         getViews(view);
 
         // set answers based on type of question
@@ -98,7 +100,9 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
             setCheckboxViews();
         }
 
-        // if no wrong answers
+        displayUserAnswer();
+
+        // determines whether to show answers or not. If wrong answers is not null, then show
         if (mWrongAnswers != null) {
             showAnswers();
         }
@@ -114,7 +118,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         if (mQuestionType == 1) {
             switch (mCorrectAnswers.charAt(0)) {
                 case 'a':
-                    radio_a.setTextColor(GREEN); // TODO optimize
+                    radio_a.setTextColor(GREEN);
                     break;
                 case 'b':
                     radio_b.setTextColor(GREEN);
@@ -160,31 +164,8 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                 }
             }
 
-            if (mUserAnswer.length() != 0) {
-                switch (mUserAnswer.charAt(0)) {
-                    case 'a':
-                        radio_a.setChecked(true);
-                        break;
-                    case 'b':
-                        radio_b.setChecked(true);
-                        break;
-                    case 'c':
-                        radio_c.setChecked(true);
-                        break;
-                    case 'd':
-                        radio_d.setChecked(true);
-                        break;
-                    case 'e':
-                        radio_e.setChecked(true);
-                        break;
-                    case 'f':
-                        radio_f.setChecked(true);
-                        break;
-                    default:
-                        Log.e(LOG_TAG, "Radio question wrong user-answer-match error");
+            displayUserAnswer();
 
-                }
-            }
 
         } else {
             for (int i = 0; i < mCorrectAnswers.length(); i++) {
@@ -237,6 +218,42 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                     }
                 }
             }
+            displayUserAnswer();
+        }
+    }
+
+    private void displayUserAnswer() {
+        Log.e(LOG_TAG, "******** display user answer");
+        if (mQuestionType == 1) {
+            Log.e(LOG_TAG, "******** display user answer RADIO");
+            if (mUserAnswer.length() != 0) {
+                switch (mUserAnswer.charAt(0)) {
+                    case 'a':
+                        radio_a.setChecked(true);
+                        break;
+                    case 'b':
+                        radio_b.setChecked(true);
+                        break;
+                    case 'c':
+                        radio_c.setChecked(true);
+                        break;
+                    case 'd':
+                        radio_d.setChecked(true);
+                        break;
+                    case 'e':
+                        radio_e.setChecked(true);
+                        break;
+                    case 'f':
+                        radio_f.setChecked(true);
+                        break;
+                    default:
+                        Log.e(LOG_TAG, "Radio question wrong user-answer-match error");
+
+                }
+
+            }
+        } else {
+            Log.e(LOG_TAG, " ********* display user answer checkbox");
             for (int i = 0; i < mUserAnswer.length(); i++) {
                 if (mUserAnswer.length() != 0) {
                     switch (mUserAnswer.charAt(i)) {
@@ -276,7 +293,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     }
 
     private void disableRadioButtons() {
-        for (int i = 0; i < radioGroup.getChildCount(); i++){
+        for (int i = 0; i < radioGroup.getChildCount(); i++) {
             radioGroup.getChildAt(i).setEnabled(false);
         }
     }
@@ -379,7 +396,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                     default:
                         Log.e(LOG_TAG, "Radio selection match error");
                 }
-                mViewModel.setUserAnswer(mRadioSelection, true);
+                mViewModel.collectUserAnswer(mRadioSelection, true);
                 mListener.answerSelected(true);
             }
         });
@@ -443,7 +460,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                 Log.e(LOG_TAG, "Error matching checkbox");
         }
 
-        mViewModel.setUserAnswer(answer, vIsChecked);
+        mViewModel.collectUserAnswer(answer, vIsChecked);
         mListener.answerSelected((mViewModel.getUserAnswer().length() > 0));
 
     }

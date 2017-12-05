@@ -34,7 +34,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     private static QuestionsViewModel mViewModel;
     private static String mCorrectAnswers;
     //    private static StringBuilder mCheckboxAnswer = new StringBuilder();
-    private static int mQuestionType, i = 0;
+    private static int mQuestionType;
 
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -90,7 +90,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         mQuestionType = mViewModel.getCurrentQuestion().getType();
         mCorrectAnswers = mViewModel.getCurrentQuestion().answer;
         mUserAnswer = mViewModel.getUserAnswer();
-        Log.w(LOG_TAG, "** user answer: " + mUserAnswer);
+        Log.w(LOG_TAG, "################## user answer: " + mUserAnswer);
         getViews(view);
 
         // set answers based on type of question
@@ -109,12 +109,6 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
 
         return view;
     }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        displayUserAnswer();
-//    }
 
     private void showAnswers() {
         disableRadioButtons();
@@ -229,11 +223,10 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     }
 
     private void displayUserAnswer() {
-        Log.w(LOG_TAG, "frag UAs: " + mUserAnswer);
+        Log.e(LOG_TAG, "******** display user answer");
         if (mQuestionType == 1) {
-
+            Log.e(LOG_TAG, "******** display user answer RADIO");
             if (mUserAnswer.length() != 0) {
-                mViewModel.collectUserAnswer(mUserAnswer.charAt(0), true);
                 switch (mUserAnswer.charAt(0)) {
                     case 'a':
                         radio_a.setChecked(true);
@@ -255,12 +248,13 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                         break;
                     default:
                         Log.e(LOG_TAG, "Radio question wrong user-answer-match error");
+
                 }
 
             }
         } else {
+            Log.e(LOG_TAG, " ********* display user answer checkbox");
             for (int i = 0; i < mUserAnswer.length(); i++) {
-                mViewModel.collectUserAnswer(mUserAnswer.charAt(i), true);
                 if (mUserAnswer.length() != 0) {
                     switch (mUserAnswer.charAt(i)) {
                         case 'a':
@@ -286,9 +280,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                     }
                 }
             }
-
         }
-        Log.w(LOG_TAG, "frag UAs - 2: " + mUserAnswer);
     }
 
     private void disableCheckboxes() {
@@ -444,10 +436,6 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
             vIsChecked = checkBoxView.isChecked();
         }
 
-
-        if(i == 0) displayUserAnswer();
-        i++;
-
         Character answer = null;
         switch (v.getId()) {
             case R.id.checkboxButton_a:
@@ -473,16 +461,8 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         }
 
         mViewModel.collectUserAnswer(answer, vIsChecked);
-        mListener.answerSelected((mViewModel.getAnswerSelected()));
+        mListener.answerSelected((mViewModel.getUserAnswer().length() > 0));
 
-        StringBuilder sb = new StringBuilder();
-
-        if (vIsChecked) {
-            sb.append(mUserAnswer).append(answer);
-        } else {
-            sb.indexOf(answer.toString());
-        }
-        mUserAnswer = sb.toString();
     }
 
 

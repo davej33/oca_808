@@ -33,13 +33,12 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         ProgressFragment.OnFragmentInteractionListener, AnswerFragment.OnFragmentInteractionListener, ExplanationFragment.OnFragmentInteractionListener {
 
     private static final String LOG_TAG = QuestionsActivity.class.getSimpleName();
-    private static final String QUESTION_SKIPPED = "z";
+
     private Integer mQuestionNum = 0;
     private static QuestionsViewModel mViewModel;
     private FloatingActionButton mFAB;
     private ToggleButton mShowAnswerButton;
     private FrameLayout mExplanationContainer, mQuestionContainer, mAnswerContainer, mQuestionForSolutionContainer;
-    private static final String EXPLANATION_DISPLAY_TYPE = "explanation";
     private ArrayList<String> mWrongAnswers;
     private String mUserAnswer;
 
@@ -72,16 +71,10 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             mFAB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mViewModel.setUserAnswer();
+
 
 //                    String solution = mViewModel.getCurrentQuestion().answer;
                     mWrongAnswers = mViewModel.checkAnswer();
-                    if (mWrongAnswers.size() == 0) {
-
-                    } else {
-                        Log.w(LOG_TAG, "Wrong");
-//                        Toast.makeText(QuestionsActivity.this, "Wrong. \nuser answer: " + mUserAnswer + "\nsolution: " + solution, Toast.LENGTH_LONG).show();
-                    }
 
                     // TODO store answer in Test object, create test object
 

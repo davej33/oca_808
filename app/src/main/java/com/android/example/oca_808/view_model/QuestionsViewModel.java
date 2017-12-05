@@ -130,8 +130,9 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     // TODO: Implement
-    public int setUserAnswer() {
+    public void setUserAnswer(String s) {
         // add to arrayList if unanswered, if changing previous answer then set corresponding element
+        if(s!=null) if(s.equals("skipped")) mUserAnswer.append(""); // TODO fix
         if (mUserAnswerArray.size() <= mWhereWeAt) {
             mUserAnswerArray.add(mUserAnswer.toString());
             Log.w(LOG_TAG, "add " + mUserAnswer.toString() + " at index " + mWhereWeAt);
@@ -139,10 +140,14 @@ public class QuestionsViewModel extends ViewModel {
             mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
             Log.w(LOG_TAG, "set " + mUserAnswer.toString() + " at index " + mWhereWeAt);
         }
-        return mUserAnswerArray.size();
+
+        Log.w(LOG_TAG, "answer array = " + mUserAnswerArray.toString());
     }
 
     public void nextQuestion() {
+        if(mUserAnswer.length() == 0){
+            setUserAnswer("skipped");
+        }
         mQuestionNumber.setValue(++mWhereWeAt);
         mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
     }
@@ -161,16 +166,24 @@ public class QuestionsViewModel extends ViewModel {
         return mQuestionsList.size();
     }
 
+    public boolean getAnswerSelected(){
+        if(mUserAnswer.length() == 0){
+            return false;
+        }
+
+        return true;
+    }
     public String getUserAnswer() {
-        Log.w(LOG_TAG, "@@@@@@@@ user array size = " + mUserAnswerArray.size() + " WWA = " + mWhereWeAt);
+
         if (mUserAnswerArray.size() > mWhereWeAt) { // if loading a question that's already been answered
-            Log.w(LOG_TAG, "@@@@@@@@ existing user answer = " + mUserAnswerArray.get(mWhereWeAt));
             return mUserAnswerArray.get(mWhereWeAt); // return the answer
         } else {
-            Log.w(LOG_TAG, "@@@@@@@@ new user answer = " + mUserAnswer.toString());
             return mUserAnswer.toString(); // otherwise, return the current user answer
         }
+
     }
+
+
 
     public void collectUserAnswer(char userAnswer, boolean checkState) {
         if (mCurrentQuestion.type == 1) {
@@ -179,8 +192,12 @@ public class QuestionsViewModel extends ViewModel {
         } else if (mCurrentQuestion.type == 0 && checkState) {
             if (!mUserAnswer.toString().contains(String.valueOf(userAnswer)))
                 mUserAnswer.append(userAnswer);
+            Log.w(LOG_TAG, "added char: " + userAnswer);
+
         } else if (mCurrentQuestion.type == 0) {
             mUserAnswer.deleteCharAt(mUserAnswer.indexOf(String.valueOf(userAnswer)));
         }
+        setUserAnswer(null);
+        Log.w(LOG_TAG, "mUserAnswer: " + mUserAnswer);
     }
 }

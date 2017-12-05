@@ -17,8 +17,11 @@ import java.util.List;
 public interface QuestionsDao {
 
     @Insert
-    public long[] insertQuestions(ArrayList<QuestionEntity> questionEntityArrayList);
+    long[] insertQuestions(ArrayList<QuestionEntity> questionEntityArrayList);
 
     @Query("SELECT * FROM QuestionEntity")
-    public List<QuestionEntity> getQuestions();
+    List<QuestionEntity> getQuestions();
+
+    @Query("SELECT q_map_id FROM QuestionEntity")
+    List<Integer> getQuestionIds();
 }

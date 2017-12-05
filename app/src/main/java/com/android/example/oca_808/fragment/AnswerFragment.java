@@ -51,13 +51,6 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         // Required empty public constructor
     }
 
-    // TODO: Delete move function to VM
-//    public static String getUserAnswer() {
-//        if (mQuestionType == 1)
-//            return mRadioSelection;
-//        else
-//            return mCheckboxAnswer.toString();
-//    }
 
     public static AnswerFragment newInstance(ArrayList<String> wrongAnswers, String userAnswer) {
         AnswerFragment fragment = new AnswerFragment();
@@ -90,7 +83,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         mQuestionType = mViewModel.getCurrentQuestion().getType();
         mCorrectAnswers = mViewModel.getCurrentQuestion().answer;
         mUserAnswer = mViewModel.getUserAnswer();
-        Log.w(LOG_TAG, "################## user answer: " + mUserAnswer);
+        Log.i(LOG_TAG, "aFrag inflate - user answer: " + mUserAnswer);
         getViews(view);
 
         // set answers based on type of question

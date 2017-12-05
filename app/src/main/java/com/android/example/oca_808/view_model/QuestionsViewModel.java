@@ -67,7 +67,7 @@ public class QuestionsViewModel extends ViewModel {
             mUserAnswerArray.add(null);
         }
 //        startTimer();
-        int index = mQuestionsList.indexOf(mCurrentQuestion);
+//        int index = mQuestionsList.indexOf(mCurrentQuestion);
     }
 
 
@@ -130,7 +130,7 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     // TODO: Implement
-    public int setUserAnswer() {
+    public void setUserAnswer() {
         // add to arrayList if unanswered, if changing previous answer then set corresponding element
         if (mUserAnswerArray.size() <= mWhereWeAt) {
             mUserAnswerArray.add(mUserAnswer.toString());
@@ -139,7 +139,6 @@ public class QuestionsViewModel extends ViewModel {
             mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
             Log.w(LOG_TAG, "set " + mUserAnswer.toString() + " at index " + mWhereWeAt);
         }
-        return mUserAnswerArray.size();
     }
 
     public void nextQuestion() {
@@ -162,12 +161,12 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     public String getUserAnswer() {
-        Log.w(LOG_TAG, "@@@@@@@@ user array size = " + mUserAnswerArray.size() + " WWA = " + mWhereWeAt);
+//        Log.w(LOG_TAG, "@@@@@@@@ user array size = " + mUserAnswerArray.size() + " WWA = " + mWhereWeAt);
         if (mUserAnswerArray.size() > mWhereWeAt) { // if loading a question that's already been answered
-            Log.w(LOG_TAG, "@@@@@@@@ existing user answer = " + mUserAnswerArray.get(mWhereWeAt));
+//            Log.w(LOG_TAG, "@@@@@@@@ existing user answer = " + mUserAnswerArray.get(mWhereWeAt));
             return mUserAnswerArray.get(mWhereWeAt); // return the answer
         } else {
-            Log.w(LOG_TAG, "@@@@@@@@ new user answer = " + mUserAnswer.toString());
+//            Log.w(LOG_TAG, "@@@@@@@@ new user answer = " + mUserAnswer.toString());
             return mUserAnswer.toString(); // otherwise, return the current user answer
         }
     }

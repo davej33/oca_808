@@ -65,8 +65,8 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         if (mViewModel == null) {
             mViewModel = new QuestionsViewModel(getContext());
-
         }
+
         if (getArguments() != null) {
             mWrongAnswers = getArguments().getStringArrayList(WRONG_ANSWERS);
             mUserAnswer = getArguments().getString(USER_ANSWER);
@@ -82,6 +82,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         mQuestionType = mViewModel.getCurrentQuestion().getType();
         mCorrectAnswers = mViewModel.getCurrentQuestion().answer;
         mUserAnswer = mViewModel.getUserAnswer();
+
         getViews(view);
 
         // set answers based on type of question
@@ -101,6 +102,12 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         }
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        displayUserAnswer();
     }
 
     private void showAnswers() {

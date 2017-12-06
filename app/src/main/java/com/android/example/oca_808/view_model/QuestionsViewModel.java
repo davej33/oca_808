@@ -45,6 +45,8 @@ public class QuestionsViewModel extends ViewModel {
 //    private MutableLiveData<Long> mElapsedTime = new MutableLiveData<>();
 
 
+
+
     // constructor
     public QuestionsViewModel(Context context) {
 
@@ -116,7 +118,7 @@ public class QuestionsViewModel extends ViewModel {
         return wrongAnswers;
     }
 
-    // TODO: Implement
+
     public void setUserAnswer(String s) {
         // add to arrayList if unanswered, if changing previous answer then set corresponding element
         if (mUserAnswerArray.size() <= mWhereWeAt) {
@@ -141,7 +143,6 @@ public class QuestionsViewModel extends ViewModel {
         mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
     }
 
-    //  TODO: implement
     public void loadPreviousQuestion() {
         mQuestionNumber.setValue(--mWhereWeAt);
         mCurrentQuestion = mQuestionsList.get(mWhereWeAt);

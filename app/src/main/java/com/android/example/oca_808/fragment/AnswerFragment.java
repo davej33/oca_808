@@ -422,6 +422,12 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.i(LOG_TAG, "onStop run");
+        mViewModel.saveDataToDb();
+    }
 
     @Override
     public void onClick(View v) {

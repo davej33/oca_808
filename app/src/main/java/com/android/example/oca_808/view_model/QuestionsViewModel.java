@@ -38,7 +38,7 @@ public class QuestionsViewModel extends ViewModel {
     private static List<String> mUserAnswerArray;
     private static StringBuilder mUserAnswer;
 
-
+    private static boolean mInitiated;
     // Timer vars
 //    private static final int ONE_SECOND = 1;
 //    private long mInitialTime;
@@ -56,7 +56,10 @@ public class QuestionsViewModel extends ViewModel {
         }
         // TODO: determine how to select specific tests
         // get TestEntity
-        setTestAttributes();
+        if(!mInitiated){
+            mInitiated = true;
+            setTestAttributes();
+        }
 
 
         mUserAnswer = new StringBuilder();
@@ -210,7 +213,7 @@ public class QuestionsViewModel extends ViewModel {
         sb.deleteCharAt(sb.length() - 1).deleteCharAt(0);
         mUserAnswerArray = Arrays.asList((sb.toString()).split(", "));
         mUserAnswerArray = new ArrayList<>(mUserAnswerArray);
-        mUserAnswerArray.add(0, null);
+        if(!mUserAnswerArray.get(0).equals("null")) mUserAnswerArray.add(0, null);
         Log.w(LOG_TAG, "user answer array init: " + mUserAnswerArray.toString());
     }
 
@@ -234,5 +237,13 @@ public class QuestionsViewModel extends ViewModel {
         mQuestionsList.add(0, null);
         Log.w(LOG_TAG, "questionList count with null added: " + mQuestionsList.size());
         return mQuestionsList;
+    }
+
+    public void saveDataToDb() {
+        mCurrentTest.setAnswerSet(mUserAnswerArray.toString());
+        mCurrentTest.setResumeQuestionNum(mWhereWeAt);
+
+        int updateCheck = mDb.testsDao().updateTestResults(mCurrentTest);
+        Log.w(LOG_TAG, "^^^^^^^^^ update check: " + updateCheck);
     }
 }

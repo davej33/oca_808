@@ -3,6 +3,7 @@ package com.android.example.oca_808.db.dao;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import com.android.example.oca_808.db.entity.TestEntity;
 
@@ -18,4 +19,7 @@ public interface TestsDao {
 
     @Query("SELECT * FROM TestEntity WHERE _id = :id")
     TestEntity fetchTest(int id);
+
+    @Update
+    int updateTestResults(TestEntity... test);
 }

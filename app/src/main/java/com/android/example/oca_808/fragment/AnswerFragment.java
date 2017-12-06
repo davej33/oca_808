@@ -93,7 +93,10 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
             setCheckboxViews();
         }
 
-        displayUserAnswer();
+        if (mUserAnswer.length() > 0) {
+            Log.i(LOG_TAG, "%%%%%%%%%%%%%%% display onCreateView run");
+            displayUserAnswer();
+        }
 
         // determines whether to show answers or not. If wrong answers is not null, then show
         if (mWrongAnswers != null) {
@@ -216,9 +219,9 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     }
 
     private void displayUserAnswer() {
-        Log.e(LOG_TAG, "******** display user answer");
+        Log.i(LOG_TAG, "******** display user answer");
         if (mQuestionType == 1) {
-            Log.e(LOG_TAG, "******** display user answer RADIO");
+            Log.i(LOG_TAG, "******** display user answer RADIO");
             if (mUserAnswer.length() != 0) {
                 switch (mUserAnswer.charAt(0)) {
                     case 'a':
@@ -246,7 +249,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
 
             }
         } else {
-            Log.e(LOG_TAG, " ********* display user answer checkbox");
+            Log.i(LOG_TAG, " ********* display user answer checkbox");
             for (int i = 0; i < mUserAnswer.length(); i++) {
                 if (mUserAnswer.length() != 0) {
                     switch (mUserAnswer.charAt(i)) {
@@ -415,6 +418,8 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
+    int i = 0;
+
     @Override
     public void onClick(View v) {
 
@@ -429,7 +434,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
             vIsChecked = checkBoxView.isChecked();
         }
 
-        Character answer = null;
+        char answer;
         switch (v.getId()) {
             case R.id.checkboxButton_a:
                 answer = 'a';
@@ -450,11 +455,30 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                 answer = 'f';
                 break;
             default:
+                answer = 'z';
                 Log.e(LOG_TAG, "Error matching checkbox");
         }
 
-        mViewModel.collectUserAnswer(answer, vIsChecked);
+        if (i == 0) {
+            for (int j = 0; j < mUserAnswer.length(); j++) {
+                char c = mUserAnswer.charAt(j);
+                mViewModel.collectUserAnswer(c, true);
+            }
+        }
+        if(answer != 'z'){
+            mViewModel.collectUserAnswer(answer, vIsChecked);
+        } else {
+            Log.e(LOG_TAG, "ERROR matching checkbox selection");
+        }
         mListener.answerSelected((mViewModel.getUserAnswer().length() > 0));
+
+        StringBuilder sb = new StringBuilder(mUserAnswer);
+        if(vIsChecked){
+            sb.append(answer);
+        } else {
+            sb.deleteCharAt(sb.indexOf(String.valueOf(answer)));
+        }
+        mUserAnswer = sb.toString();
 
     }
 

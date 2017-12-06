@@ -130,13 +130,21 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     // TODO: Implement
-    public void setUserAnswer() {
+    public void setUserAnswer(String s) {
         // add to arrayList if unanswered, if changing previous answer then set corresponding element
         if (mUserAnswerArray.size() <= mWhereWeAt) {
-            mUserAnswerArray.add(mUserAnswer.toString());
+            if(s == null){
+                mUserAnswerArray.add(mUserAnswer.toString());
+            } else {
+                mUserAnswerArray.add("");
+            }
             Log.w(LOG_TAG, "add " + mUserAnswer.toString() + " at index " + mWhereWeAt);
         } else {
-            mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
+            if(s == null){
+                mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
+            } else {
+                mUserAnswerArray.set(mWhereWeAt, "");
+            }
             Log.w(LOG_TAG, "set " + mUserAnswer.toString() + " at index " + mWhereWeAt);
         }
     }
@@ -163,23 +171,28 @@ public class QuestionsViewModel extends ViewModel {
     public String getUserAnswer() {
 //        Log.w(LOG_TAG, "@@@@@@@@ user array size = " + mUserAnswerArray.size() + " WWA = " + mWhereWeAt);
         if (mUserAnswerArray.size() > mWhereWeAt) { // if loading a question that's already been answered
-//            Log.w(LOG_TAG, "@@@@@@@@ existing user answer = " + mUserAnswerArray.get(mWhereWeAt));
+            Log.w(LOG_TAG, "getUserAnswer return: " + mUserAnswerArray.get(mWhereWeAt));
             return mUserAnswerArray.get(mWhereWeAt); // return the answer
         } else {
-//            Log.w(LOG_TAG, "@@@@@@@@ new user answer = " + mUserAnswer.toString());
+            Log.w(LOG_TAG, "getUserAnswer return: " + mUserAnswer.toString());
             return mUserAnswer.toString(); // otherwise, return the current user answer
         }
     }
 
     public void collectUserAnswer(char userAnswer, boolean checkState) {
+        Log.i(LOG_TAG, "1. VM uAnswersArray: " + mUserAnswerArray.toString());
         if (mCurrentQuestion.type == 1) {
             if (mUserAnswer.length() == 1) mUserAnswer.deleteCharAt(0);
             mUserAnswer.append(userAnswer);
         } else if (mCurrentQuestion.type == 0 && checkState) {
             if (!mUserAnswer.toString().contains(String.valueOf(userAnswer)))
                 mUserAnswer.append(userAnswer);
+            Log.i(LOG_TAG, "added to mUserAnswer: " + mUserAnswer);
         } else if (mCurrentQuestion.type == 0) {
             mUserAnswer.deleteCharAt(mUserAnswer.indexOf(String.valueOf(userAnswer)));
+            Log.i(LOG_TAG, "removed from mUserAnswer: " + mUserAnswer);
         }
+        setUserAnswer(null);
+        Log.i(LOG_TAG, "2. VM uAnswersArray: " + mUserAnswerArray.toString());
     }
 }

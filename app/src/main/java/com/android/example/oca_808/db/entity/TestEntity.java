@@ -11,7 +11,7 @@ import android.arch.persistence.room.PrimaryKey;
 public class TestEntity {
 
     @PrimaryKey(autoGenerate = true)
-    public int id;
+    public int _id;
     public int type; // 0 = practice, 1 = test
     public String questionSet;
     public String answerSet;
@@ -38,6 +38,10 @@ public class TestEntity {
         this.questionElapsedTimeSet = questionElapsedTimeSet;
         this.questionCount = questionCount;
         this.sessionCount = sessionCount;
+    }
+
+    public String getAnswerSet() {
+        return answerSet;
     }
 
     public void setAnswerSet(String answerSet) {

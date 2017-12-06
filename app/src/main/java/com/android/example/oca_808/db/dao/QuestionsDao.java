@@ -19,8 +19,8 @@ public interface QuestionsDao {
     @Insert
     long[] insertQuestions(ArrayList<QuestionEntity> questionEntityArrayList);
 
-    @Query("SELECT * FROM QuestionEntity")
-    List<QuestionEntity> getQuestions();
+    @Query("SELECT * FROM QuestionEntity WHERE q_map_id IN (:list)")
+    List<QuestionEntity> getQuestions(List<String> list);
 
     @Query("SELECT q_map_id FROM QuestionEntity")
     List<Integer> getQuestionIds();

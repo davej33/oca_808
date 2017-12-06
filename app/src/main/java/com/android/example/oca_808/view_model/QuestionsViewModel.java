@@ -10,8 +10,11 @@ import android.util.Log;
 
 import com.android.example.oca_808.db.AppDatabase;
 import com.android.example.oca_808.db.entity.QuestionEntity;
+import com.android.example.oca_808.db.entity.TestEntity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by charlotte on 11/21/17.
@@ -31,7 +34,8 @@ public class QuestionsViewModel extends ViewModel {
     private static int mWhereWeAt;
 
     // Test vars
-    private static ArrayList<String> mUserAnswerArray;
+    private static TestEntity mCurrentTest;
+    private static List<String> mUserAnswerArray;
     private static StringBuilder mUserAnswer;
 
 
@@ -48,33 +52,16 @@ public class QuestionsViewModel extends ViewModel {
         if (mDb == null) {
             mDb = AppDatabase.getDb(context);
         }
+        // TODO: determine how to select specific tests
+        // get TestEntity
+        setTestAttributes();
 
-        // set question list
-        setQuestionsList();
 
-        // set question number value to 1
-        if (mQuestionNumber == null) {
-            mWhereWeAt = 1;
-            mQuestionNumber = new MutableLiveData<>();
-            mQuestionNumber.setValue(mWhereWeAt); //TODO: update to accommodate resumed test
-        }
-
-        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
         mUserAnswer = new StringBuilder();
-
-        if (mUserAnswerArray == null) {
-            mUserAnswerArray = new ArrayList<>();
-            mUserAnswerArray.add(null);
-        }
 //        startTimer();
 //        int index = mQuestionsList.indexOf(mCurrentQuestion);
     }
 
-
-    public void setQuestionsList() {
-        mQuestionsList = (ArrayList<QuestionEntity>) mDb.questionsDao().getQuestions();
-        mQuestionsList.add(0, null);
-    }
 
     public LiveData<Integer> newQuestion() {
         return mQuestionNumber;
@@ -133,14 +120,14 @@ public class QuestionsViewModel extends ViewModel {
     public void setUserAnswer(String s) {
         // add to arrayList if unanswered, if changing previous answer then set corresponding element
         if (mUserAnswerArray.size() <= mWhereWeAt) {
-            if(s == null){
+            if (s == null) {
                 mUserAnswerArray.add(mUserAnswer.toString());
             } else {
                 mUserAnswerArray.add("");
             }
             Log.w(LOG_TAG, "add " + mUserAnswer.toString() + " at index " + mWhereWeAt);
         } else {
-            if(s == null){
+            if (s == null) {
                 mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
             } else {
                 mUserAnswerArray.set(mWhereWeAt, "");
@@ -194,5 +181,57 @@ public class QuestionsViewModel extends ViewModel {
         }
         setUserAnswer(null);
         Log.i(LOG_TAG, "2. VM uAnswersArray: " + mUserAnswerArray.toString());
+    }
+
+    // ---------------------------------- get and set test --------------------
+    private void setTestAttributes() {
+        // get TestEntity
+        mCurrentTest = mDb.testsDao().fetchTest(1);
+
+        // get questions
+        mQuestionsList = setQuestionsList();
+
+        // set starting point
+        if (mQuestionNumber == null) {
+            mWhereWeAt = mCurrentTest.resumeQuestionNum;
+            Log.w(LOG_TAG, "WWA: " + mWhereWeAt);
+            mQuestionNumber = new MutableLiveData<>();
+            mQuestionNumber.setValue(mWhereWeAt); //TODO: update to accommodate resumed test
+        }
+
+        if (mCurrentQuestion == null) {
+            mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
+        }
+
+
+        // set answer list
+        StringBuilder sb = new StringBuilder(mCurrentTest.answerSet);
+        sb.deleteCharAt(sb.length() - 1).deleteCharAt(0);
+        mUserAnswerArray = Arrays.asList((sb.toString()).split(", "));
+        mUserAnswerArray = new ArrayList<>(mUserAnswerArray);
+        mUserAnswerArray.add(0, null);
+        Log.w(LOG_TAG, "user answer array init: " + mUserAnswerArray.toString());
+    }
+
+    public ArrayList<QuestionEntity> setQuestionsList() {
+
+        // get question list from the TestEntity
+        StringBuilder questionsStringBuilder = new StringBuilder(mCurrentTest.questionSet);
+//        Log.w(LOG_TAG, "questionStringBuilder = "  + questionsStringBuilder.toString());
+        questionsStringBuilder.deleteCharAt(questionsStringBuilder.length() - 1).deleteCharAt(0);
+        String questionsString = questionsStringBuilder.toString();
+//        Log.w(LOG_TAG, "questionString = "  + questionsString);
+
+        // convert string to list of question IDs
+        List<String> qIdListAsStrings = Arrays.asList(questionsString.split(", "));
+//        Log.w(LOG_TAG, "questionStringList = "  + qIdListAsStrings.toString());
+
+
+//        Log.w(LOG_TAG, "IntList count: " + mQuestionsList.size());
+        mQuestionsList = (ArrayList<QuestionEntity>) mDb.questionsDao().getQuestions(qIdListAsStrings);
+        Log.w(LOG_TAG, "questionList count: " + mQuestionsList.size());
+        mQuestionsList.add(0, null);
+        Log.w(LOG_TAG, "questionList count with null added: " + mQuestionsList.size());
+        return mQuestionsList;
     }
 }

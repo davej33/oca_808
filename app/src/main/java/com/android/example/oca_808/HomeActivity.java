@@ -36,22 +36,22 @@ public class HomeActivity extends AppCompatActivity {
         i.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                createTestSim();
                 new QuestionsViewModel(getApplicationContext());
                 startActivity(new Intent(getApplicationContext(), QuestionsActivity.class));
-                createTestSim();
-
             }
         });
     }
 
     private void createTestSim() {
-
         // get questions
         List<Integer> questionList = mDb.questionsDao().getQuestionIds();
         String questionListString = questionList.toString();
 
         // create list for answers
-        List<String> answerArrayList = new ArrayList<>(questionList.size()); // set ArrayList capacity to 70
+        List<String> answerArrayList = new ArrayList<>(questionList.size());
+        answerArrayList.add("b");
+        answerArrayList.add("def");
         String answerListString = answerArrayList.toString();
 
         // create list for storing time elapsed on each question

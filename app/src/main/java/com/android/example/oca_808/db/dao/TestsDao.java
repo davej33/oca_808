@@ -16,6 +16,6 @@ public interface TestsDao {
     @Insert
     long insertNewTest(TestEntity newTest);
 
-    @Query("SELECT * FROM TestEntity WHERE id = :id")
+    @Query("SELECT * FROM TestEntity WHERE _id = :id")
     TestEntity fetchTest(int id);
 }

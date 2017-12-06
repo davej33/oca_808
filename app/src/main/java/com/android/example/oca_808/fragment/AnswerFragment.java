@@ -33,9 +33,8 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     private CheckBox checkbox_a, checkbox_b, checkbox_c, checkbox_d, checkbox_e, checkbox_f;
     private static QuestionsViewModel mViewModel;
     private static String mCorrectAnswers;
-    //    private static StringBuilder mCheckboxAnswer = new StringBuilder();
     private static int mQuestionType;
-
+    private int i = 0;
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String WRONG_ANSWERS = "display";
@@ -83,7 +82,6 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         mQuestionType = mViewModel.getCurrentQuestion().getType();
         mCorrectAnswers = mViewModel.getCurrentQuestion().answer;
         mUserAnswer = mViewModel.getUserAnswer();
-        Log.i(LOG_TAG, "aFrag inflate - user answer: " + mUserAnswer);
         getViews(view);
 
         // set answers based on type of question
@@ -94,7 +92,6 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         }
 
         if (mUserAnswer.length() > 0) {
-            Log.i(LOG_TAG, "%%%%%%%%%%%%%%% display onCreateView run");
             displayUserAnswer();
         }
 
@@ -418,7 +415,6 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
-    int i = 0;
 
     @Override
     public void onClick(View v) {

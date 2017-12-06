@@ -1,6 +1,7 @@
 package com.android.example.oca_808.db.entity;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 /**
@@ -8,6 +9,8 @@ import android.arch.persistence.room.PrimaryKey;
  */
 
 @Entity
+//        (indices = {@Index(value = {"q_map_id"},
+//        unique = true)})
 public class QuestionEntity {
 
     @PrimaryKey (autoGenerate = true)

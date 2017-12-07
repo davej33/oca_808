@@ -4,10 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +34,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Context mContext;
     private ConstraintLayout mMainLayout;
     private LayoutInflater mLayoutInflater;
-    private TestHistoryAdapter mAdapter;
+    private TestHistoryAdapter mTestHistoryAdapter;
 
 
     @Override
@@ -69,7 +72,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.test_button:
                 inflateTestPopUp(v);
-                mAdapter = new TestHistoryAdapter(this, 1);
+                mTestHistoryAdapter = new TestHistoryAdapter(this, 1);
                 break;
             case R.id.new_test_tv:
                 TestGenerator.createTestSim(this, 1);
@@ -84,6 +87,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         // inflate layout
         mPopUpView = mLayoutInflater.inflate(R.layout.popup_test, (ViewGroup) v.getRootView(), false);
+        Handler mainHandler = new Handler(getApplicationContext().getMainLooper());
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                // set recycler view
+                RecyclerView mRecyclerView = mPopUpView.findViewById(R.id.rv_incomplete_tests);
+                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+                mRecyclerView.setLayoutManager(layoutManager);
+                mRecyclerView.setAdapter(mTestHistoryAdapter);
+            }
+        };
+        mainHandler.post(r);
+
 
         // Initialize new instance of popup window
         mPopUpWindow = new PopupWindow(

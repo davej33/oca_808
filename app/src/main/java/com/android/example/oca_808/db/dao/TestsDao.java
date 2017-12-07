@@ -22,7 +22,7 @@ public interface TestsDao {
     @Query("SELECT * FROM TestEntity WHERE _id = :id")
     TestEntity fetchTest(int id);
 
-    @Query("SELECT * FROM TestEntity WHERE type = :type AND complete = 'false'")
+    @Query("SELECT * FROM TestEntity WHERE type = :type")
     List<TestEntity> fetchIncompleteTests(int type);
 
 

@@ -66,7 +66,7 @@ public final class TestGenerator {
     private static String createTestTitle(Context context, int type) {
         SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(context);
         int testNum = shPref.getInt(context.getResources().getString(R.string.sp_test_num_key), -1);
-        Log.w(LOG_TAG, "sp testNum: " + testNum);
+//        Log.w(LOG_TAG, "sp testNum: " + testNum);
         SharedPreferences.Editor editor = shPref.edit();
         editor.putInt(context.getResources().getString(R.string.sp_test_num_key), ++testNum);
         editor.apply();

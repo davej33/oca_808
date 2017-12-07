@@ -65,15 +65,18 @@ public final class TestGenerator {
 
     private static String createTestTitle(Context context, int type) {
         SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String testNumString = shPref.getString(context.getResources().getString(R.string.sp_test_num_key), context.getResources().getString(R.string.sp_test_num_default));
-        Log.w(LOG_TAG, "sp testNum: " + testNumString);
-        int sToInt = Integer.valueOf(testNumString);
+        int testNum = shPref.getInt(context.getResources().getString(R.string.sp_test_num_key), -1);
+        Log.w(LOG_TAG, "sp testNum: " + testNum);
+        SharedPreferences.Editor editor = shPref.edit();
+        editor.putInt(context.getResources().getString(R.string.sp_test_num_key), ++testNum);
+        editor.apply();
+        String title = "";
         if (type == 1) {
-            return TEST_NUM_TEXT + String.valueOf(++sToInt);
+            title = TEST_NUM_TEXT + String.valueOf(testNum);
         } else {
-            return PRACTICE_NUM_TEXT + String.valueOf(++sToInt);
+            title = PRACTICE_NUM_TEXT + String.valueOf(testNum);
         }
-
+        return title;
     }
 
     public static void addQs(Context context) {

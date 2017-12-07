@@ -254,7 +254,7 @@ public class QuestionsViewModel extends ViewModel {
             int testLength = mQuestionsList.size() - 1;
             int progress = (100 * questionsAnswered) / testLength;
 
-            Log.w(LOG_TAG, "Progress - answered" + questionsAnswered + " of " + (mQuestionsList.size() - 1) + " equaling " + progress + "% complete");
+//            Log.w(LOG_TAG, "Progress - answered" + questionsAnswered + " of " + (mQuestionsList.size() - 1) + " equaling " + progress + "% complete");
 
             return progress;
         } else {

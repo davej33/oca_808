@@ -91,8 +91,6 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
         displayQuestion();
 
-//        getSupportFragmentManager().beginTransaction().replace(R.id.progress_container, ProgressFragment.newInstance(null, null)).commit();
-
         subscribe();
 
     }
@@ -107,9 +105,8 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         // set new views
         getSupportFragmentManager().beginTransaction().replace(R.id.question_container, QuestionFragment.newInstance(mQuestionNum, null)).commit();
         getSupportFragmentManager().beginTransaction().replace(R.id.answer_container, AnswerFragment.newInstance(null, null)).commit();
-        if (mQuestionNum == 1 || mQuestionNum == 2) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.progress_container, ProgressFragment.newInstance(null, null)).commit();
-        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.progress_container, ProgressFragment.newInstance(null, null)).commit();
+
 
         mFAB.setImageResource(android.R.drawable.ic_media_next);
     }

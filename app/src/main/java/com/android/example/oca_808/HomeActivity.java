@@ -54,13 +54,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setupSharedPref() {
         SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String checkSP = null;
-        try{
-            checkSP = shPref.getString(getResources().getString(R.string.sp_test_num_key), null);
-        } catch (Exception e){
-            e.printStackTrace();
+        int checkSP = shPref.getInt(getResources().getString(R.string.sp_test_num_key), -99);
+        if(checkSP < 0){
             SharedPreferences.Editor editor = shPref.edit();
-            editor.putString(getResources().getString(R.string.sp_test_num_key), getResources().getString(R.string.sp_test_num_default));
+            editor.putInt(getResources().getString(R.string.sp_test_num_key), 0);
             editor.apply();
         }
 

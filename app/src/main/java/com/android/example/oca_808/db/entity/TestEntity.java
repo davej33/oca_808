@@ -12,11 +12,13 @@ public class TestEntity {
 
     @PrimaryKey(autoGenerate = true)
     public int _id;
+    public String title;
     public int type; // 0 = practice, 1 = test
     public String questionSet;
     public String answerSet;
     public String questionElapsedTimeSet;
     public boolean complete; // 0 = in-progress, 1 = complete
+    public int progress;
     public long startDateTime;
     public long endDateTime;
     public long elapsedTestTime;
@@ -25,9 +27,11 @@ public class TestEntity {
     public int questionCount;
     public int sessionCount;
 
-    public TestEntity(int type, String questionSet, String answerSet, String questionElapsedTimeSet, boolean complete, long startDateTime, long endDateTime, long elapsedTestTime, long elapsedQuestionTime, int resumeQuestionNum, int questionCount, int sessionCount){
+    public TestEntity(int type, String title, String questionSet, String answerSet, String questionElapsedTimeSet, boolean complete, int progress, long startDateTime, long endDateTime, long elapsedTestTime, long elapsedQuestionTime, int resumeQuestionNum, int questionCount, int sessionCount) {
         this.type = type;
+        this.title = title;
         this.complete = complete;
+        this.progress = progress;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.elapsedTestTime = elapsedTestTime;
@@ -68,4 +72,7 @@ public class TestEntity {
         this.sessionCount = sessionCount;
     }
 
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
 }

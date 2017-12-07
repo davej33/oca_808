@@ -2,34 +2,25 @@ package com.android.example.oca_808;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.content.SharedPreferences;
 import android.os.Build;
-import android.provider.ContactsContract;
+import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.android.example.oca_808.adapter.TestHistoryAdapter;
 import com.android.example.oca_808.db.AppDatabase;
-import com.android.example.oca_808.db.entity.QuestionEntity;
-import com.android.example.oca_808.db.entity.TestEntity;
 import com.android.example.oca_808.helper.TestGenerator;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -40,6 +31,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Context mContext;
     private ConstraintLayout mMainLayout;
     private LayoutInflater mLayoutInflater;
+    private TestHistoryAdapter mAdapter;
 
 
     @Override
@@ -53,23 +45,40 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         mContext = this;
 
+        setupSharedPref();
 
         TestGenerator.addQs(mContext); // TODO: only run once
         ImageButton testButton = findViewById(R.id.test_button);
         testButton.setOnClickListener(this);
     }
 
+    private void setupSharedPref() {
+        SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String checkSP = null;
+        try{
+            checkSP = shPref.getString(getResources().getString(R.string.sp_test_num_key), null);
+        } catch (Exception e){
+            e.printStackTrace();
+            SharedPreferences.Editor editor = shPref.edit();
+            editor.putString(getResources().getString(R.string.sp_test_num_key), getResources().getString(R.string.sp_test_num_default));
+            editor.apply();
+        }
+
+    }
+
     @Override
     public void onClick(View v) {
-        Log.w(LOG_TAG, "view id: " + v.getId());
+//        Log.w(LOG_TAG, "view id: " + v.getId());
         switch (v.getId()) {
             case R.id.test_button:
                 inflateTestPopUp(v);
+                mAdapter = new TestHistoryAdapter(this, 1);
                 break;
             case R.id.new_test_tv:
-                TestGenerator.createTestSim();
+                TestGenerator.createTestSim(this, 1);
                 new QuestionsViewModel(getApplicationContext());
                 startActivity(new Intent(getApplicationContext(), QuestionsActivity.class));
+//                mPopUpWindow.dismiss();
 
         }
     }
@@ -79,14 +88,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         // inflate layout
         mPopUpView = mLayoutInflater.inflate(R.layout.popup_test, (ViewGroup) v.getRootView(), false);
 
-        // Initialize a new instance of popup window
+        // Initialize new instance of popup window
         mPopUpWindow = new PopupWindow(
                 mPopUpView,
                 ConstraintLayout.LayoutParams.WRAP_CONTENT,
                 ConstraintLayout.LayoutParams.WRAP_CONTENT,
                 true
         );
-
 
         // Set an elevation value for popup window
         // Call requires API level 21

@@ -2,47 +2,55 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/test_popup"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorGray"
-    android:id="@+id/test_popup">
+    android:layout_margin="24dp"
+    android:background="#aa000000">
 
     <TextView
         android:id="@+id/new_test_tv"
-        android:layout_width="347dp"
-        android:layout_height="91dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:textAlignment="center"
-        android:textSize="40sp"
-        android:text="@string/new_test"
+        android:layout_width="200dp"
+        android:layout_height="90dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
         android:background="@color/colorGreen"
+        android:gravity="center"
+        android:text="@string/new_test"
+        android:textColor="#fff"
+        android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/resume_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Continue"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:background="@color/colorGray"
+        android:gravity="center"
+        android:text="Resume"
+        android:textColor="#fff"
+        android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/new_test_tv" />
 
     <android.support.v7.widget.RecyclerView
-        android:layout_width="372dp"
-        android:layout_height="356dp"
-        android:layout_marginBottom="8dp"
+        android:id="@+id/rv_incomplete_tests"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="#fff"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/resume_tv" />
+
+
 </android.support.constraint.ConstraintLayout>

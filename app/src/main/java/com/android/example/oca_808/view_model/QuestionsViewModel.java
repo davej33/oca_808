@@ -45,8 +45,6 @@ public class QuestionsViewModel extends ViewModel {
 //    private MutableLiveData<Long> mElapsedTime = new MutableLiveData<>();
 
 
-
-
     // constructor
     public QuestionsViewModel(Context context) {
 
@@ -56,7 +54,7 @@ public class QuestionsViewModel extends ViewModel {
         }
         // TODO: determine how to select specific tests
         // get TestEntity
-        if(!mInitiated){
+        if (!mInitiated) {
             mInitiated = true;
             setTestAttributes();
         }
@@ -210,7 +208,7 @@ public class QuestionsViewModel extends ViewModel {
         sb.deleteCharAt(sb.length() - 1).deleteCharAt(0);
         mUserAnswerArray = Arrays.asList((sb.toString()).split(", "));
         mUserAnswerArray = new ArrayList<>(mUserAnswerArray);
-        if(!mUserAnswerArray.get(0).equals("null")) mUserAnswerArray.add(0, null);
+        if (!mUserAnswerArray.get(0).equals("null")) mUserAnswerArray.add(0, null);
         Log.w(LOG_TAG, "user answer array init: " + mUserAnswerArray.toString());
     }
 
@@ -239,8 +237,28 @@ public class QuestionsViewModel extends ViewModel {
     public void saveDataToDb() {
         mCurrentTest.setAnswerSet(mUserAnswerArray.toString());
         mCurrentTest.setResumeQuestionNum(mWhereWeAt);
+        mCurrentTest.setProgress(calculateProgress());
 
         int updateCheck = mDb.testsDao().updateTestResults(mCurrentTest);
 //        Log.w(LOG_TAG, "^^^^^^^^^ update check: " + updateCheck);
+    }
+
+    private int calculateProgress() {
+        if (mUserAnswerArray.size() > 0) {
+            int questionsAnswered = 0;
+            for (String s : mUserAnswerArray) {
+                if (s != null && (!(s.equals("") || s.equals("null")))) {
+                    questionsAnswered++;
+                }
+            }
+            int testLength = mQuestionsList.size() - 1;
+            int progress = (100 * questionsAnswered) / testLength;
+
+            Log.w(LOG_TAG, "Progress - answered" + questionsAnswered + " of " + (mQuestionsList.size() - 1) + " equaling " + progress + "% complete");
+
+            return progress;
+        } else {
+            return 0;
+        }
     }
 }

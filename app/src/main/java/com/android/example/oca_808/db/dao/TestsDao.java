@@ -7,6 +7,8 @@ import android.arch.persistence.room.Update;
 
 import com.android.example.oca_808.db.entity.TestEntity;
 
+import java.util.List;
+
 /**
  * Created by charlotte on 12/5/17.
  */
@@ -19,6 +21,11 @@ public interface TestsDao {
 
     @Query("SELECT * FROM TestEntity WHERE _id = :id")
     TestEntity fetchTest(int id);
+
+    @Query("SELECT * FROM TestEntity WHERE type = :type AND complete = 'false'")
+    List<TestEntity> fetchIncompleteTests(int type);
+
+
 
     @Update
     int updateTestResults(TestEntity... test);

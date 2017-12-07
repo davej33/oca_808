@@ -1,9 +1,12 @@
 package com.android.example.oca_808.helper;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.android.example.oca_808.R;
 import com.android.example.oca_808.db.AppDatabase;
 import com.android.example.oca_808.db.entity.QuestionEntity;
 import com.android.example.oca_808.db.entity.TestEntity;
@@ -23,17 +26,21 @@ public final class TestGenerator {
     private static long mStartTime;
     private static AppDatabase mDb;
     private static List<QuestionEntity> mQuestions;
+    private static final String TEST_NUM_TEXT = "Test_";
+    private static final String PRACTICE_NUM_TEXT = "Pract_";
 
-    public static void createTestSim() {
+    public static void createTestSim(Context context, int i) {
         // get questions
+        String testTitle = createTestTitle(context, i);
+        Log.w(LOG_TAG, "testTitle: " + testTitle);
 
         List<Integer> questionList = mDb.questionsDao().getQuestionIds();
         String questionListString = questionList.toString();
 
         // create list for answers
         List<String> answerArrayList = new ArrayList<>(questionList.size());
-        answerArrayList.add("b");
-        answerArrayList.add("def");
+//        answerArrayList.add("b");
+//        answerArrayList.add("def");
         String answerListString = answerArrayList.toString();
 
         // create list for storing time elapsed on each question
@@ -50,10 +57,23 @@ public final class TestGenerator {
         }
 
         // create new test
-        TestEntity newTest = new TestEntity(1, questionListString, answerListString, elapsedQuestionTimeString, false, mStartTime, 0, 0, 0, 1, questionList.size(), 1);
+        TestEntity newTest = new TestEntity(1, testTitle, questionListString, answerListString, elapsedQuestionTimeString, false, 0, mStartTime, 0, 0, 0, 1, questionList.size(), 1);
         long testInsertCheck = mDb.testsDao().insertNewTest(newTest);
-        Log.i(LOG_TAG, "test to string: " + newTest.toString());
-        Log.i(LOG_TAG, "test insert check: " + testInsertCheck);
+//        Log.i(LOG_TAG, "test to string: " + newTest.toString());
+//        Log.i(LOG_TAG, "test insert check: " + testInsertCheck);
+    }
+
+    private static String createTestTitle(Context context, int type) {
+        SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(context);
+        String testNumString = shPref.getString(context.getResources().getString(R.string.sp_test_num_key), context.getResources().getString(R.string.sp_test_num_default));
+        Log.w(LOG_TAG, "sp testNum: " + testNumString);
+        int sToInt = Integer.valueOf(testNumString);
+        if (type == 1) {
+            return TEST_NUM_TEXT + String.valueOf(++sToInt);
+        } else {
+            return PRACTICE_NUM_TEXT + String.valueOf(++sToInt);
+        }
+
     }
 
     public static void addQs(Context context) {

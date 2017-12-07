@@ -61,7 +61,6 @@ public class QuestionsViewModel extends ViewModel {
             setTestAttributes();
         }
 
-
         mUserAnswer = new StringBuilder();
 //        startTimer();
 //        int index = mQuestionsList.indexOf(mCurrentQuestion);
@@ -198,15 +197,13 @@ public class QuestionsViewModel extends ViewModel {
         // set starting point
         if (mQuestionNumber == null) {
             mWhereWeAt = mCurrentTest.resumeQuestionNum;
-            Log.w(LOG_TAG, "WWA: " + mWhereWeAt);
+            Log.i(LOG_TAG, "WWA: " + mWhereWeAt);
             mQuestionNumber = new MutableLiveData<>();
-            mQuestionNumber.setValue(mWhereWeAt); //TODO: update to accommodate resumed test
+            mQuestionNumber.setValue(mWhereWeAt);
         }
-
         if (mCurrentQuestion == null) {
             mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
         }
-
 
         // set answer list
         StringBuilder sb = new StringBuilder(mCurrentTest.answerSet);
@@ -233,9 +230,9 @@ public class QuestionsViewModel extends ViewModel {
 
 //        Log.w(LOG_TAG, "IntList count: " + mQuestionsList.size());
         mQuestionsList = (ArrayList<QuestionEntity>) mDb.questionsDao().getQuestions(qIdListAsStrings);
-        Log.w(LOG_TAG, "questionList count: " + mQuestionsList.size());
+        Log.i(LOG_TAG, "questionList count: " + mQuestionsList.size());
         mQuestionsList.add(0, null);
-        Log.w(LOG_TAG, "questionList count with null added: " + mQuestionsList.size());
+        Log.i(LOG_TAG, "questionList count with null added: " + mQuestionsList.size());
         return mQuestionsList;
     }
 
@@ -244,6 +241,6 @@ public class QuestionsViewModel extends ViewModel {
         mCurrentTest.setResumeQuestionNum(mWhereWeAt);
 
         int updateCheck = mDb.testsDao().updateTestResults(mCurrentTest);
-        Log.w(LOG_TAG, "^^^^^^^^^ update check: " + updateCheck);
+//        Log.w(LOG_TAG, "^^^^^^^^^ update check: " + updateCheck);
     }
 }

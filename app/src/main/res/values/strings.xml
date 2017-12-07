@@ -3,4 +3,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="new_test">New</string>
+    <string name="test">Test</string>
+    <string name="train">Train</string>
+    <string name="stats">Stats</string>
 </resources>

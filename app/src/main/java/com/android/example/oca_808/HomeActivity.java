@@ -1,17 +1,29 @@
 package com.android.example.oca_808;
 
-import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.provider.ContactsContract;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.android.example.oca_808.db.AppDatabase;
 import com.android.example.oca_808.db.entity.QuestionEntity;
 import com.android.example.oca_808.db.entity.TestEntity;
+import com.android.example.oca_808.helper.TestGenerator;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 import java.time.LocalDateTime;
@@ -19,82 +31,89 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String LOG_TAG = HomeActivity.class.getSimpleName();
-    ArrayList<QuestionEntity> mQuestions;
     private AppDatabase mDb;
-    private long mStartTime;
+    private PopupWindow mPopUpWindow;
+    private View mPopUpView;
+    private Context mContext;
+    private ConstraintLayout mMainLayout;
+    private LayoutInflater mLayoutInflater;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        // instantiate objects
         mDb = AppDatabase.getDb(this);
-        addQs();
-        ImageView i = findViewById(R.id.test_button);
-        i.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createTestSim();
+        mMainLayout = findViewById(R.id.home_activity);
+        mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        mContext = this;
+
+
+        TestGenerator.addQs(mContext); // TODO: only run once
+        ImageButton testButton = findViewById(R.id.test_button);
+        testButton.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Log.w(LOG_TAG, "view id: " + v.getId());
+        switch (v.getId()) {
+            case R.id.test_button:
+                inflateTestPopUp(v);
+                break;
+            case R.id.new_test_tv:
+                TestGenerator.createTestSim();
                 new QuestionsViewModel(getApplicationContext());
                 startActivity(new Intent(getApplicationContext(), QuestionsActivity.class));
-            }
-        });
-    }
-
-    private void createTestSim() {
-        // get questions
-        List<Integer> questionList = mDb.questionsDao().getQuestionIds();
-        String questionListString = questionList.toString();
-
-        // create list for answers
-        List<String> answerArrayList = new ArrayList<>(questionList.size());
-        answerArrayList.add("b");
-        answerArrayList.add("def");
-        String answerListString = answerArrayList.toString();
-
-        // create list for storing time elapsed on each question
-        List<String> elapsedQuestionTimeList = new ArrayList<>(questionList.size());
-        String elapsedQuestionTimeString = elapsedQuestionTimeList.toString();
-
-        // get local time in milliseconds
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalDateTime startTime = LocalDateTime.now();
-            ZoneId zoneId = ZoneId.systemDefault();
-            mStartTime = startTime.atZone(zoneId).toEpochSecond();
-        } else {
-            mStartTime = System.currentTimeMillis();
-        }
-
-        // create new test
-        TestEntity newTest = new TestEntity(1, questionListString, answerListString, elapsedQuestionTimeString, false, mStartTime, 0, 0, 0, 1, questionList.size(), 1);
-        long testInsertCheck = mDb.testsDao().insertNewTest(newTest);
-        Log.i(LOG_TAG, "test to string: " + newTest.toString());
-        Log.i(LOG_TAG, "test insert check: " + testInsertCheck);
-    }
-
-    private void addQs() {
-        if (mQuestions == null) {
-            mQuestions = new ArrayList<>();
-            mQuestions.add(new QuestionEntity(1101, 11, 1, "1: What is \n2: Java? 1101", "A good cup of jo", "small mammal", "large lizard", "programming language", "no idea", "a fish", "d", "Just cuz", 2));
-            mQuestions.add(new QuestionEntity(4101, 41, 0, "Given the following array, which statements evaluate to &?\n\nchar[] foo = {‘X’,’1’,’Y’,’2’,’Z,’&’};", "foo[6];", "foo[5];",
-                    "foo[foo.length()];", "foo[foo.length()-1];", "Does not compile", "None of the above", "bd", "Key Points:\n - Array indices begin at 0\n - Array length begins at 1\n\n     index =   0   1   2   3   4  5\n " +
-                    "char[] foo = {‘X’,’A’,’Y’,’B’,’Z,’&’};\n      length =   1   2   3   4   5  6\n\nfoo[6] tries to access index 6 which doesn’t exist so it will throw an ArrayIndexOutOfBoundsException\n " +
-                    "foo[5] is correct\nfoo[foo.length()]  tries to access index 6 which doesn’t exist so it will throw an ArrayIndexOutOfBoundsException.\nfoo[foo.length() - 1] is correct\nDoes not compile is incorrect\n" +
-                    "'None' is incorrect because two answers evaluate to &", 3));
-            mQuestions.add(new QuestionEntity(1102, 11, 1, "1: What is \n2: Java?", "A good cup of jo", "small mammal", "large lizard", "programming language", "no idea", "a fish", "d", "Just cuz", 1));
-            mQuestions.add(new QuestionEntity(4102, 41, 0, "Given the following array, which statements evaluate to &?\n\nchar[] foo = {‘X’,’1’,’Y’,’2’,’Z,’&’};", "foo[6];", "foo[5];",
-                    "foo[foo.length()];", "foo[foo.length()-1];", "Does not compile", "None of the above", "bd", "Key Points:\n - Array indices begin at 0\n - Array length begins at 1\n\n     index =   0   1   2   3   4  5\n " +
-                    "char[] foo = {‘X’,’A’,’Y’,’B’,’Z,’&’};\n      length =   1   2   3   4   5  6\n\nfoo[6] tries to access index 6 which doesn’t exist so it will throw an ArrayIndexOutOfBoundsException\n " +
-                    "foo[5] is correct\nfoo[foo.length()]  tries to access index 6 which doesn’t exist so it will throw an ArrayIndexOutOfBoundsException.\nfoo[foo.length() - 1] is correct\nDoes not compile is incorrect\n" +
-                    "'None' is incorrect because two answers evaluate to &", 3));
-
-            long[] x = mDb.questionsDao().insertQuestions(mQuestions);
-            Log.w(LOG_TAG, "insert count: " + x.length);
 
         }
     }
 
+    private void inflateTestPopUp(View v) {
 
+        // inflate layout
+        mPopUpView = mLayoutInflater.inflate(R.layout.popup_test, (ViewGroup) v.getRootView(), false);
+
+        // Initialize a new instance of popup window
+        mPopUpWindow = new PopupWindow(
+                mPopUpView,
+                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                true
+        );
+
+
+        // Set an elevation value for popup window
+        // Call requires API level 21
+        if (Build.VERSION.SDK_INT >= 21) {
+            mPopUpWindow.setElevation(5.0f);
+        }
+
+        // show the popup
+        mPopUpWindow.showAtLocation(mMainLayout, Gravity.CENTER, 0, 0);
+
+        // dim popup background
+        dimBehind(mPopUpWindow);
+
+        // set onClickListener
+        TextView newTest = mPopUpView.findViewById(R.id.new_test_tv);
+        newTest.setOnClickListener(this);
+
+
+    }
+
+    public static void dimBehind(PopupWindow popupWindow) {
+        View container = popupWindow.getContentView().getRootView();
+        Context context = popupWindow.getContentView().getContext();
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
+        p.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        p.dimAmount = 0.3f;
+        wm.updateViewLayout(container, p);
+    }
 }

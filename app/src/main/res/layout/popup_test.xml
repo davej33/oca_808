@@ -43,7 +43,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_incomplete_tests"
         android:layout_width="320dp"
-        android:layout_height="185dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"

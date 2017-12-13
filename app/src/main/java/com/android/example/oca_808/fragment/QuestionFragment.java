@@ -74,10 +74,10 @@ public class QuestionFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question, container, false);
-        if (mViewModel == null) {
+//        if (mViewModel == null) {
             mViewModel = QuestionsViewModel.getQVM();
 //            mViewModel = ViewModelProviders.of(this, new QuestionViewModelFactory(getActivity().getApplication())).get(QuestionsViewModel.class);
-        }
+//        }
         String questionText = mViewModel.getCurrentQuestion().getQuestion();
 //        Log.w(LOG_TAG,"question text ******************* : " + questionText);
         TextView tv = view.findViewById(R.id.question_view);

@@ -63,6 +63,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         mQuestionForSolutionContainer = findViewById(R.id.question_solution_container);
 
 
+        Toast.makeText(this, mViewModel.getTestTitle(), Toast.LENGTH_SHORT).show();
         // Hide the status bar.
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
@@ -77,7 +78,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             mFAB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mViewModel.getUserAnswer().equals(""))mViewModel.setUserAnswer("");
+                    if(mViewModel.getUserAnswer().equals("")) mViewModel.setUserAnswer("");
 
 //                    String solution = mViewModel.getCurrentQuestion().answer;
                     mWrongAnswers = mViewModel.checkAnswer();

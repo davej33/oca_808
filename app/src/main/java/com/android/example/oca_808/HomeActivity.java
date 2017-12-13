@@ -53,6 +53,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         setupSharedPref();
 
+        QuestionsViewModel qvm = ViewModelProviders.of(this, new QuestionViewModelFactory(this.getApplication())).get(QuestionsViewModel.class);
+        qvm.setQVM(qvm);
+
         TestGenerator.addQs(mContext); // TODO: only run once
         ImageButton testButton = findViewById(R.id.test_button);
         testButton.setOnClickListener(this);
@@ -79,8 +82,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.new_test_tv:
                 TestGenerator.createTestSim(this, 1);
-                QuestionsViewModel qvm = ViewModelProviders.of(this, new QuestionViewModelFactory(this.getApplication())).get(QuestionsViewModel.class);
-                qvm.setQVM(qvm);
                 startActivity(new Intent(getApplicationContext(), QuestionsActivity.class));
 //                mPopUpWindow.dismiss();
 
@@ -140,5 +141,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         p.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         p.dimAmount = 0.3f;
         wm.updateViewLayout(container, p);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(mPopUpWindow != null) mPopUpWindow.dismiss();
     }
 }

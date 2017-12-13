@@ -46,26 +46,17 @@ public class QuestionsViewModel extends ViewModel {
 //    private long mInitialTime;
 //    private MutableLiveData<Long> mElapsedTime = new MutableLiveData<>();
 
-    static int i = 0;
+    private static int mLoadTestId;
     private static QuestionsViewModel mQuestionViewModel;
+
     // constructor
     public QuestionsViewModel(Application mApplication) {
-Log.i(LOG_TAG, "QVM constructor run " + ++i);
 
         // instantiate db if null
         if (mDb == null) {
             mDb = AppDatabase.getDb(mApplication);
         }
-        // TODO: determine how to select specific tests
-        // get TestEntity
-        if (!mInitiated) {
-            mInitiated = true;
-            setTestAttributes();
-        }
 
-        mUserAnswer = new StringBuilder();
-//        startTimer();
-//        int index = mQuestionsList.indexOf(mCurrentQuestion);
     }
 
 
@@ -161,13 +152,14 @@ Log.i(LOG_TAG, "QVM constructor run " + ++i);
     }
 
     public String getUserAnswer() {
-//        Log.w(LOG_TAG, "@@@@@@@@ user array size = " + mUserAnswerArray.size() + " WWA = " + mWhereWeAt);
+
         if (mUserAnswerArray.size() > mWhereWeAt) { // if loading a question that's already been answered
-            Log.w(LOG_TAG, "getUserAnswer return: " + mUserAnswerArray.get(mWhereWeAt));
+            Log.w(LOG_TAG, "Question answered. getUserAnswer return = " + mUserAnswerArray.get(mWhereWeAt));
             return mUserAnswerArray.get(mWhereWeAt); // return the answer
         } else {
-            Log.w(LOG_TAG, "getUserAnswer return: " + mUserAnswer.toString());
-            return mUserAnswer.toString(); // otherwise, return the current user answer
+            Log.w(LOG_TAG, "getUserAnswer = Unanswered" );
+            mUserAnswer.delete(0, mUserAnswer.length());
+            return ""; // otherwise, return the current user answer
         }
     }
 
@@ -190,11 +182,12 @@ Log.i(LOG_TAG, "QVM constructor run " + ++i);
 
     // ---------------------------------- get and set test --------------------
     private void setTestAttributes() {
-        // get TestEntity
-        mCurrentTest = mDb.testsDao().fetchTest(1);
-
         // get questions
         mQuestionsList = setQuestionsList();
+
+        mUserAnswer = new StringBuilder();
+//        startTimer();
+//        int index = mQuestionsList.indexOf(mCurrentQuestion);
 
         // set starting point
         if (mQuestionNumber == null) {
@@ -269,7 +262,39 @@ Log.i(LOG_TAG, "QVM constructor run " + ++i);
     public void setQVM(QuestionsViewModel QVM) {
         mQuestionViewModel = QVM;
     }
+
     public static QuestionsViewModel getQVM() {
         return mQuestionViewModel;
+    }
+
+    public void getTest(int testId) {
+
+//        clearVars();
+
+        // get TestEntity
+        mCurrentTest = mDb.testsDao().fetchTest(testId);
+        Log.i(LOG_TAG, "current test title: " + mCurrentTest.title);
+
+        if (!mInitiated) {
+            mInitiated = true;
+            setTestAttributes();
+        }
+
+    }
+
+//    private void clearVars() {
+//        mCurrentTest = null;
+//        mQuestionsList = null;
+//        mCurrentQuestion = null;
+//        mUserAnswerArray = null;
+//        mUserAnswer = null;
+//    }
+
+    public AppDatabase getDb() {
+        return mDb;
+    }
+
+    public String getTestTitle() {
+        return mCurrentTest.title;
     }
 }

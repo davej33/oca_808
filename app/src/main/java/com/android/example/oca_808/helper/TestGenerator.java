@@ -10,6 +10,7 @@ import com.android.example.oca_808.R;
 import com.android.example.oca_808.db.AppDatabase;
 import com.android.example.oca_808.db.entity.QuestionEntity;
 import com.android.example.oca_808.db.entity.TestEntity;
+import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -28,6 +29,7 @@ public final class TestGenerator {
     private static List<QuestionEntity> mQuestions;
     private static final String TEST_NUM_TEXT = "Test_";
     private static final String PRACTICE_NUM_TEXT = "Pract_";
+    private static int mTestNum;
 
     public static void createTestSim(Context context, int i) {
         // get questions
@@ -59,22 +61,25 @@ public final class TestGenerator {
         // create new test
         TestEntity newTest = new TestEntity(1, testTitle, questionListString, answerListString, elapsedQuestionTimeString, false, 0, mStartTime, 0, 0, 0, 1, questionList.size(), 1);
         long testInsertCheck = mDb.testsDao().insertNewTest(newTest);
+        Log.i(LOG_TAG,"@@@@@@ mTestId: " + mTestNum);
+        QuestionsViewModel.getQVM().getTest(mTestNum);
 //        Log.i(LOG_TAG, "test to string: " + newTest.toString());
 //        Log.i(LOG_TAG, "test insert check: " + testInsertCheck);
     }
 
     private static String createTestTitle(Context context, int type) {
         SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(context);
-        int testNum = shPref.getInt(context.getResources().getString(R.string.sp_test_num_key), -1);
-//        Log.w(LOG_TAG, "sp testNum: " + testNum);
+        mTestNum = shPref.getInt(context.getResources().getString(R.string.sp_test_num_key), -1);
+//        Log.w(LOG_TAG, "sp mTestNum: " + mTestNum);
         SharedPreferences.Editor editor = shPref.edit();
-        editor.putInt(context.getResources().getString(R.string.sp_test_num_key), ++testNum);
+        editor.putInt(context.getResources().getString(R.string.sp_test_num_key), ++mTestNum);
+        Log.i(LOG_TAG,"@@@@@@ createtitle mTestId: " + mTestNum);
         editor.apply();
         String title = "";
         if (type == 1) {
-            title = TEST_NUM_TEXT + String.valueOf(testNum);
+            title = TEST_NUM_TEXT + String.valueOf(mTestNum);
         } else {
-            title = PRACTICE_NUM_TEXT + String.valueOf(testNum);
+            title = PRACTICE_NUM_TEXT + String.valueOf(mTestNum);
         }
         return title;
     }

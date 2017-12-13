@@ -35,7 +35,6 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         ProgressFragment.OnFragmentInteractionListener, AnswerFragment.OnFragmentInteractionListener, ExplanationFragment.OnFragmentInteractionListener {
 
     private static final String LOG_TAG = QuestionsActivity.class.getSimpleName();
-    private static final String QUESTION_SKIPPED = "z";
     private Integer mQuestionNum = 0;
     private static QuestionsViewModel mViewModel;
     private FloatingActionButton mFAB;

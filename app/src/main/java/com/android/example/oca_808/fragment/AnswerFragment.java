@@ -328,18 +328,31 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
 
         radioGroup.setVisibility(View.INVISIBLE);
 
-        checkbox_a.setText(mViewModel.getCurrentQuestion().getA());
-        checkbox_b.setText(mViewModel.getCurrentQuestion().getB());
-        checkbox_c.setText(mViewModel.getCurrentQuestion().getC());
-        checkbox_d.setText(mViewModel.getCurrentQuestion().getD());
-        checkbox_e.setText(mViewModel.getCurrentQuestion().getE());
-        checkbox_f.setText(mViewModel.getCurrentQuestion().getF());
+        // get answer options and add letter prefix
+        String cbA = "A) " + mViewModel.getCurrentQuestion().getA();
+        String cbB = "B) " + mViewModel.getCurrentQuestion().getB();
+        String cbC = "C) " + mViewModel.getCurrentQuestion().getC();
+        String cbD = "D) " + mViewModel.getCurrentQuestion().getD();
+        String cbE = "E) " + mViewModel.getCurrentQuestion().getE();
+        String cbF = "F) " + mViewModel.getCurrentQuestion().getF();
+
+        // set options
+        checkbox_a.setText(cbA);
+        checkbox_b.setText(cbB);
+        checkbox_c.setText(cbC);
+        checkbox_d.setText(cbD);
+        checkbox_e.setText(cbE);
+        checkbox_f.setText(cbF);
+
+        // clear options
         checkbox_a.setChecked(false);
         checkbox_b.setChecked(false);
         checkbox_c.setChecked(false);
         checkbox_d.setChecked(false);
         checkbox_e.setChecked(false);
         checkbox_f.setChecked(false);
+
+        // set text color
         checkbox_a.setTextColor(getResources().getColor(R.color.colorBlack));
         checkbox_b.setTextColor(getResources().getColor(R.color.colorBlack));
         checkbox_c.setTextColor(getResources().getColor(R.color.colorBlack));
@@ -358,12 +371,20 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         checkbox_e.setVisibility(View.INVISIBLE);
         checkbox_f.setVisibility(View.INVISIBLE);
 
-        radio_a.setText(mViewModel.getCurrentQuestion().getA());
-        radio_b.setText(mViewModel.getCurrentQuestion().getB());
-        radio_c.setText(mViewModel.getCurrentQuestion().getC());
-        radio_d.setText(mViewModel.getCurrentQuestion().getD());
-        radio_e.setText(mViewModel.getCurrentQuestion().getE());
-        radio_f.setText(mViewModel.getCurrentQuestion().getF());
+        // get answer options and add letter prefix
+        String cbA = "A) " + mViewModel.getCurrentQuestion().getA();
+        String cbB = "B) " + mViewModel.getCurrentQuestion().getB();
+        String cbC = "C) " + mViewModel.getCurrentQuestion().getC();
+        String cbD = "D) " + mViewModel.getCurrentQuestion().getD();
+        String cbE = "E) " + mViewModel.getCurrentQuestion().getE();
+        String cbF = "F) " + mViewModel.getCurrentQuestion().getF();
+
+        radio_a.setText(cbA);
+        radio_b.setText(cbB);
+        radio_c.setText(cbC);
+        radio_d.setText(cbD);
+        radio_e.setText(cbE);
+        radio_f.setText(cbF);
 
         radio_a.setTextColor(getResources().getColor(R.color.colorBlack));
         radio_b.setTextColor(getResources().getColor(R.color.colorBlack));

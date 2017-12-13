@@ -2,6 +2,7 @@ package com.android.example.oca_808;
 
 import android.annotation.TargetApi;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -20,6 +21,7 @@ import com.android.example.oca_808.fragment.AnswerFragment;
 import com.android.example.oca_808.fragment.ExplanationFragment;
 import com.android.example.oca_808.fragment.ProgressFragment;
 import com.android.example.oca_808.fragment.QuestionFragment;
+import com.android.example.oca_808.view_model.QuestionViewModelFactory;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 import java.util.ArrayList;
@@ -50,7 +52,10 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         setContentView(R.layout.activity_question);
 
 
-        mViewModel = new QuestionsViewModel(getApplicationContext());
+        if (mViewModel == null) {
+            mViewModel = QuestionsViewModel.getQVM();
+//            mViewModel = ViewModelProviders.of(this, new QuestionViewModelFactory(getActivity().getApplication())).get(QuestionsViewModel.class);
+        }
         mShowAnswerButton = findViewById(R.id.show_answer);
         mExplanationContainer = findViewById(R.id.explanation_container);
         mQuestionContainer = findViewById(R.id.question_container);
@@ -76,7 +81,6 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
 //                    String solution = mViewModel.getCurrentQuestion().answer;
                     mWrongAnswers = mViewModel.checkAnswer();
-
 
                     // TODO store answer in Test object, create test object
 

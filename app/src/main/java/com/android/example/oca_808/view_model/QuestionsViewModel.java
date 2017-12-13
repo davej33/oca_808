@@ -1,5 +1,7 @@
 package com.android.example.oca_808.view_model;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
@@ -44,13 +46,15 @@ public class QuestionsViewModel extends ViewModel {
 //    private long mInitialTime;
 //    private MutableLiveData<Long> mElapsedTime = new MutableLiveData<>();
 
-
+    static int i = 0;
+    private static QuestionsViewModel mQuestionViewModel;
     // constructor
-    public QuestionsViewModel(Context context) {
+    public QuestionsViewModel(Application mApplication) {
+Log.i(LOG_TAG, "QVM constructor run " + ++i);
 
         // instantiate db if null
         if (mDb == null) {
-            mDb = AppDatabase.getDb(context);
+            mDb = AppDatabase.getDb(mApplication);
         }
         // TODO: determine how to select specific tests
         // get TestEntity
@@ -260,5 +264,12 @@ public class QuestionsViewModel extends ViewModel {
         } else {
             return 0;
         }
+    }
+
+    public void setQVM(QuestionsViewModel QVM) {
+        mQuestionViewModel = QVM;
+    }
+    public static QuestionsViewModel getQVM() {
+        return mQuestionViewModel;
     }
 }

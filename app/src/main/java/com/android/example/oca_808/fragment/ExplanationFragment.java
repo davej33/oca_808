@@ -1,5 +1,6 @@
 package com.android.example.oca_808.fragment;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.example.oca_808.R;
+import com.android.example.oca_808.view_model.QuestionViewModelFactory;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 /**
@@ -72,7 +74,11 @@ public class ExplanationFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_explanation, container, false);
 
-        mViewModel = new QuestionsViewModel(getContext());
+        if (mViewModel == null) {
+            mViewModel = QuestionsViewModel.getQVM();
+//            mViewModel = ViewModelProviders.of(this, new QuestionViewModelFactory(getActivity().getApplication())).get(QuestionsViewModel.class);
+        }
+
         mExplanation = view.findViewById(R.id.explanation_textview);
         mExplanation.setText(mViewModel.getCurrentQuestion().explanation);
         return view;

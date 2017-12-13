@@ -1,6 +1,7 @@
 package com.android.example.oca_808.fragment;
 
 import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.android.example.oca_808.R;
+import com.android.example.oca_808.view_model.QuestionViewModelFactory;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 import java.util.ArrayList;
@@ -64,7 +66,8 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (mViewModel == null) {
-            mViewModel = new QuestionsViewModel(getContext());
+            mViewModel = QuestionsViewModel.getQVM();
+//            mViewModel = ViewModelProviders.of(this, new QuestionViewModelFactory(getActivity().getApplication())).get(QuestionsViewModel.class);
         }
 
         if (getArguments() != null) {

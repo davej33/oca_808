@@ -1,5 +1,7 @@
 package com.android.example.oca_808;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import com.android.example.oca_808.adapter.TestHistoryAdapter;
 import com.android.example.oca_808.db.AppDatabase;
 import com.android.example.oca_808.helper.TestGenerator;
+import com.android.example.oca_808.view_model.QuestionViewModelFactory;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -76,7 +79,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.new_test_tv:
                 TestGenerator.createTestSim(this, 1);
-                new QuestionsViewModel(getApplicationContext());
+                QuestionsViewModel qvm = ViewModelProviders.of(this, new QuestionViewModelFactory(this.getApplication())).get(QuestionsViewModel.class);
+                qvm.setQVM(qvm);
                 startActivity(new Intent(getApplicationContext(), QuestionsActivity.class));
 //                mPopUpWindow.dismiss();
 

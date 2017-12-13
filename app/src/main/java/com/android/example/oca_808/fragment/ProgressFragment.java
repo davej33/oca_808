@@ -1,6 +1,7 @@
 package com.android.example.oca_808.fragment;
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.example.oca_808.R;
+import com.android.example.oca_808.view_model.QuestionViewModelFactory;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 /**
@@ -77,7 +79,11 @@ public class ProgressFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_progress, container, false);
-        mViewModel = new QuestionsViewModel(getContext());
+        if (mViewModel == null) {
+            mViewModel = QuestionsViewModel.getQVM();
+//            mViewModel = ViewModelProviders.of(this, new QuestionViewModelFactory(getActivity().getApplication())).get(QuestionsViewModel.class);
+        }
+
         int mQuestionNumber = mViewModel.getmWhereWeAt();
         int mQuestionCount = mViewModel.getQuestionCount() - 1;
 

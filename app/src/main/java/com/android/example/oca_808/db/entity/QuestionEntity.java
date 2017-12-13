@@ -1,6 +1,7 @@
 package com.android.example.oca_808.db.entity;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 /**
@@ -8,6 +9,8 @@ import android.arch.persistence.room.PrimaryKey;
  */
 
 @Entity
+//        (indices = {@Index(value = {"q_map_id"},
+//        unique = true)})
 public class QuestionEntity {
 
     @PrimaryKey (autoGenerate = true)
@@ -26,9 +29,10 @@ public class QuestionEntity {
     public int status;
     public boolean saved;
     public String explanation;
+    public int difficulty;
 
     public QuestionEntity(int qid, int objectives, int type, String question, String a, String b, String c, String d, String e, String f,
-                          String answer, String explanation){
+                          String answer, String explanation, int difficulty){
         q_map_id = qid;
         this.type = type;
         this.question = question;
@@ -43,8 +47,10 @@ public class QuestionEntity {
         status = 0;
         saved = false;
         this.explanation = explanation;
+        this.difficulty = difficulty;
     }
-    
+
+
     public QuestionEntity(){}
 
     public int getType(){
@@ -142,4 +148,9 @@ public class QuestionEntity {
     public void setSaved(boolean saved) {
         this.saved = saved;
     }
+
+    public int getDifficulty() {
+        return difficulty;
+    }
+
 }

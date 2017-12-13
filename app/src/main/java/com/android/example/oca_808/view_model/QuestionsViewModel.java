@@ -10,8 +10,11 @@ import android.util.Log;
 
 import com.android.example.oca_808.db.AppDatabase;
 import com.android.example.oca_808.db.entity.QuestionEntity;
+import com.android.example.oca_808.db.entity.TestEntity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by charlotte on 11/21/17.
@@ -31,10 +34,11 @@ public class QuestionsViewModel extends ViewModel {
     private static int mWhereWeAt;
 
     // Test vars
-    private static ArrayList<String> mUserAnswerArray;
+    private static TestEntity mCurrentTest;
+    private static List<String> mUserAnswerArray;
     private static StringBuilder mUserAnswer;
 
-
+    private static boolean mInitiated;
     // Timer vars
 //    private static final int ONE_SECOND = 1;
 //    private long mInitialTime;
@@ -48,33 +52,18 @@ public class QuestionsViewModel extends ViewModel {
         if (mDb == null) {
             mDb = AppDatabase.getDb(context);
         }
-
-        // set question list
-        setQuestionsList();
-
-        // set question number value to 1
-        if (mQuestionNumber == null) {
-            mWhereWeAt = 1;
-            mQuestionNumber = new MutableLiveData<>();
-            mQuestionNumber.setValue(mWhereWeAt); //TODO: update to accommodate resumed test
+        // TODO: determine how to select specific tests
+        // get TestEntity
+        if (!mInitiated) {
+            mInitiated = true;
+            setTestAttributes();
         }
 
-        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
         mUserAnswer = new StringBuilder();
-
-        if (mUserAnswerArray == null) {
-            mUserAnswerArray = new ArrayList<>();
-            mUserAnswerArray.add(null);
-        }
 //        startTimer();
-        int index = mQuestionsList.indexOf(mCurrentQuestion);
+//        int index = mQuestionsList.indexOf(mCurrentQuestion);
     }
 
-
-    public void setQuestionsList() {
-        mQuestionsList = (ArrayList<QuestionEntity>) mDb.questionsDao().getQuestions();
-        mQuestionsList.add(0, null);
-    }
 
     public LiveData<Integer> newQuestion() {
         return mQuestionNumber;
@@ -129,17 +118,24 @@ public class QuestionsViewModel extends ViewModel {
         return wrongAnswers;
     }
 
-    // TODO: Implement
-    public int setUserAnswer() {
+
+    public void setUserAnswer(String s) {
         // add to arrayList if unanswered, if changing previous answer then set corresponding element
         if (mUserAnswerArray.size() <= mWhereWeAt) {
-            mUserAnswerArray.add(mUserAnswer.toString());
+            if (s == null) {
+                mUserAnswerArray.add(mUserAnswer.toString());
+            } else {
+                mUserAnswerArray.add("");
+            }
             Log.w(LOG_TAG, "add " + mUserAnswer.toString() + " at index " + mWhereWeAt);
         } else {
-            mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
+            if (s == null) {
+                mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
+            } else {
+                mUserAnswerArray.set(mWhereWeAt, "");
+            }
             Log.w(LOG_TAG, "set " + mUserAnswer.toString() + " at index " + mWhereWeAt);
         }
-        return mUserAnswerArray.size();
     }
 
     public void nextQuestion() {
@@ -147,7 +143,6 @@ public class QuestionsViewModel extends ViewModel {
         mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
     }
 
-    //  TODO: implement
     public void loadPreviousQuestion() {
         mQuestionNumber.setValue(--mWhereWeAt);
         mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
@@ -162,25 +157,108 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     public String getUserAnswer() {
-        Log.w(LOG_TAG, "@@@@@@@@ user array size = " + mUserAnswerArray.size() + " WWA = " + mWhereWeAt);
+//        Log.w(LOG_TAG, "@@@@@@@@ user array size = " + mUserAnswerArray.size() + " WWA = " + mWhereWeAt);
         if (mUserAnswerArray.size() > mWhereWeAt) { // if loading a question that's already been answered
-            Log.w(LOG_TAG, "@@@@@@@@ existing user answer = " + mUserAnswerArray.get(mWhereWeAt));
+            Log.w(LOG_TAG, "getUserAnswer return: " + mUserAnswerArray.get(mWhereWeAt));
             return mUserAnswerArray.get(mWhereWeAt); // return the answer
         } else {
-            Log.w(LOG_TAG, "@@@@@@@@ new user answer = " + mUserAnswer.toString());
+            Log.w(LOG_TAG, "getUserAnswer return: " + mUserAnswer.toString());
             return mUserAnswer.toString(); // otherwise, return the current user answer
         }
     }
 
     public void collectUserAnswer(char userAnswer, boolean checkState) {
+        Log.i(LOG_TAG, "1. VM uAnswersArray: " + mUserAnswerArray.toString());
         if (mCurrentQuestion.type == 1) {
             if (mUserAnswer.length() == 1) mUserAnswer.deleteCharAt(0);
             mUserAnswer.append(userAnswer);
         } else if (mCurrentQuestion.type == 0 && checkState) {
             if (!mUserAnswer.toString().contains(String.valueOf(userAnswer)))
                 mUserAnswer.append(userAnswer);
+            Log.i(LOG_TAG, "added to mUserAnswer: " + mUserAnswer);
         } else if (mCurrentQuestion.type == 0) {
             mUserAnswer.deleteCharAt(mUserAnswer.indexOf(String.valueOf(userAnswer)));
+            Log.i(LOG_TAG, "removed from mUserAnswer: " + mUserAnswer);
+        }
+        setUserAnswer(null);
+        Log.i(LOG_TAG, "2. VM uAnswersArray: " + mUserAnswerArray.toString());
+    }
+
+    // ---------------------------------- get and set test --------------------
+    private void setTestAttributes() {
+        // get TestEntity
+        mCurrentTest = mDb.testsDao().fetchTest(1);
+
+        // get questions
+        mQuestionsList = setQuestionsList();
+
+        // set starting point
+        if (mQuestionNumber == null) {
+            mWhereWeAt = mCurrentTest.resumeQuestionNum;
+            Log.i(LOG_TAG, "WWA: " + mWhereWeAt);
+            mQuestionNumber = new MutableLiveData<>();
+            mQuestionNumber.setValue(mWhereWeAt);
+        }
+        if (mCurrentQuestion == null) {
+            mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
+        }
+
+        // set answer list
+        StringBuilder sb = new StringBuilder(mCurrentTest.answerSet);
+        sb.deleteCharAt(sb.length() - 1).deleteCharAt(0);
+        mUserAnswerArray = Arrays.asList((sb.toString()).split(", "));
+        mUserAnswerArray = new ArrayList<>(mUserAnswerArray);
+        if (!mUserAnswerArray.get(0).equals("null")) mUserAnswerArray.add(0, null);
+        Log.w(LOG_TAG, "user answer array init: " + mUserAnswerArray.toString());
+    }
+
+    public ArrayList<QuestionEntity> setQuestionsList() {
+
+        // get question list from the TestEntity
+        StringBuilder questionsStringBuilder = new StringBuilder(mCurrentTest.questionSet);
+//        Log.w(LOG_TAG, "questionStringBuilder = "  + questionsStringBuilder.toString());
+        questionsStringBuilder.deleteCharAt(questionsStringBuilder.length() - 1).deleteCharAt(0);
+        String questionsString = questionsStringBuilder.toString();
+//        Log.w(LOG_TAG, "questionString = "  + questionsString);
+
+        // convert string to list of question IDs
+        List<String> qIdListAsStrings = Arrays.asList(questionsString.split(", "));
+//        Log.w(LOG_TAG, "questionStringList = "  + qIdListAsStrings.toString());
+
+
+//        Log.w(LOG_TAG, "IntList count: " + mQuestionsList.size());
+        mQuestionsList = (ArrayList<QuestionEntity>) mDb.questionsDao().getQuestions(qIdListAsStrings);
+        Log.i(LOG_TAG, "questionList count: " + mQuestionsList.size());
+        mQuestionsList.add(0, null);
+        Log.i(LOG_TAG, "questionList count with null added: " + mQuestionsList.size());
+        return mQuestionsList;
+    }
+
+    public void saveDataToDb() {
+        mCurrentTest.setAnswerSet(mUserAnswerArray.toString());
+        mCurrentTest.setResumeQuestionNum(mWhereWeAt);
+        mCurrentTest.setProgress(calculateProgress());
+
+        int updateCheck = mDb.testsDao().updateTestResults(mCurrentTest);
+//        Log.w(LOG_TAG, "^^^^^^^^^ update check: " + updateCheck);
+    }
+
+    private int calculateProgress() {
+        if (mUserAnswerArray.size() > 0) {
+            int questionsAnswered = 0;
+            for (String s : mUserAnswerArray) {
+                if (s != null && (!(s.equals("") || s.equals("null")))) {
+                    questionsAnswered++;
+                }
+            }
+            int testLength = mQuestionsList.size() - 1;
+            int progress = (100 * questionsAnswered) / testLength;
+
+//            Log.w(LOG_TAG, "Progress - answered" + questionsAnswered + " of " + (mQuestionsList.size() - 1) + " equaling " + progress + "% complete");
+
+            return progress;
+        } else {
+            return 0;
         }
     }
 }

@@ -25,12 +25,8 @@ import com.android.example.oca_808.view_model.QuestionsViewModel;
  */
 public class ProgressFragment extends Fragment {
 
-    private static int mQuestionNumber;
-    private static int mQuestionCount;
     private QuestionsViewModel mViewModel;
     private TextView mProgressQuestionNumberDisplay;
-    private TextView mQuestionCountDisplay;
-    private TextView mPreviousButton;
 
     private ProgressBar mBar;
     // TODO: Rename parameter arguments, choose names that match
@@ -82,18 +78,18 @@ public class ProgressFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_progress, container, false);
         mViewModel = new QuestionsViewModel(getContext());
-        mQuestionNumber = mViewModel.getmWhereWeAt();
-        mQuestionCount = mViewModel.getQuestionCount();
+        int mQuestionNumber = mViewModel.getmWhereWeAt();
+        int mQuestionCount = mViewModel.getQuestionCount() - 1;
 
 //        mBar = view.findViewById(R.id.progressBar);
 //        mBar.setMax(mQuestionCount);
 //        mBar.setProgress(mQuestionNumber);
 
         mProgressQuestionNumberDisplay = view.findViewById(R.id.question_number_prog);
-        mQuestionCountDisplay = view.findViewById(R.id.question_count_prog);
+        TextView mQuestionCountDisplay = view.findViewById(R.id.question_count_prog);
         mProgressQuestionNumberDisplay.setText(String.valueOf(mQuestionNumber));
         mQuestionCountDisplay.setText(String.valueOf(mQuestionCount));
-        mPreviousButton = view.findViewById(R.id.previous_question_view);
+        TextView mPreviousButton = view.findViewById(R.id.previous_question_view);
         if(mQuestionNumber == 1) mPreviousButton.setVisibility(View.GONE);
         mPreviousButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +109,7 @@ public class ProgressFragment extends Fragment {
             @Override
             public void onChanged(@Nullable Integer qNum) {
 //                mBar.setProgress(qNum);
+
                 mProgressQuestionNumberDisplay.setText(String.valueOf(qNum));
             }
         };

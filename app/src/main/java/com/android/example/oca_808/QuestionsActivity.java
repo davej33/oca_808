@@ -72,16 +72,11 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             mFAB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mViewModel.setUserAnswer();
+                    if(mViewModel.getUserAnswer().equals(""))mViewModel.setUserAnswer("");
 
 //                    String solution = mViewModel.getCurrentQuestion().answer;
                     mWrongAnswers = mViewModel.checkAnswer();
-                    if (mWrongAnswers.size() == 0) {
 
-                    } else {
-                        Log.w(LOG_TAG, "Wrong");
-//                        Toast.makeText(QuestionsActivity.this, "Wrong. \nuser answer: " + mUserAnswer + "\nsolution: " + solution, Toast.LENGTH_LONG).show();
-                    }
 
                     // TODO store answer in Test object, create test object
 
@@ -95,8 +90,6 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         }
 
         displayQuestion();
-
-//        getSupportFragmentManager().beginTransaction().replace(R.id.progress_container, ProgressFragment.newInstance(null, null)).commit();
 
         subscribe();
 
@@ -112,9 +105,8 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         // set new views
         getSupportFragmentManager().beginTransaction().replace(R.id.question_container, QuestionFragment.newInstance(mQuestionNum, null)).commit();
         getSupportFragmentManager().beginTransaction().replace(R.id.answer_container, AnswerFragment.newInstance(null, null)).commit();
-        if (mQuestionNum == 1 || mQuestionNum == 2) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.progress_container, ProgressFragment.newInstance(null, null)).commit();
-        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.progress_container, ProgressFragment.newInstance(null, null)).commit();
+
 
         mFAB.setImageResource(android.R.drawable.ic_media_next);
     }

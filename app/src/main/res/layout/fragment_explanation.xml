@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_explanation"
     tools:context="com.android.example.oca_808.fragment.ExplanationFragment">
 
     <TextView
@@ -10,6 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="8dp"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical"
+        android:text="explanation"
          />
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:background="@color/colorPrimary"
+        android:layout_gravity="bottom"/>
 </FrameLayout>

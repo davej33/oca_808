@@ -85,4 +85,9 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="study_mode">Study Mode</string>
+    <string name="timer">Timer</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="question_history">Q Performance</string>
+    <string name="questions">Questions</string>
 </resources>

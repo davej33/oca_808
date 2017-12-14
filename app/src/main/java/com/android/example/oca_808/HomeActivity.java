@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.NumberPicker;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -38,6 +39,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private ConstraintLayout mMainLayout;
     private LayoutInflater mLayoutInflater;
     private TestHistoryAdapter mTestHistoryAdapter;
+    private QuestionsViewModel mQuestionViewModel;
 
 
     @Override
@@ -45,16 +47,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_2);
 
+        mQuestionViewModel = ViewModelProviders.of(this, new QuestionViewModelFactory(this.getApplication())).get(QuestionsViewModel.class);
+        mQuestionViewModel.setQVM(mQuestionViewModel);
+
         // instantiate objects
-        mDb = AppDatabase.getDb(this);
+        mDb = mQuestionViewModel.getDb();
         mMainLayout = findViewById(R.id.home_activity);
         mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         mContext = this;
 
         setupSharedPref();
-
-        QuestionsViewModel qvm = ViewModelProviders.of(this, new QuestionViewModelFactory(this.getApplication())).get(QuestionsViewModel.class);
-        qvm.setQVM(qvm);
 
         TestGenerator.addQs(mContext); // TODO: only run once
         ImageButton testButton = findViewById(R.id.test_button);
@@ -91,19 +93,25 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void inflateTestPopUp(View v) {
 
         // inflate layout
-        mPopUpView = mLayoutInflater.inflate(R.layout.popup_test, (ViewGroup) v.getRootView(), false);
-        Handler mainHandler = new Handler(getApplicationContext().getMainLooper());
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                // set recycler view
-                RecyclerView mRecyclerView = mPopUpView.findViewById(R.id.rv_incomplete_tests);
-                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-                mRecyclerView.setLayoutManager(layoutManager);
-                mRecyclerView.setAdapter(mTestHistoryAdapter);
-            }
-        };
-        mainHandler.post(r);
+        mPopUpView = mLayoutInflater.inflate(R.layout.popup_test_2, (ViewGroup) v.getRootView(), false);
+        NumberPicker picker = mPopUpView.findViewById(R.id.question_count_picker);
+        String[] data = new String[]{"10", "25", "50", "70"};
+        picker.setMinValue(0);
+        picker.setMaxValue(data.length-1);
+        picker.setDisplayedValues(data);
+        picker.setWrapSelectorWheel(false);
+//        Handler mainHandler = new Handler(getApplicationContext().getMainLooper());
+//        Runnable r = new Runnable() {
+//            @Override
+//            public void run() {
+//                // set recycler view
+//                RecyclerView mRecyclerView = mPopUpView.findViewById(R.id.rv_incomplete_tests);
+//                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+//                mRecyclerView.setLayoutManager(layoutManager);
+//                mRecyclerView.setAdapter(mTestHistoryAdapter);
+//            }
+//        };
+//        mainHandler.post(r);
 
 
         // Initialize new instance of popup window
@@ -139,7 +147,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
         p.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        p.dimAmount = 0.3f;
+        p.dimAmount = 0.7f;
         wm.updateViewLayout(container, p);
     }
 

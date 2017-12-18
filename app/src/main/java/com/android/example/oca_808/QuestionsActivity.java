@@ -3,6 +3,7 @@ package com.android.example.oca_808;
 import android.annotation.TargetApi;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -112,7 +113,14 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         getSupportFragmentManager().beginTransaction().replace(R.id.progress_container, ProgressFragment.newInstance(null, null)).commit();
 
 
-        mFAB.setImageResource(android.R.drawable.ic_media_next);
+        // set fab state based on user answer
+        if (mViewModel.getUserAnswer() == null || mViewModel.getUserAnswer().equals("")) {
+            mFAB.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGray)));
+            mFAB.setImageResource(android.R.drawable.ic_media_next);
+        } else {
+            mFAB.setImageResource(android.R.drawable.checkbox_on_background);
+            mFAB.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
+        }
     }
 
 

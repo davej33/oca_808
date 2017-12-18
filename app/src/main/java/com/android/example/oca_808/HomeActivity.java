@@ -63,7 +63,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_2);
+        setContentView(R.layout.activity_home_3);
 
         mQuestionViewModel = ViewModelProviders.of(this, new QuestionViewModelFactory(this.getApplication())).get(QuestionsViewModel.class);
         mQuestionViewModel.setQVM(mQuestionViewModel);

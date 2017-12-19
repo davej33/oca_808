@@ -45,7 +45,7 @@
             android:layout_height="48dp"
             android:layout_gravity="end"
             android:layout_margin="8dp"
-            android:background="@drawable/switch_thumb_image"
+            android:background="@drawable/toggle_show_answer"
             android:elevation="16dp"
             android:textOff=""
             android:textOn=""

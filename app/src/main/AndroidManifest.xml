@@ -19,11 +19,13 @@
         <activity android:name=".QuestionsActivity" />
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <activity android:name=".TestReviewActivity"></activity>
     </application>
 
 </manifest>

@@ -7,7 +7,6 @@
     <string name="test">Test</string>
 
 
-
     <!-- Shared Preferences -->
     <string name="sp_test_num_key">testNum</string>
     <string name="sp_test_num_default">000</string>

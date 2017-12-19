@@ -1,25 +1,20 @@
 package com.android.example.oca_808;
 
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
@@ -63,7 +58,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_3);
+        setContentView(R.layout.activity_home_8bit);
 
         mQuestionViewModel = ViewModelProviders.of(this, new QuestionViewModelFactory(this.getApplication())).get(QuestionsViewModel.class);
         mQuestionViewModel.setQVM(mQuestionViewModel);
@@ -166,7 +161,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void inflateTestPopUp(View v) {
 
         // inflate layout
-        mPopUpView = mLayoutInflater.inflate(R.layout.popup_test_2, (ViewGroup) v.getRootView(), false);
+        mPopUpView = mLayoutInflater.inflate(R.layout.popup_test_8bit, (ViewGroup) v.getRootView(), false);
 
         // if practice test, show options else hide options
         if (mTestType == PRACTICE_TEST) {

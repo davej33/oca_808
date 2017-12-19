@@ -8,18 +8,6 @@
     android:layout_margin="40dp"
     >
 
-    <!--<ImageButton-->
-    <!--android:id="@+id/new_test_tv"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginEnd="24dp"-->
-    <!--android:layout_marginStart="24dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:background="@drawable/background_buttons_home"-->
-    <!---->
-    <!--/>-->
-
-
     <Button
         android:id="@+id/resume_tv"
         android:layout_width="300dp"
@@ -68,24 +56,6 @@
 
     <include
         android:id="@+id/practice_test_view_options"
-
         layout="@layout/practice_test_popup_preferences"
         />
-
-    <!--<android.support.v7.widget.RecyclerView-->
-    <!--android:id="@+id/rv_incomplete_tests"-->
-    <!--android:layout_width="320dp"-->
-    <!--android:layout_height="100dp"-->
-    <!--android:layout_marginBottom="8dp"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:layout_marginStart="8dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:background="#fff"-->
-    <!--android:maxHeight="100dp"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/resume_tv" />-->
-
-
 </android.support.constraint.ConstraintLayout>

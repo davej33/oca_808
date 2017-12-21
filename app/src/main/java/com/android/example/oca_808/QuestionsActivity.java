@@ -3,6 +3,7 @@ package com.android.example.oca_808;
 import android.annotation.TargetApi;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -13,6 +14,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -39,7 +43,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
     private Integer mQuestionNum = 0;
     private static QuestionsViewModel mViewModel;
     private FloatingActionButton mFAB;
-    private ToggleButton mShowAnswerButton;
+    private ToggleButton mShowAnswerButton, mMarkButton;
     private FrameLayout mExplanationContainer, mQuestionContainer, mAnswerContainer, mQuestionForSolutionContainer;
     private static final String EXPLANATION_DISPLAY_TYPE = "explanation";
     private ArrayList<String> mWrongAnswers;
@@ -62,6 +66,13 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         mAnswerContainer = findViewById(R.id.answer_container);
         mQuestionForSolutionContainer = findViewById(R.id.question_solution_container);
 
+        mMarkButton = findViewById(R.id.mark_button);
+        mMarkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewModel.setmMarkedQuestion(mMarkButton.isChecked());
+            }
+        });
 
         Toast.makeText(this, mViewModel.getTestTitle(), Toast.LENGTH_SHORT).show();
         // Hide the status bar.
@@ -170,5 +181,20 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
     @Override
     public void loadPreviousQuestion() {
         mViewModel.loadPreviousQuestion();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.test_pref_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.end_session:
+                startActivity(new Intent(this, TestReviewActivity.class));
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

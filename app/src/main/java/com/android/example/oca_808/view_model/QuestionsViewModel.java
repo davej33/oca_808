@@ -39,6 +39,7 @@ public class QuestionsViewModel extends ViewModel {
     private static TestEntity mCurrentTest;
     private static List<String> mUserAnswerArray;
     private static StringBuilder mUserAnswer;
+    private static List<String> mMarkedQuestions;
 
     private static boolean mInitiated;
     // Timer vars
@@ -157,7 +158,7 @@ public class QuestionsViewModel extends ViewModel {
             Log.w(LOG_TAG, "Question answered. getUserAnswer return = " + mUserAnswerArray.get(mWhereWeAt));
             return mUserAnswerArray.get(mWhereWeAt); // return the answer
         } else {
-            Log.w(LOG_TAG, "getUserAnswer = Unanswered" );
+            Log.w(LOG_TAG, "getUserAnswer = Unanswered");
             mUserAnswer.delete(0, mUserAnswer.length());
             return ""; // otherwise, return the current user answer
         }
@@ -181,7 +182,23 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     // ---------------------------------- get and set test --------------------
+    public void getTest(int testId) {
+
+//        clearVars();
+
+        // get TestEntity
+        mCurrentTest = mDb.testsDao().fetchTest(testId);
+        Log.i(LOG_TAG, "current test title: " + mCurrentTest.title);
+
+        if (!mInitiated) {
+            mInitiated = true;
+            setTestAttributes();
+        }
+
+    }
+
     private void setTestAttributes() {
+
         // get questions
         mQuestionsList = setQuestionsList();
 
@@ -200,32 +217,54 @@ public class QuestionsViewModel extends ViewModel {
             mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
         }
 
-        // set answer list
+        // TODO: should only do this if resuming test
+        // convert answer list to StringBuilder to remove brackets then to List
         StringBuilder sb = new StringBuilder(mCurrentTest.answerSet);
         sb.deleteCharAt(sb.length() - 1).deleteCharAt(0);
-        mUserAnswerArray = Arrays.asList((sb.toString()).split(", "));
-        mUserAnswerArray = new ArrayList<>(mUserAnswerArray);
+        if (sb.length() < 1) {
+            mUserAnswerArray = new ArrayList<>();
+            for (int i = 0; i < mCurrentTest.questionCount; i++) {
+                mUserAnswerArray.add("");
+            }
+        } else {
+            mUserAnswerArray = new ArrayList<>(Arrays.asList((sb.toString()).split(", ")));
+        }
+
+        // add null at index 0 so question/index numbers align
         if (!mUserAnswerArray.get(0).equals("null")) mUserAnswerArray.add(0, null);
         Log.w(LOG_TAG, "user answer array init: " + mUserAnswerArray.toString());
+
+        // convert answer list to StringBuilder to remove brackets then to List
+        StringBuilder sb2 = new StringBuilder(mCurrentTest.mMarkedQuestionSet);
+        sb2.deleteCharAt(sb2.length() - 1).deleteCharAt(0);
+        if (sb2.length() < 1) {
+            mMarkedQuestions = new ArrayList<>();
+            for (int i = 0; i < mCurrentTest.questionCount; i++) {
+                mMarkedQuestions.add("");
+            }
+        } else {
+            mMarkedQuestions = new ArrayList<>(Arrays.asList((sb2.toString()).split(", ")));
+        }
+        Log.i(LOG_TAG, "marked q array length: " + mMarkedQuestions.size());
+
+        // add null at index 0 so question/index numbers align
+        if (!mMarkedQuestions.get(0).equals("null")) mMarkedQuestions.add(0, null);
+        Log.w(LOG_TAG, "mUserAnswer array init: " + mMarkedQuestions.toString());
     }
 
     public ArrayList<QuestionEntity> setQuestionsList() {
 
-        // get question list from the TestEntity
+        // get question list from the TestEntity, remove brackets, then convert to List
         StringBuilder questionsStringBuilder = new StringBuilder(mCurrentTest.questionSet);
-//        Log.w(LOG_TAG, "questionStringBuilder = "  + questionsStringBuilder.toString());
         questionsStringBuilder.deleteCharAt(questionsStringBuilder.length() - 1).deleteCharAt(0);
         String questionsString = questionsStringBuilder.toString();
-//        Log.w(LOG_TAG, "questionString = "  + questionsString);
-
-        // convert string to list of question IDs
         List<String> qIdListAsStrings = Arrays.asList(questionsString.split(", "));
-//        Log.w(LOG_TAG, "questionStringList = "  + qIdListAsStrings.toString());
 
-
-//        Log.w(LOG_TAG, "IntList count: " + mQuestionsList.size());
+        // fetch questions from db and store
         mQuestionsList = (ArrayList<QuestionEntity>) mDb.questionsDao().getQuestions(qIdListAsStrings);
         Log.i(LOG_TAG, "questionList count: " + mQuestionsList.size());
+
+        // add null at index 0 so question number matches indexed position
         mQuestionsList.add(0, null);
         Log.i(LOG_TAG, "questionList count with null added: " + mQuestionsList.size());
         return mQuestionsList;
@@ -267,28 +306,6 @@ public class QuestionsViewModel extends ViewModel {
         return mQuestionViewModel;
     }
 
-    public void getTest(int testId) {
-
-//        clearVars();
-
-        // get TestEntity
-        mCurrentTest = mDb.testsDao().fetchTest(testId);
-        Log.i(LOG_TAG, "current test title: " + mCurrentTest.title);
-
-        if (!mInitiated) {
-            mInitiated = true;
-            setTestAttributes();
-        }
-
-    }
-
-//    private void clearVars() {
-//        mCurrentTest = null;
-//        mQuestionsList = null;
-//        mCurrentQuestion = null;
-//        mUserAnswerArray = null;
-//        mUserAnswer = null;
-//    }
 
     public AppDatabase getDb() {
         return mDb;
@@ -297,4 +314,32 @@ public class QuestionsViewModel extends ViewModel {
     public String getTestTitle() {
         return mCurrentTest.title;
     }
+
+    // get and set marked questions
+    public void setmMarkedQuestion(boolean b) {
+        if (b) {
+            mMarkedQuestions.set(mWhereWeAt, "1");
+        } else {
+            mMarkedQuestions.set(mWhereWeAt, "0");
+        }
+        Log.i(LOG_TAG, "marked q array length: " + mMarkedQuestions.size());
+        Log.i(LOG_TAG, "marked question state at " + mWhereWeAt + " is " + mMarkedQuestions.get(mWhereWeAt));
+    }
+
+    public String getMarkedState(int i) {
+        return mMarkedQuestions.get(i);
+    }
+
+    public String getAnswerSubmitted(int i) {
+        return mUserAnswerArray.get(i);
+    }
 }
+
+
+//    private void clearVars() {
+//        mCurrentTest = null;
+//        mQuestionsList = null;
+//        mCurrentQuestion = null;
+//        mUserAnswerArray = null;
+//        mUserAnswer = null;
+//    }

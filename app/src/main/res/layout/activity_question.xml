@@ -40,17 +40,34 @@
         app:layout_constraintTop_toBottomOf="@+id/progress_container">
 
         <ToggleButton
+            android:id="@+id/mark_button"
+            android:layout_width="26dp"
+            android:layout_height="30dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/toggle_bookmark"
+            android:checked="true"
+            android:textOff=""
+            android:textOn=""
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginRight="8dp" />
+
+        <ToggleButton
             android:id="@+id/show_answer"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_gravity="end"
+            android:layout_gravity="bottom|end"
             android:layout_margin="8dp"
-            android:background="@drawable/toggle_show_answer"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/show_answer_background"
+            android:checked="true"
             android:elevation="16dp"
             android:textOff=""
             android:textOn=""
-            tools:layout_editor_absoluteX="320dp"
-            tools:layout_editor_absoluteY="102dp" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:layout_editor_absoluteX="320dp" />
 
     </FrameLayout>
 
@@ -86,7 +103,10 @@
         app:layout_constraintBottom_toTopOf="@+id/answer_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/question_solution_container" />
+        app:layout_constraintTop_toBottomOf="@+id/question_solution_container" >
+
+
+    </FrameLayout>
 
 
 </android.support.constraint.ConstraintLayout>

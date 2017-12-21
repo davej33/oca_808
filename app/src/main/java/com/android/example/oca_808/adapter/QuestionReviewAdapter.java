@@ -18,7 +18,7 @@ import com.android.example.oca_808.view_model.QuestionsViewModel;
 public class QuestionReviewAdapter extends RecyclerView.Adapter<QuestionReviewAdapter.QuestionViewHolder>  {
 
     private Context mContext;
-    private QuestionsViewModel mViewModel;
+    private static QuestionsViewModel mViewModel;
 
     public QuestionReviewAdapter(Context context){
         mContext = context;
@@ -32,7 +32,29 @@ public class QuestionReviewAdapter extends RecyclerView.Adapter<QuestionReviewAd
 
     @Override
     public void onBindViewHolder(QuestionViewHolder holder, int position) {
+        // get question number
+        int qNum = holder.getAdapterPosition() + 1;
+        String qNumString = "Question " + qNum;
 
+        // get marked state and answered state
+        String marked = mViewModel.getMarkedState(qNum);
+        String answer = mViewModel.getAnswerSubmitted(qNum);
+
+        // determine values for states
+        boolean isAnswered = true;
+        if(answer == null || answer.equals("")){
+            isAnswered = false;
+        }
+
+        boolean isMarked = false;
+        if(marked.equals("1")){
+            isMarked = true;
+        }
+
+        // set states
+        holder.questionNum.setText(qNumString);
+        holder.answered.setChecked(isAnswered);
+        holder.marked.setChecked(isMarked);
     }
 
     @Override

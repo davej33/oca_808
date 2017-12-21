@@ -161,7 +161,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void inflateTestPopUp(View v) {
 
         // inflate layout
-        mPopUpView = mLayoutInflater.inflate(R.layout.popup_test_8bit, (ViewGroup) v.getRootView(), false);
+        mPopUpView = mLayoutInflater.inflate(R.layout.popup_test_1_1, (ViewGroup) v.getRootView(), false);
 
         // if practice test, show options else hide options
         if (mTestType == PRACTICE_TEST) {

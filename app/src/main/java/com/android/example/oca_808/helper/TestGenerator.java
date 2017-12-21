@@ -24,6 +24,9 @@ import java.util.List;
 public final class TestGenerator {
 
     private static final String LOG_TAG = TestGenerator.class.getSimpleName();
+    private static final int DIFF_EASY = 1;
+    private static final int DIFF_MED = 2;
+    private static final int DIFF_HARD = 3;
     private static long mStartTime;
     private static AppDatabase mDb;
     private static List<QuestionEntity> mQuestions;
@@ -31,23 +34,21 @@ public final class TestGenerator {
     private static final String PRACTICE_NUM_TEXT = "Pract_";
     private static int mTestNum;
 
-    public static void createTestSim(Context context, int i) {
+    public static void createTestSim(Context context, int testType) {
         // get questions
-        String testTitle = createTestTitle(context, i);
-        Log.w(LOG_TAG, "testTitle: " + testTitle);
+        String testTitle = createTestTitle(context, testType);
+//        Log.w(LOG_TAG, "testTitle: " + testTitle);
 
         List<Integer> questionList = mDb.questionsDao().getQuestionIds();
         String questionListString = questionList.toString();
 
         // create list for answers
-        List<String> answerArrayList = new ArrayList<>(questionList.size());
-//        answerArrayList.add("b");
-//        answerArrayList.add("def");
-        String answerListString = answerArrayList.toString();
+        String answerArrayList = new ArrayList<>(questionList.size()).toString();
+
 
         // create list for storing time elapsed on each question
-        List<String> elapsedQuestionTimeList = new ArrayList<>(questionList.size());
-        String elapsedQuestionTimeString = elapsedQuestionTimeList.toString();
+        String elapsedQuestionTimeList = new ArrayList<>(questionList.size()).toString();
+        Log.i(LOG_TAG, " ********* elapsedTime: " + elapsedQuestionTimeList.length());
 
         // get local time in milliseconds
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -59,9 +60,10 @@ public final class TestGenerator {
         }
 
         // create new test
-        TestEntity newTest = new TestEntity(1, testTitle, questionListString, answerListString, elapsedQuestionTimeString, false, 0, mStartTime, 0, 0, 0, 1, questionList.size(), 1);
+        TestEntity newTest = new TestEntity(testType, testTitle, questionListString, answerArrayList,
+                elapsedQuestionTimeList, false, 0, mStartTime, 0, 0, 0, 1, questionList.size(), 1);//, markedQuestionList
         long testInsertCheck = mDb.testsDao().insertNewTest(newTest);
-        Log.i(LOG_TAG,"@@@@@@ mTestId: " + mTestNum);
+//        Log.i(LOG_TAG,"@@@@@@ mTestId: " + mTestNum);
         QuestionsViewModel.getQVM().getTest(mTestNum);
 //        Log.i(LOG_TAG, "test to string: " + newTest.toString());
 //        Log.i(LOG_TAG, "test insert check: " + testInsertCheck);
@@ -73,7 +75,7 @@ public final class TestGenerator {
 //        Log.w(LOG_TAG, "sp mTestNum: " + mTestNum);
         SharedPreferences.Editor editor = shPref.edit();
         editor.putInt(context.getResources().getString(R.string.sp_test_num_key), ++mTestNum);
-        Log.i(LOG_TAG,"@@@@@@ createtitle mTestId: " + mTestNum);
+//        Log.i(LOG_TAG,"@@@@@@ createtitle mTestId: " + mTestNum);
         editor.apply();
         String title = "";
         if (type == 1) {
@@ -88,18 +90,37 @@ public final class TestGenerator {
         mDb = AppDatabase.getDb(context);
         if (mQuestions == null) {
             mQuestions = new ArrayList<>();
-            mQuestions.add(new QuestionEntity(1101, 11, 1, "1: What is \n2: Java? 1101", "A good cup of jo", "small mammal", "large lizard", "programming language", "no idea", "a fish", "d", "Just cuz", 2));
-            mQuestions.add(new QuestionEntity(4101, 41, 0, "Given the following array, which statements evaluate to &?\n\nchar[] foo = {‘X’,’1’,’Y’,’2’,’Z,’&’};", "foo[6];", "foo[5];",
-                    "foo[foo.length()];", "foo[foo.length()-1];", "Does not compile", "None of the above", "bd", "Key Points:\n - Array indices begin at 0\n - Array length begins at 1\n\n     index =   0   1   2   3   4  5\n " +
-                    "char[] foo = {‘X’,’A’,’Y’,’B’,’Z,’&’};\n      length =   1   2   3   4   5  6\n\nfoo[6] tries to access index 6 which doesn’t exist so it will throw an ArrayIndexOutOfBoundsException\n " +
+
+            // ---------------- Java Basics 9900 -----------------------
+            mQuestions.add(new QuestionEntity(9901, 0, "Select all valid identifiers.", "$xYz", "3foo", "_bar", "true", "True", "foo3", "acef",
+                            "Java identifiers:\nA) Can start with and contain ‘$’ or ‘_’\nB) Can contain numbers, but not at the beginning\nC) Can start with and contain ‘$’ or ‘_’\nD) Can not "
+                            + "use a keyword as an identifier\nE) Case matters. ‘True’ is valid, ‘true’ is not\nF) Can contain numbers, not at the beginning\n", DIFF_EASY));
+
+
+            mQuestions.add(new QuestionEntity(9906, 0, "Select all the valid identifiers.", "public", "foo.bar", "keyword", "Valid!", "pump_it_up", "No valid options", "ce",
+                            "A) Can not use a reserved word\nB) Can not contain ‘.’; ‘$’ and ‘_’ only valid special characters\nC) ’keyword’ is valid; not a reserved keyword\nD) Can not " +
+                            "contain ‘!’; ‘$’ and ‘_’ only valid special characters\nE) Case matters; ‘Public’ is valid, ‘public’ is not\nF) Two valid identifiers", DIFF_MED));
+
+
+            // ---------------- Arrays 4100 -----------------------
+            mQuestions.add(new QuestionEntity(4106, 0, "Given the following array, which statements evaluate to '&'?\n\nchar[] foo = {‘X’,’1’,’Y’,’2’,’Z,’&’};", "foo[6];", "foo[5];",
+                    "foo[foo.length()];", "foo[foo.length()-1];", "Does not compile", "None of the above", "bd", "Key Points:\n - Array indices begin at 0\n - Array length begins at 1\n\n       index =   0   1   2   3   4  5\n " +
+                    "char[] foo = {‘X’,’A’,’Y’,’B’,’Z,’&’};\n       length =   1   2   3   4   5  6\n\nfoo[6] tries to access index 6 which doesn’t exist so it will throw an ArrayIndexOutOfBoundsException\n " +
                     "foo[5] is correct\nfoo[foo.length()]  tries to access index 6 which doesn’t exist so it will throw an ArrayIndexOutOfBoundsException.\nfoo[foo.length() - 1] is correct\nDoes not compile is incorrect\n" +
-                    "'None' is incorrect because two answers evaluate to &", 3));
-            mQuestions.add(new QuestionEntity(1102, 11, 1, "1: What is \n2: Java?", "A good cup of jo", "small mammal", "large lizard", "programming language", "no idea", "a fish", "d", "Just cuz", 1));
-            mQuestions.add(new QuestionEntity(4102, 41, 0, "Given the following array, which statements evaluate to &?\n\nchar[] foo = {‘X’,’1’,’Y’,’2’,’Z,’&’};", "foo[6];", "foo[5];",
-                    "foo[foo.length()];", "foo[foo.length()-1];", "Does not compile", "None of the above", "bd", "Key Points:\n - Array indices begin at 0\n - Array length begins at 1\n\n     index =   0   1   2   3   4  5\n " +
-                    "char[] foo = {‘X’,’A’,’Y’,’B’,’Z,’&’};\n      length =   1   2   3   4   5  6\n\nfoo[6] tries to access index 6 which doesn’t exist so it will throw an ArrayIndexOutOfBoundsException\n " +
-                    "foo[5] is correct\nfoo[foo.length()]  tries to access index 6 which doesn’t exist so it will throw an ArrayIndexOutOfBoundsException.\nfoo[foo.length() - 1] is correct\nDoes not compile is incorrect\n" +
-                    "'None' is incorrect because two answers evaluate to &", 3));
+                    "'None' is incorrect because two answers evaluate to &", DIFF_MED));
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             long[] x = TestGenerator.mDb.questionsDao().insertQuestions(mQuestions);
             Log.w(LOG_TAG, "insert count: " + x.length);

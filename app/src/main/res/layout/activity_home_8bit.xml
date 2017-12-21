@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:id="@+id/home_activity"
+    android:theme="@style/NintendoFont"
     android:layout_height="match_parent">
 
     <Button
@@ -12,7 +13,6 @@
         android:layout_height="166dp"
         android:background="@color/colorPrimaryVeryLight"
         android:text="@string/train"
-        android:fontFamily="@font/press_start_2p"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/stats_button"
         app:layout_constraintStart_toStartOf="parent" />
@@ -26,7 +26,6 @@
         app:layout_constraintBottom_toTopOf="@+id/train_button"
         app:layout_constraintEnd_toStartOf="@+id/practice_button"
         app:layout_constraintHorizontal_bias="0.5"
-        android:fontFamily="@font/press_start_2p"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_chainStyle="spread_inside" />
@@ -37,7 +36,6 @@
         android:layout_height="0dp"
         android:background="@color/colorPrimaryLittleLight"
         android:text="@string/practice_test"
-        android:fontFamily="@font/press_start_2p"
         app:layout_constraintBottom_toBottomOf="@+id/test_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/test_button"
@@ -47,7 +45,6 @@
         android:id="@+id/stats_button"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:fontFamily="@font/press_start_2p"
         android:background="@color/colorPrimaryLight"
         android:text="Progress"
         app:layout_constraintBottom_toBottomOf="@+id/train_button"
@@ -62,7 +59,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/space_background"
-        android:fontFamily="@font/press_start_2p"
         android:gravity="center"
         android:text="OCA PREP"
         android:textColor="@color/colorPrimary"
@@ -78,7 +74,9 @@
         android:id="@+id/robot_image"
         android:layout_width="82dp"
         android:layout_height="64dp"
-        app:srcCompat="@mipmap/ic_robot"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="16dp" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/ic_robot" />
 </android.support.constraint.ConstraintLayout>

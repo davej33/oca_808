@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.android.example.oca_808.R;
 import com.android.example.oca_808.view_model.QuestionViewModelFactory;
@@ -29,6 +30,7 @@ public class ProgressFragment extends Fragment {
 
     private QuestionsViewModel mViewModel;
     private TextView mProgressQuestionNumberDisplay;
+    private ToggleButton mMarkButton;
 
     private ProgressBar mBar;
     // TODO: Rename parameter arguments, choose names that match
@@ -96,13 +98,14 @@ public class ProgressFragment extends Fragment {
         mProgressQuestionNumberDisplay.setText(String.valueOf(mQuestionNumber));
         mQuestionCountDisplay.setText(String.valueOf(mQuestionCount));
         TextView mPreviousButton = view.findViewById(R.id.previous_question_view);
-        if(mQuestionNumber == 1) mPreviousButton.setVisibility(View.GONE);
+        if(mQuestionNumber == 1) mPreviousButton.setVisibility(View.INVISIBLE);
         mPreviousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.loadPreviousQuestion();
             }
         });
+
 
         subscribe();
 

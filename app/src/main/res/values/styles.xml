@@ -8,5 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="NintendoFont">
+        <item name="android:fontFamily">@font/press_start_2p</item>
+    </style>
 
 </resources>

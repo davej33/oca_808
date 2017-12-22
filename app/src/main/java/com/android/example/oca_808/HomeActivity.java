@@ -74,8 +74,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         TestGenerator.addQs(mContext); // TODO: only run once
 
         // get buttons and set onClickListener
-        mTestButton = findViewById(R.id.test_button);
-        mPracticeButton = findViewById(R.id.practice_button);
+        mTestButton = findViewById(R.id.score_bg);
+        mPracticeButton = findViewById(R.id.title_background);
         mTrainButton = findViewById(R.id.train_button);
         mStatsButton = findViewById(R.id.stats_button);
         mTestButton.setOnClickListener(this);
@@ -99,7 +99,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
 //        Log.w(LOG_TAG, "view id: " + v.getId());
         switch (v.getId()) {
-            case R.id.test_button:
+            case R.id.score_bg:
                 mTestType = TEST_SIM;
                 inflateTestPopUp(v);
                 break;
@@ -111,7 +111,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 startActivity(new Intent(getApplicationContext(), QuestionsActivity.class));
                 break;
-            case R.id.practice_button:
+            case R.id.title_background:
                 mTestType = PRACTICE_TEST;
                 inflateTestPopUp(v);
                 break;

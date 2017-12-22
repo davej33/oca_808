@@ -9,7 +9,7 @@
     tools:context="com.android.example.oca_808.HomeActivity">
 
     <Button
-        android:id="@+id/test_button"
+        android:id="@+id/score_bg"
         android:layout_width="0dp"
         android:layout_height="89dp"
         android:layout_marginEnd="32dp"
@@ -17,14 +17,14 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/background_buttons_home"
         android:elevation="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/practice_button"
+        app:layout_constraintBottom_toTopOf="@+id/title_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/practice_button"
+        android:id="@+id/title_background"
         android:layout_width="0dp"
         android:layout_height="90dp"
         android:layout_marginEnd="32dp"
@@ -36,7 +36,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/test_button" />
+        app:layout_constraintTop_toBottomOf="@+id/score_bg" />
 
     <Button
         android:id="@+id/train_button"
@@ -51,7 +51,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/practice_button" />
+        app:layout_constraintTop_toBottomOf="@+id/title_background" />
 
     <Button
         android:id="@+id/stats_button"
@@ -82,11 +82,11 @@
         android:textColor="@color/colorPrimary"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/test_button"
-        app:layout_constraintEnd_toEndOf="@+id/test_button"
+        app:layout_constraintBottom_toBottomOf="@+id/score_bg"
+        app:layout_constraintEnd_toEndOf="@+id/score_bg"
         app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="@+id/test_button"
-        app:layout_constraintTop_toTopOf="@+id/test_button"
+        app:layout_constraintStart_toStartOf="@+id/score_bg"
+        app:layout_constraintTop_toTopOf="@+id/score_bg"
         app:layout_constraintVertical_bias="0.483" />
     <TextView
         android:id="@+id/stats_tv"
@@ -141,10 +141,10 @@
         android:textColor="@color/colorPrimary"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/practice_button"
-        app:layout_constraintEnd_toEndOf="@+id/practice_button"
-        app:layout_constraintStart_toStartOf="@+id/practice_button"
-        app:layout_constraintTop_toTopOf="@+id/practice_button"
+        app:layout_constraintBottom_toBottomOf="@+id/title_background"
+        app:layout_constraintEnd_toEndOf="@+id/title_background"
+        app:layout_constraintStart_toStartOf="@+id/title_background"
+        app:layout_constraintTop_toTopOf="@+id/title_background"
         app:layout_constraintVertical_bias="0.511" />
 
 

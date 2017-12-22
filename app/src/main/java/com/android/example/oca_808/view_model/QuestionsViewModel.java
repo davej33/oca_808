@@ -115,33 +115,50 @@ public class QuestionsViewModel extends ViewModel {
     }
 
 
-    public void setUserAnswer(String s) {
-        // add to arrayList if unanswered, if changing previous answer then set corresponding element
-        if (mUserAnswerArray.size() <= mWhereWeAt) {
-            if (s == null) {
-                mUserAnswerArray.add(mUserAnswer.toString());
-            } else {
-                mUserAnswerArray.add("");
-            }
-            Log.w(LOG_TAG, "add " + mUserAnswer.toString() + " at index " + mWhereWeAt);
-        } else {
-            if (s == null) {
-                mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
-            } else {
-                mUserAnswerArray.set(mWhereWeAt, "");
-            }
-            Log.w(LOG_TAG, "set " + mUserAnswer.toString() + " at index " + mWhereWeAt);
-        }
-    }
+//    public void setUserAnswer(String s) {
+//        // add to arrayList if unanswered, if changing previous answer then set corresponding element
+//        if (mUserAnswerArray.size() <= mWhereWeAt) {
+//            if (s == null) {
+//                mUserAnswerArray.add(mUserAnswer.toString());
+//            } else {
+//                mUserAnswerArray.add("");
+//            }
+//            Log.w(LOG_TAG, "add " + mUserAnswer.toString() + " at index " + mWhereWeAt);
+//        } else {
+//            if (s == null) {
+//                mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
+//            } else {
+//                mUserAnswerArray.set(mWhereWeAt, "");
+//            }
+//            Log.w(LOG_TAG, "set " + mUserAnswer.toString() + " at index " + mWhereWeAt);
+//        }
+//    }
 
     public void nextQuestion() {
         mQuestionNumber.setValue(++mWhereWeAt);
         mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
+
+        // set user answer
+        mUserAnswer.delete(0, mUserAnswer.length());
+        String s = mUserAnswerArray.get(mWhereWeAt);
+        if(!s.equals("")){
+            for (char c: s.toCharArray()) {
+                mUserAnswer.append(c);
+            }
+        }
     }
 
     public void loadPreviousQuestion() {
         mQuestionNumber.setValue(--mWhereWeAt);
         mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
+        // set user answer
+        mUserAnswer.delete(0, mUserAnswer.length());
+        String s = mUserAnswerArray.get(mWhereWeAt);
+        if(!s.equals("")){
+            for (char c: s.toCharArray()) {
+                mUserAnswer.append(c);
+            }
+        }
     }
 
     public int getmWhereWeAt() {
@@ -177,8 +194,13 @@ public class QuestionsViewModel extends ViewModel {
             mUserAnswer.deleteCharAt(mUserAnswer.indexOf(String.valueOf(userAnswer)));
             Log.i(LOG_TAG, "removed from mUserAnswer: " + mUserAnswer);
         }
-        setUserAnswer(null);
+        mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
         Log.i(LOG_TAG, "2. VM uAnswersArray: " + mUserAnswerArray.toString());
+    }
+
+    public void setmWhereWeAt(int i){
+        mWhereWeAt = i;
+        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
     }
 
     // ---------------------------------- get and set test --------------------
@@ -322,7 +344,7 @@ public class QuestionsViewModel extends ViewModel {
         } else {
             mMarkedQuestions.set(mWhereWeAt, "0");
         }
-        Log.i(LOG_TAG, "marked q array length: " + mMarkedQuestions.size());
+        Log.i(LOG_TAG, "marked q array length: " + mMarkedQuestions.toString());
         Log.i(LOG_TAG, "marked question state at " + mWhereWeAt + " is " + mMarkedQuestions.get(mWhereWeAt));
     }
 

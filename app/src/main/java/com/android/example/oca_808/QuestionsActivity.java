@@ -67,12 +67,18 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         mQuestionForSolutionContainer = findViewById(R.id.question_solution_container);
 
         mMarkButton = findViewById(R.id.mark_button);
-        mMarkButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mViewModel.setmMarkedQuestion(mMarkButton.isChecked());
-            }
-        });
+        String s = mViewModel.getMarkedState(mViewModel.getmWhereWeAt());
+        if(s.equals("1")){
+            mMarkButton.setChecked(true);
+        } else {
+            mMarkButton.setChecked(false);
+        }
+//        mMarkButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mViewModel.setmMarkedQuestion(mMarkButton.isChecked());
+//            }
+//        });
 
         Toast.makeText(this, mViewModel.getTestTitle(), Toast.LENGTH_SHORT).show();
         // Hide the status bar.
@@ -89,8 +95,8 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             mFAB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mViewModel.getUserAnswer().equals("")) mViewModel.setUserAnswer("");
 
+                    mViewModel.setmMarkedQuestion(mMarkButton.isChecked());
 //                    String solution = mViewModel.getCurrentQuestion().answer;
                     mWrongAnswers = mViewModel.checkAnswer();
 

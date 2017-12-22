@@ -141,8 +141,8 @@ public class QuestionsViewModel extends ViewModel {
         // set user answer
         mUserAnswer.delete(0, mUserAnswer.length());
         String s = mUserAnswerArray.get(mWhereWeAt);
-        if(!s.equals("")){
-            for (char c: s.toCharArray()) {
+        if (!s.equals("")) {
+            for (char c : s.toCharArray()) {
                 mUserAnswer.append(c);
             }
         }
@@ -154,8 +154,8 @@ public class QuestionsViewModel extends ViewModel {
         // set user answer
         mUserAnswer.delete(0, mUserAnswer.length());
         String s = mUserAnswerArray.get(mWhereWeAt);
-        if(!s.equals("")){
-            for (char c: s.toCharArray()) {
+        if (!s.equals("")) {
+            for (char c : s.toCharArray()) {
                 mUserAnswer.append(c);
             }
         }
@@ -198,7 +198,7 @@ public class QuestionsViewModel extends ViewModel {
         Log.i(LOG_TAG, "2. VM uAnswersArray: " + mUserAnswerArray.toString());
     }
 
-    public void setmWhereWeAt(int i){
+    public void setmWhereWeAt(int i) {
         mWhereWeAt = i;
         mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
     }
@@ -355,8 +355,40 @@ public class QuestionsViewModel extends ViewModel {
     public String getAnswerSubmitted(int i) {
         return mUserAnswerArray.get(i);
     }
-}
 
+    public int getTestScore() {
+        int score = 0;
+
+        // iterate through each question
+        for (int i = 1; i < mQuestionsList.size(); i++) {
+            String userAnswer = "";
+
+            if (mUserAnswerArray.get(i) != null && mUserAnswerArray.get(i).length() > 0) {
+                userAnswer = getSortedString(mUserAnswerArray.get(i).toCharArray());
+            }
+            String sol = getSortedString(mQuestionsList.get(i).answer.toCharArray());
+
+            Log.i(LOG_TAG, "user / sol ---- " + userAnswer + " / " + sol);
+            if (userAnswer.equals(sol)){
+                score++;
+                Log.i(LOG_TAG, "score: " + score);
+            }
+        }
+        Log.i(LOG_TAG, "score2: " + score);
+        return score;
+    }
+
+    private String getSortedString(char[] chars) {
+        StringBuilder sb = new StringBuilder();
+
+        // get sorted array for user answer
+        Arrays.sort(chars);
+        for (char c : chars) {
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+}
 
 //    private void clearVars() {
 //        mCurrentTest = null;

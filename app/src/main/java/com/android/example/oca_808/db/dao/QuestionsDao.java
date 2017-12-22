@@ -24,4 +24,6 @@ public interface QuestionsDao {
 
     @Query("SELECT q_map_id FROM QuestionEntity")
     List<Integer> getQuestionIds();
+
+//    @Query("SELECT answer FROM QuestionEntity WHERE q_map_id IN")
 }

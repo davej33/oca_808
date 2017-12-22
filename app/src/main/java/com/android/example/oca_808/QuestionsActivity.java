@@ -112,6 +112,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         }
 
         displayQuestion();
+        mViewModel.startTimer();
 
         subscribe();
 
@@ -127,7 +128,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         // set new views
         getSupportFragmentManager().beginTransaction().replace(R.id.question_container, QuestionFragment.newInstance(mQuestionNum, null)).commit();
         getSupportFragmentManager().beginTransaction().replace(R.id.answer_container, AnswerFragment.newInstance(null, null)).commit();
-        getSupportFragmentManager().beginTransaction().replace(R.id.progress_container, ProgressFragment.newInstance(null, null)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.progress_container, ProgressFragment.newInstance()).commit();
 
 
         // set fab state based on user answer
@@ -159,13 +160,21 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         final Observer<Integer> questionObserver = new Observer<Integer>() {
             @Override
             public void onChanged(@Nullable Integer qNum) {
+                Log.i(LOG_TAG,"check onQuestionChange");
                 mQuestionNum = qNum;
                 displayQuestion();
             }
         };
         mViewModel.newQuestion().observe(this, questionObserver);
 
-
+        final Observer<String> timerObserver = new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                Log.i(LOG_TAG,"check onTimerChange");
+                ProgressFragment.setTimeRemainingFrag(s);
+            }
+        };
+        mViewModel.getTimeRemaining().observe(this, timerObserver);
     }
 
 

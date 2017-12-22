@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -30,17 +31,12 @@ public class ProgressFragment extends Fragment {
 
     private QuestionsViewModel mViewModel;
     private TextView mProgressQuestionNumberDisplay;
+    private static TextView mTimeRemainingTV;
     private ToggleButton mMarkButton;
+    private static String mTimeRemaining;
 
     private ProgressBar mBar;
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -48,31 +44,15 @@ public class ProgressFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProgressFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProgressFragment newInstance(String param1, String param2) {
-        ProgressFragment fragment = new ProgressFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+
+    public static ProgressFragment newInstance() {
+        return  new ProgressFragment();
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
     }
 
@@ -85,6 +65,8 @@ public class ProgressFragment extends Fragment {
             mViewModel = QuestionsViewModel.getQVM();
 //            mViewModel = ViewModelProviders.of(this, new QuestionViewModelFactory(getActivity().getApplication())).get(QuestionsViewModel.class);
         }
+
+        mTimeRemainingTV = view.findViewById(R.id.textClock);
 
         int mQuestionNumber = mViewModel.getmWhereWeAt();
         int mQuestionCount = mViewModel.getQuestionCount() - 1;
@@ -106,7 +88,6 @@ public class ProgressFragment extends Fragment {
             }
         });
 
-
         subscribe();
 
         return view;
@@ -123,13 +104,6 @@ public class ProgressFragment extends Fragment {
             }
         };
         mViewModel.newQuestion().observe(this, questionObserver);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onClickPrevious() {
-        if (mListener != null) {
-            mListener.loadPreviousQuestion();
-        }
     }
 
     @Override
@@ -149,6 +123,9 @@ public class ProgressFragment extends Fragment {
         mListener = null;
     }
 
+    public static void setTimeRemainingFrag(String timeRemaining){
+        mTimeRemainingTV.setText(timeRemaining);
+    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -161,7 +138,10 @@ public class ProgressFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         void loadPreviousQuestion();
     }
+
+
+
 }

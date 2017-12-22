@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -43,10 +44,12 @@ public class QuestionsViewModel extends ViewModel {
 
     private static boolean mInitiated;
     // Timer vars
-//    private static final int ONE_SECOND = 1;
-//    private long mInitialTime;
-//    private MutableLiveData<Long> mElapsedTime = new MutableLiveData<>();
-
+    private static final int ONE_MINUTE = 60000;
+    private static final int TEST_START_DURATION = 9000000;
+    private static MutableLiveData<String> mTimeRemaining = new MutableLiveData<>();
+    private static TestCountdownTimer mTimer;
+    private static int mMin = 30;   // TODO add to test object
+    private static int mHour = 2;
     private static int mLoadTestId;
     private static QuestionsViewModel mQuestionViewModel;
 
@@ -58,6 +61,7 @@ public class QuestionsViewModel extends ViewModel {
             mDb = AppDatabase.getDb(mApplication);
         }
 
+        ;
     }
 
 
@@ -69,28 +73,6 @@ public class QuestionsViewModel extends ViewModel {
         return mCurrentQuestion;
     }
 
-    // TODO: efficient?
-    private void startTimer() {
-//        mInitialTime = SystemClock.elapsedRealtime();
-//        Timer timer = new Timer();
-//
-//        // Update the elapsed time every second.
-//        timer.scheduleAtFixedRate(new TimerTask() {
-//            @Override
-//            public void run() {
-//                final long newValue = (SystemClock.elapsedRealtime() - mInitialTime) / 1000;
-//                // setValue() cannot be called from a background thread so post to main thread.
-//                new Handler(Looper.getMainLooper()).post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mElapsedTime.setValue(newValue);
-//
-//                    }
-//                });
-//            }
-//        }, ONE_SECOND, ONE_SECOND);
-
-    }
 
     // called from QuestionActivity on FAB click
     // compares user answer and returns any wrong answers in ArrayList
@@ -114,25 +96,14 @@ public class QuestionsViewModel extends ViewModel {
         return wrongAnswers;
     }
 
+    public void startTimer() {
+        if (mTimer == null) mTimer = new TestCountdownTimer(TEST_START_DURATION, ONE_MINUTE);
+        mTimer.start();
+    }
 
-//    public void setUserAnswer(String s) {
-//        // add to arrayList if unanswered, if changing previous answer then set corresponding element
-//        if (mUserAnswerArray.size() <= mWhereWeAt) {
-//            if (s == null) {
-//                mUserAnswerArray.add(mUserAnswer.toString());
-//            } else {
-//                mUserAnswerArray.add("");
-//            }
-//            Log.w(LOG_TAG, "add " + mUserAnswer.toString() + " at index " + mWhereWeAt);
-//        } else {
-//            if (s == null) {
-//                mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
-//            } else {
-//                mUserAnswerArray.set(mWhereWeAt, "");
-//            }
-//            Log.w(LOG_TAG, "set " + mUserAnswer.toString() + " at index " + mWhereWeAt);
-//        }
-//    }
+    public void stopTimer() {
+
+    }
 
     public void nextQuestion() {
         mQuestionNumber.setValue(++mWhereWeAt);
@@ -220,7 +191,7 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     private void setTestAttributes() {
-
+//TODO: add timer fetch and set
         // get questions
         mQuestionsList = setQuestionsList();
 
@@ -369,7 +340,7 @@ public class QuestionsViewModel extends ViewModel {
             String sol = getSortedString(mQuestionsList.get(i).answer.toCharArray());
 
             Log.i(LOG_TAG, "user / sol ---- " + userAnswer + " / " + sol);
-            if (userAnswer.equals(sol)){
+            if (userAnswer.equals(sol)) {
                 score++;
                 Log.i(LOG_TAG, "score: " + score);
             }
@@ -388,12 +359,53 @@ public class QuestionsViewModel extends ViewModel {
         }
         return sb.toString();
     }
+
+    public LiveData<String> getTimeRemaining() {
+        return mTimeRemaining;
+    }
+
+    public static class TestCountdownTimer extends CountDownTimer {
+
+        /**
+         * @param millisInFuture    The number of millis in the future from the call
+         * to {@link #start()} until the countdown is done and {@link #onFinish()}
+         * is called.
+         * @param countDownInterval The interval along the way to receive
+         * {@link #onTick(long)} callbacks.
+         */
+
+
+        String timeRemaining;
+
+        public TestCountdownTimer(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+            timeRemaining = "" + mHour + ":" + mMin;
+            mTimeRemaining.setValue(timeRemaining);
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+
+            if (mMin == 0 && mHour == 2) {
+                mMin = 59;
+                mHour = 1;
+            } else if (mMin == 0 && mHour == 1) {
+                mMin = 59;
+                mHour = 0;
+            } else {
+                --mMin;
+            }
+
+            timeRemaining = "" + mHour + ":" + mMin;
+
+            mTimeRemaining.setValue(timeRemaining);
+//            Log.i(LOG_TAG, "LiveData value: " + mTimeRemaining.getValue());
+        }
+
+        @Override
+        public void onFinish() {
+
+        }
+    }
 }
 
-//    private void clearVars() {
-//        mCurrentTest = null;
-//        mQuestionsList = null;
-//        mCurrentQuestion = null;
-//        mUserAnswerArray = null;
-//        mUserAnswer = null;
-//    }

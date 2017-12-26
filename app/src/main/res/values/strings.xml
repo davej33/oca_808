@@ -10,6 +10,8 @@
     <!-- Shared Preferences -->
     <string name="sp_test_num_key">testNum</string>
     <string name="sp_test_num_default">000</string>
+    <string name="sp_resume_test">resumeTest</string>
+    <string name="sp_resume_practice_test">resumePractice</string>
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->

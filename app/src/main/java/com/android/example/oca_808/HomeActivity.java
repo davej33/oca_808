@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,16 +50,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Button mPracticeButton;
     private Button mTrainButton;
     private Button mStatsButton;
+
     private static final String[] OBJECTIVES = {"z", "1. Java Basics",
             "2. Data Types", "3. Operators and Decision Constructs",
-            "4. Arrays", "5. Loop Constructs","6. Methods and Encapsulation",
+            "4. Arrays", "5. Loop Constructs", "6. Methods and Encapsulation",
             "7. Inheritance", "8. Handling Exceptions", "9. Java API Classes"};
+    private SharedPreferences shPref;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_8bit);
+        setContentView(R.layout.activity_home);
 
         mQuestionViewModel = ViewModelProviders.of(this, new QuestionViewModelFactory(this.getApplication())).get(QuestionsViewModel.class);
         mQuestionViewModel.setQVM(mQuestionViewModel);
@@ -74,18 +77,21 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         TestGenerator.addQs(mContext); // TODO: only run once
 
         // get buttons and set onClickListener
-        mTestButton = findViewById(R.id.score_bg);
+        mTestButton = findViewById(R.id.test_button);
         mPracticeButton = findViewById(R.id.title_background);
         mTrainButton = findViewById(R.id.train_button);
         mStatsButton = findViewById(R.id.stats_button);
+
+
         mTestButton.setOnClickListener(this);
         mPracticeButton.setOnClickListener(this);
         mTrainButton.setOnClickListener(this);
         mStatsButton.setOnClickListener(this);
+
     }
 
     private void setupSharedPref() {
-        SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this);
+        shPref = PreferenceManager.getDefaultSharedPreferences(this);
         int checkSP = shPref.getInt(getResources().getString(R.string.sp_test_num_key), -9);
         if (checkSP < 0) {
             SharedPreferences.Editor editor = shPref.edit();
@@ -99,7 +105,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
 //        Log.w(LOG_TAG, "view id: " + v.getId());
         switch (v.getId()) {
-            case R.id.score_bg:
+            case R.id.test_button:
                 mTestType = TEST_SIM;
                 inflateTestPopUp(v);
                 break;
@@ -111,12 +117,27 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 startActivity(new Intent(getApplicationContext(), QuestionsActivity.class));
                 break;
+            case R.id.resume_tv_xyz:
+                int testId = 1;
+                if (mTestType == TEST_SIM) {
+                    testId = shPref.getInt(this.getResources().getString(R.string.sp_resume_test), -1);
+                } else {
+                    testId = shPref.getInt(this.getResources().getString(R.string.sp_resume_practice_test), -1);
+                }
+                if (testId > 0) {
+                    mQuestionViewModel.getTest(testId);
+                    startActivity(new Intent(this, QuestionsActivity.class));
+                } else {
+                    Log.e(LOG_TAG, "Test resume error");
+                }
+                break;
             case R.id.title_background:
                 mTestType = PRACTICE_TEST;
                 inflateTestPopUp(v);
                 break;
             case R.id.train_button:
                 inflateTrainingPopup(v);
+                break;
 
 
         }
@@ -175,19 +196,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             View includeView = mPopUpView.findViewById(R.id.practice_test_view_options);
             includeView.setVisibility(View.GONE);
         }
-//        Handler mainHandler = new Handler(getApplicationContext().getMainLooper());
-//        Runnable r = new Runnable() {
-//            @Override
-//            public void run() {
-//                // set recycler view
-//                RecyclerView mRecyclerView = mPopUpView.findViewById(R.id.rv_incomplete_tests);
-//                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-//                mRecyclerView.setLayoutManager(layoutManager);
-//                mRecyclerView.setAdapter(mTestHistoryAdapter);
-//            }
-//        };
-//        mainHandler.post(r);
-
 
         // Initialize new instance of popup window
         mPopUpWindow = new PopupWindow(
@@ -210,8 +218,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         dimBehind(mPopUpWindow);
 
         // set onClickListener
-        TextView newTest = mPopUpView.findViewById(R.id.new_test_tv);
+        Button newTest = mPopUpView.findViewById(R.id.new_test_tv);
+        TextView resumeTest = mPopUpView.findViewById(R.id.resume_tv_xyz);
         newTest.setOnClickListener(this);
+        resumeTest.setOnClickListener(this);
 
 
     }
@@ -231,5 +241,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
 
         if (mPopUpWindow != null) mPopUpWindow.dismiss();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPopUpWindow.dismiss();
     }
 }

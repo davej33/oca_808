@@ -33,11 +33,15 @@ public final class TestGenerator {
     private static final String TEST_NUM_TEXT = "Test_";
     private static final String PRACTICE_NUM_TEXT = "Pract_";
     private static int mTestNum;
+    private static SharedPreferences shPref;
 
     public static void createTestSim(Context context, int testType) {
+
         // get questions
-        String testTitle = createTestTitle(context, testType);
-//        Log.w(LOG_TAG, "testTitle: " + testTitle);
+        String testTitle = createTestTitle(context, testType); // Test sim = 1, practice test = 0
+
+        // save current test in shared preferences as the most recent test, allowing user to resume
+        saveTestIdInSharedPref(context, testType);
 
         List<Integer> questionList = mDb.questionsDao().getQuestionIds();
         String questionListString = questionList.toString();
@@ -61,21 +65,27 @@ public final class TestGenerator {
 
         // create new test
         TestEntity newTest = new TestEntity(testType, testTitle, questionListString, answerArrayList,
-                elapsedQuestionTimeList, false, 0, mStartTime, 0, 0, 0, 1, questionList.size(), 1);//, markedQuestionList
-        long testInsertCheck = mDb.testsDao().insertNewTest(newTest);
-//        Log.i(LOG_TAG,"@@@@@@ mTestId: " + mTestNum);
+                elapsedQuestionTimeList, false, 0, mStartTime, 0, 0, 0, 1, questionList.size(), 1);
+        long insertTest = mDb.testsDao().insertNewTest(newTest);
         QuestionsViewModel.getQVM().getTest(mTestNum);
-//        Log.i(LOG_TAG, "test to string: " + newTest.toString());
-//        Log.i(LOG_TAG, "test insert check: " + testInsertCheck);
+
+    }
+
+    private static void saveTestIdInSharedPref(Context context, int testType) {
+        SharedPreferences.Editor editor = shPref.edit();
+        if(testType == 1){
+            editor.putInt(context.getResources().getString(R.string.sp_resume_test), mTestNum);
+        } else {
+            editor.putInt(context.getResources().getString(R.string.sp_resume_practice_test), mTestNum);
+        }
+        editor.apply();
     }
 
     private static String createTestTitle(Context context, int type) {
-        SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(context);
+        shPref = PreferenceManager.getDefaultSharedPreferences(context);
         mTestNum = shPref.getInt(context.getResources().getString(R.string.sp_test_num_key), -1);
-//        Log.w(LOG_TAG, "sp mTestNum: " + mTestNum);
         SharedPreferences.Editor editor = shPref.edit();
         editor.putInt(context.getResources().getString(R.string.sp_test_num_key), ++mTestNum);
-//        Log.i(LOG_TAG,"@@@@@@ createtitle mTestId: " + mTestNum);
         editor.apply();
         String title = "";
         if (type == 1) {

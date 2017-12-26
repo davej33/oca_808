@@ -180,6 +180,7 @@ public class QuestionsViewModel extends ViewModel {
 //        clearVars();
 
         // get TestEntity
+        Log.i(LOG_TAG, "current test id: " + testId);
         mCurrentTest = mDb.testsDao().fetchTest(testId);
         Log.i(LOG_TAG, "current test title: " + mCurrentTest.title);
 
@@ -193,6 +194,7 @@ public class QuestionsViewModel extends ViewModel {
     private void setTestAttributes() {
 //TODO: add timer fetch and set
         // get questions
+        // set the questions list
         mQuestionsList = setQuestionsList();
 
         mUserAnswer = new StringBuilder();

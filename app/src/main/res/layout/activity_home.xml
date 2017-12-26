@@ -3,146 +3,81 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#fff"
-    tools:context="com.android.example.oca_808.HomeActivity"
-    android:id="@+id/home_activity">
+    android:id="@+id/home_activity"
+    android:theme="@style/NintendoFont"
+    android:layout_height="match_parent">
 
-    <ImageButton
-        android:id="@+id/score_bg"
-        android:layout_width="152dp"
-        android:layout_height="142dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/background_buttons_home"
-        android:elevation="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/games_button"
-        app:layout_constraintEnd_toStartOf="@+id/practice_button_view"
+    <Button
+        android:id="@+id/train_button"
+        android:layout_width="192dp"
+        android:layout_height="166dp"
+        android:background="@color/colorPrimaryVeryLight"
+        android:text="@string/train"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/stats_button"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/test_button"
+        android:layout_width="195dp"
+        android:layout_height="162dp"
+        android:background="@color/colorPrimaryLight"
+        android:text="@string/test2"
+        app:layout_constraintBottom_toTopOf="@+id/train_button"
+        app:layout_constraintEnd_toStartOf="@+id/title_background"
         app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
+
+    <Button
+        android:id="@+id/title_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorPrimaryLittleLight"
+        android:text="@string/practice_test"
+        app:layout_constraintBottom_toBottomOf="@+id/test_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/test_button"
+        app:layout_constraintTop_toTopOf="@+id/test_button" />
+
+    <Button
+        android:id="@+id/stats_button"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorPrimaryLight"
+        android:text="Progress"
+        app:layout_constraintBottom_toBottomOf="@+id/train_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/train_button"
+        app:layout_constraintTop_toTopOf="@+id/train_button"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/space_background"
+        android:gravity="center"
+        android:text="OCA PREP"
+        android:textColor="@color/colorPrimary"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/test_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="8dp" />
+        app:layout_constraintVertical_bias="0.0" />
 
-    <ImageButton
-        android:id="@+id/games_button"
-        android:layout_width="152dp"
-        android:layout_height="142dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/background_buttons_home"
-        android:elevation="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/practice_button_view2"
-        app:layout_constraintHorizontal_bias="0.5"
+    <ImageView
+        android:id="@+id/robot_image"
+        android:layout_width="82dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/score_bg"
-        android:layout_marginLeft="8dp" />
-
-    <TextView
-        android:id="@+id/text_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:elevation="16dp"
-        android:fontFamily="sans-serif-smallcaps"
-        android:text="@string/test"
-        android:textColor="#63d0ff"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/score_bg"
-        app:layout_constraintEnd_toEndOf="@+id/score_bg"
-        app:layout_constraintHorizontal_bias="0.591"
-        app:layout_constraintStart_toStartOf="@+id/score_bg"
-        app:layout_constraintTop_toTopOf="@+id/score_bg"
-        app:layout_constraintVertical_bias="0.511" />
-
-    <ImageButton
-        android:id="@+id/practice_button_view2"
-        android:layout_width="152dp"
-        android:layout_height="142dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/background_buttons_home"
-        android:elevation="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/games_button"
-        app:layout_constraintTop_toBottomOf="@+id/practice_button_view" />
-
-    <TextView
-        android:id="@+id/stats_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:elevation="16dp"
-        android:fontFamily="sans-serif-smallcaps"
-        android:text="@string/stats"
-        android:textColor="#63d0ff"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/practice_button_view2"
-        app:layout_constraintEnd_toEndOf="@+id/practice_button_view2"
-        app:layout_constraintStart_toStartOf="@+id/practice_button_view2"
-        app:layout_constraintTop_toTopOf="@+id/practice_button_view2" />
-
-    <TextView
-        android:id="@+id/training_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:elevation="16dp"
-        android:fontFamily="sans-serif-smallcaps"
-        android:text="@string/train"
-        android:textColor="#63d0ff"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/games_button"
-        app:layout_constraintEnd_toEndOf="@+id/games_button"
-        app:layout_constraintStart_toStartOf="@+id/games_button"
-        app:layout_constraintTop_toTopOf="@+id/games_button" />
-
-    <ImageButton
-        android:id="@+id/practice_button_view"
-        android:layout_width="152dp"
-        android:layout_height="142dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/background_buttons_home"
-        android:elevation="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/practice_button_view2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/score_bg"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/practice_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:elevation="16dp"
-        android:fontFamily="sans-serif-smallcaps"
-        android:text="Practice"
-        android:textColor="#63d0ff"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/practice_button_view"
-        app:layout_constraintEnd_toEndOf="@+id/practice_button_view"
-        app:layout_constraintStart_toStartOf="@+id/practice_button_view"
-        app:layout_constraintTop_toTopOf="@+id/practice_button_view"
-        app:layout_constraintVertical_bias="0.511" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/ic_robot"
+        android:layout_marginLeft="16dp" />
 </android.support.constraint.ConstraintLayout>

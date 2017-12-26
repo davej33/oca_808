@@ -1,7 +1,9 @@
 package com.android.example.oca_808.fragment;
 
 import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -13,6 +15,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.android.example.oca_808.R;
+import com.android.example.oca_808.view_model.QuestionViewModelFactory;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 import java.util.ArrayList;
@@ -64,7 +67,8 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (mViewModel == null) {
-            mViewModel = new QuestionsViewModel(getContext());
+            mViewModel = QuestionsViewModel.getQVM();
+//            mViewModel = ViewModelProviders.of(this, new QuestionViewModelFactory(getActivity().getApplication())).get(QuestionsViewModel.class);
         }
 
         if (getArguments() != null) {
@@ -223,9 +227,9 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     }
 
     private void displayUserAnswer() {
-        Log.i(LOG_TAG, "******** display user answer");
+//        Log.i(LOG_TAG, "******** display user answer");
         if (mQuestionType == 1) {
-            Log.i(LOG_TAG, "******** display user answer RADIO");
+//            Log.i(LOG_TAG, "******** display user answer RADIO");
             if (mUserAnswer.length() != 0) {
                 switch (mUserAnswer.charAt(0)) {
                     case 'a':
@@ -253,7 +257,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
 
             }
         } else {
-            Log.i(LOG_TAG, " ********* display user answer checkbox");
+//            Log.i(LOG_TAG, " ********* display user answer checkbox");
             for (int i = 0; i < mUserAnswer.length(); i++) {
                 if (mUserAnswer.length() != 0) {
                     switch (mUserAnswer.charAt(i)) {
@@ -325,18 +329,31 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
 
         radioGroup.setVisibility(View.INVISIBLE);
 
-        checkbox_a.setText(mViewModel.getCurrentQuestion().getA());
-        checkbox_b.setText(mViewModel.getCurrentQuestion().getB());
-        checkbox_c.setText(mViewModel.getCurrentQuestion().getC());
-        checkbox_d.setText(mViewModel.getCurrentQuestion().getD());
-        checkbox_e.setText(mViewModel.getCurrentQuestion().getE());
-        checkbox_f.setText(mViewModel.getCurrentQuestion().getF());
+        // get answer options and add letter prefix
+        String cbA = "A) " + mViewModel.getCurrentQuestion().getA();
+        String cbB = "B) " + mViewModel.getCurrentQuestion().getB();
+        String cbC = "C) " + mViewModel.getCurrentQuestion().getC();
+        String cbD = "D) " + mViewModel.getCurrentQuestion().getD();
+        String cbE = "E) " + mViewModel.getCurrentQuestion().getE();
+        String cbF = "F) " + mViewModel.getCurrentQuestion().getF();
+
+        // set options
+        checkbox_a.setText(cbA);
+        checkbox_b.setText(cbB);
+        checkbox_c.setText(cbC);
+        checkbox_d.setText(cbD);
+        checkbox_e.setText(cbE);
+        checkbox_f.setText(cbF);
+
+        // clear options
         checkbox_a.setChecked(false);
         checkbox_b.setChecked(false);
         checkbox_c.setChecked(false);
         checkbox_d.setChecked(false);
         checkbox_e.setChecked(false);
         checkbox_f.setChecked(false);
+
+        // set text color
         checkbox_a.setTextColor(getResources().getColor(R.color.colorBlack));
         checkbox_b.setTextColor(getResources().getColor(R.color.colorBlack));
         checkbox_c.setTextColor(getResources().getColor(R.color.colorBlack));
@@ -355,12 +372,20 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         checkbox_e.setVisibility(View.INVISIBLE);
         checkbox_f.setVisibility(View.INVISIBLE);
 
-        radio_a.setText(mViewModel.getCurrentQuestion().getA());
-        radio_b.setText(mViewModel.getCurrentQuestion().getB());
-        radio_c.setText(mViewModel.getCurrentQuestion().getC());
-        radio_d.setText(mViewModel.getCurrentQuestion().getD());
-        radio_e.setText(mViewModel.getCurrentQuestion().getE());
-        radio_f.setText(mViewModel.getCurrentQuestion().getF());
+        // get answer options and add letter prefix
+        String cbA = "A) " + mViewModel.getCurrentQuestion().getA();
+        String cbB = "B) " + mViewModel.getCurrentQuestion().getB();
+        String cbC = "C) " + mViewModel.getCurrentQuestion().getC();
+        String cbD = "D) " + mViewModel.getCurrentQuestion().getD();
+        String cbE = "E) " + mViewModel.getCurrentQuestion().getE();
+        String cbF = "F) " + mViewModel.getCurrentQuestion().getF();
+
+        radio_a.setText(cbA);
+        radio_b.setText(cbB);
+        radio_c.setText(cbC);
+        radio_d.setText(cbD);
+        radio_e.setText(cbE);
+        radio_f.setText(cbF);
 
         radio_a.setTextColor(getResources().getColor(R.color.colorBlack));
         radio_b.setTextColor(getResources().getColor(R.color.colorBlack));
@@ -397,7 +422,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                         Log.e(LOG_TAG, "Radio selection match error");
                 }
                 mViewModel.collectUserAnswer(mRadioSelection, true);
-                mListener.answerSelected(true);
+
             }
         });
 
@@ -425,7 +450,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onStop() {
         super.onStop();
-        Log.i(LOG_TAG, "onStop run");
+//        Log.i(LOG_TAG, "onStop run");
         mViewModel.saveDataToDb();
     }
 
@@ -479,7 +504,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         } else {
             Log.e(LOG_TAG, "ERROR matching checkbox selection");
         }
-        mListener.answerSelected((mViewModel.getUserAnswer().length() > 0));
+
 
         StringBuilder sb = new StringBuilder(mUserAnswer);
         if(vIsChecked){
@@ -504,6 +529,6 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
      */
     public interface OnFragmentInteractionListener {
 
-        void answerSelected(boolean b);
+        void onFragmentInteraction(Uri uri);
     }
 }

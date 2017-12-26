@@ -1,6 +1,8 @@
 package com.android.example.oca_808.adapter;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,9 +12,12 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.android.example.oca_808.QuestionsActivity;
 import com.android.example.oca_808.R;
 import com.android.example.oca_808.db.AppDatabase;
 import com.android.example.oca_808.db.entity.TestEntity;
+import com.android.example.oca_808.view_model.QuestionViewModelFactory;
+import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -50,19 +55,27 @@ public class TestHistoryAdapter extends RecyclerView.Adapter<TestHistoryAdapter.
     @Override
     public RecViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.incomplete_test_item_view, parent, false);
-        RecViewHolder holder = new RecViewHolder(view);
+        return new RecViewHolder(view);
 
 
-        return holder;
     }
 
     @Override
-    public void onBindViewHolder(RecViewHolder holder, int position) {
-        TestEntity currentTest = mTestList.get(position);
+    public void onBindViewHolder(final RecViewHolder holder, int position) {
+
+        final TestEntity currentTest = mTestList.get(position);
 
         holder.title.setText(currentTest.title);
         holder.date.setText(parseDate(currentTest.endDateTime));
         holder.progressBar.setProgress(currentTest.progress);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                QuestionsViewModel.getQVM().getTest(currentTest._id);
+                mContext.startActivity(new Intent(mContext, QuestionsActivity.class));
+            }
+        });
     }
 
     public String parseDate(long endDateTime) {

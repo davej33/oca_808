@@ -2,11 +2,9 @@
     <string name="app_name">OCA Prep</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="new_test">New</string>
     <string name="test">Test</string>
-    <string name="train">Train</string>
-    <string name="stats">Stats</string>
 
 
     <!-- Shared Preferences -->
@@ -85,4 +83,19 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="study_mode">Study Mode</string>
+    <string name="timer">Timer</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="question_history">Q History</string>
+    <string name="questions">Questions</string>
+    <string name="test2">TEST</string>
+    <string name="practice_test">Practice\nTest</string>
+    <string name="train">Train</string>
+    <string name="stats">Stats</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="resume_test">Resume</string>
+    <string name="of">of</string>
+    <string name="previous_q">PREV</string>
+    <string name="submit">Submit</string>
+    <string name="next">NEXT</string>
 </resources>

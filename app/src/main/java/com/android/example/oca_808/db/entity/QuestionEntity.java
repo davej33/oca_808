@@ -16,7 +16,7 @@ public class QuestionEntity {
     @PrimaryKey (autoGenerate = true)
     public int _id;
     public int q_map_id;
-    public int objectives;
+
     public int type; // single or multiple answer
     public String question;
     public String opt_a;
@@ -31,7 +31,7 @@ public class QuestionEntity {
     public String explanation;
     public int difficulty;
 
-    public QuestionEntity(int qid, int objectives, int type, String question, String a, String b, String c, String d, String e, String f,
+    public QuestionEntity(int qid, int type, String question, String a, String b, String c, String d, String e, String f,
                           String answer, String explanation, int difficulty){
         q_map_id = qid;
         this.type = type;
@@ -43,7 +43,6 @@ public class QuestionEntity {
         opt_e = e;
         opt_f = f;
         this.answer = answer;
-        this.objectives = objectives;
         status = 0;
         saved = false;
         this.explanation = explanation;
@@ -123,14 +122,6 @@ public class QuestionEntity {
 
     public void setAnswer(String answer) {
         this.answer = answer;
-    }
-
-    public int getObjectives() {
-        return objectives;
-    }
-
-    public void setObjectives(int objectives) {
-        this.objectives = objectives;
     }
 
     public int getStatus() {

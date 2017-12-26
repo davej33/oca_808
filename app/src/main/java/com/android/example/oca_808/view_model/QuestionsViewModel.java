@@ -1,9 +1,12 @@
 package com.android.example.oca_808.view_model;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -37,31 +40,28 @@ public class QuestionsViewModel extends ViewModel {
     private static TestEntity mCurrentTest;
     private static List<String> mUserAnswerArray;
     private static StringBuilder mUserAnswer;
+    private static List<String> mMarkedQuestions;
 
     private static boolean mInitiated;
     // Timer vars
-//    private static final int ONE_SECOND = 1;
-//    private long mInitialTime;
-//    private MutableLiveData<Long> mElapsedTime = new MutableLiveData<>();
-
+    private static final int ONE_MINUTE = 60000;
+    private static final int TEST_START_DURATION = 9000000;
+    private static MutableLiveData<String> mTimeRemaining = new MutableLiveData<>();
+    private static TestCountdownTimer mTimer;
+    private static int mMin = 30;   // TODO add to test object
+    private static int mHour = 2;
+    private static int mLoadTestId;
+    private static QuestionsViewModel mQuestionViewModel;
 
     // constructor
-    public QuestionsViewModel(Context context) {
+    public QuestionsViewModel(Application mApplication) {
 
         // instantiate db if null
         if (mDb == null) {
-            mDb = AppDatabase.getDb(context);
-        }
-        // TODO: determine how to select specific tests
-        // get TestEntity
-        if (!mInitiated) {
-            mInitiated = true;
-            setTestAttributes();
+            mDb = AppDatabase.getDb(mApplication);
         }
 
-        mUserAnswer = new StringBuilder();
-//        startTimer();
-//        int index = mQuestionsList.indexOf(mCurrentQuestion);
+        ;
     }
 
 
@@ -73,28 +73,6 @@ public class QuestionsViewModel extends ViewModel {
         return mCurrentQuestion;
     }
 
-    // TODO: efficient?
-    private void startTimer() {
-//        mInitialTime = SystemClock.elapsedRealtime();
-//        Timer timer = new Timer();
-//
-//        // Update the elapsed time every second.
-//        timer.scheduleAtFixedRate(new TimerTask() {
-//            @Override
-//            public void run() {
-//                final long newValue = (SystemClock.elapsedRealtime() - mInitialTime) / 1000;
-//                // setValue() cannot be called from a background thread so post to main thread.
-//                new Handler(Looper.getMainLooper()).post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mElapsedTime.setValue(newValue);
-//
-//                    }
-//                });
-//            }
-//        }, ONE_SECOND, ONE_SECOND);
-
-    }
 
     // called from QuestionActivity on FAB click
     // compares user answer and returns any wrong answers in ArrayList
@@ -118,34 +96,40 @@ public class QuestionsViewModel extends ViewModel {
         return wrongAnswers;
     }
 
+    public void startTimer() {
+        if (mTimer == null) mTimer = new TestCountdownTimer(TEST_START_DURATION, ONE_MINUTE);
+        mTimer.start();
+    }
 
-    public void setUserAnswer(String s) {
-        // add to arrayList if unanswered, if changing previous answer then set corresponding element
-        if (mUserAnswerArray.size() <= mWhereWeAt) {
-            if (s == null) {
-                mUserAnswerArray.add(mUserAnswer.toString());
-            } else {
-                mUserAnswerArray.add("");
-            }
-            Log.w(LOG_TAG, "add " + mUserAnswer.toString() + " at index " + mWhereWeAt);
-        } else {
-            if (s == null) {
-                mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
-            } else {
-                mUserAnswerArray.set(mWhereWeAt, "");
-            }
-            Log.w(LOG_TAG, "set " + mUserAnswer.toString() + " at index " + mWhereWeAt);
-        }
+    public void stopTimer() {
+
     }
 
     public void nextQuestion() {
         mQuestionNumber.setValue(++mWhereWeAt);
         mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
+
+        // set user answer
+        mUserAnswer.delete(0, mUserAnswer.length());
+        String s = mUserAnswerArray.get(mWhereWeAt);
+        if (!s.equals("")) {
+            for (char c : s.toCharArray()) {
+                mUserAnswer.append(c);
+            }
+        }
     }
 
     public void loadPreviousQuestion() {
         mQuestionNumber.setValue(--mWhereWeAt);
         mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
+        // set user answer
+        mUserAnswer.delete(0, mUserAnswer.length());
+        String s = mUserAnswerArray.get(mWhereWeAt);
+        if (!s.equals("")) {
+            for (char c : s.toCharArray()) {
+                mUserAnswer.append(c);
+            }
+        }
     }
 
     public int getmWhereWeAt() {
@@ -157,40 +141,63 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     public String getUserAnswer() {
-//        Log.w(LOG_TAG, "@@@@@@@@ user array size = " + mUserAnswerArray.size() + " WWA = " + mWhereWeAt);
+
         if (mUserAnswerArray.size() > mWhereWeAt) { // if loading a question that's already been answered
-            Log.w(LOG_TAG, "getUserAnswer return: " + mUserAnswerArray.get(mWhereWeAt));
+//            Log.w(LOG_TAG, "Question answered. getUserAnswer return = " + mUserAnswerArray.get(mWhereWeAt));
             return mUserAnswerArray.get(mWhereWeAt); // return the answer
         } else {
-            Log.w(LOG_TAG, "getUserAnswer return: " + mUserAnswer.toString());
-            return mUserAnswer.toString(); // otherwise, return the current user answer
+//            Log.w(LOG_TAG, "getUserAnswer = Unanswered");
+            mUserAnswer.delete(0, mUserAnswer.length());
+            return ""; // otherwise, return the current user answer
         }
     }
 
     public void collectUserAnswer(char userAnswer, boolean checkState) {
-        Log.i(LOG_TAG, "1. VM uAnswersArray: " + mUserAnswerArray.toString());
+//        Log.i(LOG_TAG, "1. VM uAnswersArray: " + mUserAnswerArray.toString());
         if (mCurrentQuestion.type == 1) {
             if (mUserAnswer.length() == 1) mUserAnswer.deleteCharAt(0);
             mUserAnswer.append(userAnswer);
         } else if (mCurrentQuestion.type == 0 && checkState) {
             if (!mUserAnswer.toString().contains(String.valueOf(userAnswer)))
                 mUserAnswer.append(userAnswer);
-            Log.i(LOG_TAG, "added to mUserAnswer: " + mUserAnswer);
+//            Log.i(LOG_TAG, "added to mUserAnswer: " + mUserAnswer);
         } else if (mCurrentQuestion.type == 0) {
             mUserAnswer.deleteCharAt(mUserAnswer.indexOf(String.valueOf(userAnswer)));
-            Log.i(LOG_TAG, "removed from mUserAnswer: " + mUserAnswer);
+//            Log.i(LOG_TAG, "removed from mUserAnswer: " + mUserAnswer);
         }
-        setUserAnswer(null);
-        Log.i(LOG_TAG, "2. VM uAnswersArray: " + mUserAnswerArray.toString());
+        mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
+//        Log.i(LOG_TAG, "2. VM uAnswersArray: " + mUserAnswerArray.toString());
+    }
+
+    public void setmWhereWeAt(int i) {
+        mWhereWeAt = i;
+        mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
     }
 
     // ---------------------------------- get and set test --------------------
-    private void setTestAttributes() {
-        // get TestEntity
-        mCurrentTest = mDb.testsDao().fetchTest(1);
+    public void getTest(int testId) {
 
+//        clearVars();
+
+        // get TestEntity
+        mCurrentTest = mDb.testsDao().fetchTest(testId);
+        Log.i(LOG_TAG, "current test title: " + mCurrentTest.title);
+
+        if (!mInitiated) {
+            mInitiated = true;
+            setTestAttributes();
+        }
+
+    }
+
+    private void setTestAttributes() {
+//TODO: add timer fetch and set
         // get questions
         mQuestionsList = setQuestionsList();
+
+        mUserAnswer = new StringBuilder();
+//        startTimer();
+//        int index = mQuestionsList.indexOf(mCurrentQuestion);
 
         // set starting point
         if (mQuestionNumber == null) {
@@ -203,32 +210,54 @@ public class QuestionsViewModel extends ViewModel {
             mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
         }
 
-        // set answer list
+        // TODO: should only do this if resuming test
+        // convert answer list to StringBuilder to remove brackets then to List
         StringBuilder sb = new StringBuilder(mCurrentTest.answerSet);
         sb.deleteCharAt(sb.length() - 1).deleteCharAt(0);
-        mUserAnswerArray = Arrays.asList((sb.toString()).split(", "));
-        mUserAnswerArray = new ArrayList<>(mUserAnswerArray);
+        if (sb.length() < 1) {
+            mUserAnswerArray = new ArrayList<>();
+            for (int i = 0; i < mCurrentTest.questionCount; i++) {
+                mUserAnswerArray.add("");
+            }
+        } else {
+            mUserAnswerArray = new ArrayList<>(Arrays.asList((sb.toString()).split(", ")));
+        }
+
+        // add null at index 0 so question/index numbers align
         if (!mUserAnswerArray.get(0).equals("null")) mUserAnswerArray.add(0, null);
         Log.w(LOG_TAG, "user answer array init: " + mUserAnswerArray.toString());
+
+        // convert answer list to StringBuilder to remove brackets then to List
+        StringBuilder sb2 = new StringBuilder(mCurrentTest.mMarkedQuestionSet);
+        sb2.deleteCharAt(sb2.length() - 1).deleteCharAt(0);
+        if (sb2.length() < 1) {
+            mMarkedQuestions = new ArrayList<>();
+            for (int i = 0; i < mCurrentTest.questionCount; i++) {
+                mMarkedQuestions.add("");
+            }
+        } else {
+            mMarkedQuestions = new ArrayList<>(Arrays.asList((sb2.toString()).split(", ")));
+        }
+//        Log.i(LOG_TAG, "marked q array length: " + mMarkedQuestions.size());
+
+        // add null at index 0 so question/index numbers align
+        if (!mMarkedQuestions.get(0).equals("null")) mMarkedQuestions.add(0, null);
+//        Log.w(LOG_TAG, "mUserAnswer array init: " + mMarkedQuestions.toString());
     }
 
     public ArrayList<QuestionEntity> setQuestionsList() {
 
-        // get question list from the TestEntity
+        // get question list from the TestEntity, remove brackets, then convert to List
         StringBuilder questionsStringBuilder = new StringBuilder(mCurrentTest.questionSet);
-//        Log.w(LOG_TAG, "questionStringBuilder = "  + questionsStringBuilder.toString());
         questionsStringBuilder.deleteCharAt(questionsStringBuilder.length() - 1).deleteCharAt(0);
         String questionsString = questionsStringBuilder.toString();
-//        Log.w(LOG_TAG, "questionString = "  + questionsString);
-
-        // convert string to list of question IDs
         List<String> qIdListAsStrings = Arrays.asList(questionsString.split(", "));
-//        Log.w(LOG_TAG, "questionStringList = "  + qIdListAsStrings.toString());
 
-
-//        Log.w(LOG_TAG, "IntList count: " + mQuestionsList.size());
+        // fetch questions from db and store
         mQuestionsList = (ArrayList<QuestionEntity>) mDb.questionsDao().getQuestions(qIdListAsStrings);
         Log.i(LOG_TAG, "questionList count: " + mQuestionsList.size());
+
+        // add null at index 0 so question number matches indexed position
         mQuestionsList.add(0, null);
         Log.i(LOG_TAG, "questionList count with null added: " + mQuestionsList.size());
         return mQuestionsList;
@@ -261,4 +290,127 @@ public class QuestionsViewModel extends ViewModel {
             return 0;
         }
     }
+
+    public void setQVM(QuestionsViewModel QVM) {
+        mQuestionViewModel = QVM;
+    }
+
+    public static QuestionsViewModel getQVM() {
+        return mQuestionViewModel;
+    }
+
+
+    public AppDatabase getDb() {
+        return mDb;
+    }
+
+    public String getTestTitle() {
+        return mCurrentTest.title;
+    }
+
+    // get and set marked questions
+    public void setmMarkedQuestion(boolean b) {
+        if (b) {
+            mMarkedQuestions.set(mWhereWeAt, "1");
+        } else {
+            mMarkedQuestions.set(mWhereWeAt, "0");
+        }
+        Log.i(LOG_TAG, "marked q array length: " + mMarkedQuestions.toString());
+        Log.i(LOG_TAG, "marked question state at " + mWhereWeAt + " is " + mMarkedQuestions.get(mWhereWeAt));
+    }
+
+    public String getMarkedState(int i) {
+        return mMarkedQuestions.get(i);
+    }
+
+    public String getAnswerSubmitted(int i) {
+        return mUserAnswerArray.get(i);
+    }
+
+    public int getTestScore() {
+        int score = 0;
+
+        // iterate through each question
+        for (int i = 1; i < mQuestionsList.size(); i++) {
+            String userAnswer = "";
+
+            if (mUserAnswerArray.get(i) != null && mUserAnswerArray.get(i).length() > 0) {
+                userAnswer = getSortedString(mUserAnswerArray.get(i).toCharArray());
+            }
+            String sol = getSortedString(mQuestionsList.get(i).answer.toCharArray());
+
+            Log.i(LOG_TAG, "user / sol ---- " + userAnswer + " / " + sol);
+            if (userAnswer.equals(sol)) {
+                score++;
+                Log.i(LOG_TAG, "score: " + score);
+            }
+        }
+        Log.i(LOG_TAG, "score2: " + score);
+        return score;
+    }
+
+    private String getSortedString(char[] chars) {
+        StringBuilder sb = new StringBuilder();
+
+        // get sorted array for user answer
+        Arrays.sort(chars);
+        for (char c : chars) {
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    public LiveData<String> getTimeRemaining() {
+        return mTimeRemaining;
+    }
+
+    public static class TestCountdownTimer extends CountDownTimer {
+
+        /**
+         * @param millisInFuture    The number of millis in the future from the call
+         * to {@link #start()} until the countdown is done and {@link #onFinish()}
+         * is called.
+         * @param countDownInterval The interval along the way to receive
+         * {@link #onTick(long)} callbacks.
+         */
+
+
+        String timeRemaining;
+
+        public TestCountdownTimer(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+            timeRemaining = "" + mHour + ":" + mMin;
+            mTimeRemaining.setValue(timeRemaining);
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+
+            if (mMin == 0 && mHour == 2) {
+                mMin = 59;
+                mHour = 1;
+            } else if (mMin == 0 && mHour == 1) {
+                mMin = 59;
+                mHour = 0;
+            } else {
+                --mMin;
+            }
+
+            if(mMin < 10){
+                timeRemaining = "" + mHour + ":" + "0" + mMin;
+            } else {
+                timeRemaining = "" + mHour + ":" + mMin;
+            }
+
+
+            mTimeRemaining.setValue(timeRemaining);
+//            Log.i(LOG_TAG, "LiveData value: " + mTimeRemaining.getValue());
+        }
+
+        @Override
+        public void onFinish() {
+
+        }
+    }
 }
+

@@ -26,8 +26,11 @@ public class TestEntity {
     public int resumeQuestionNum;
     public int questionCount;
     public int sessionCount;
+    public String mMarkedQuestionSet;
 
-    public TestEntity(int type, String title, String questionSet, String answerSet, String questionElapsedTimeSet, boolean complete, int progress, long startDateTime, long endDateTime, long elapsedTestTime, long elapsedQuestionTime, int resumeQuestionNum, int questionCount, int sessionCount) {
+    public TestEntity(int type, String title, String questionSet, String answerSet, String questionElapsedTimeSet,
+                      boolean complete, int progress, long startDateTime, long endDateTime, long elapsedTestTime,
+                      long elapsedQuestionTime, int resumeQuestionNum, int questionCount, int sessionCount) {
         this.type = type;
         this.title = title;
         this.complete = complete;
@@ -42,6 +45,7 @@ public class TestEntity {
         this.questionElapsedTimeSet = questionElapsedTimeSet;
         this.questionCount = questionCount;
         this.sessionCount = sessionCount;
+        mMarkedQuestionSet = answerSet;
     }
 
     public String getAnswerSet() {
@@ -74,5 +78,9 @@ public class TestEntity {
 
     public void setProgress(int progress) {
         this.progress = progress;
+    }
+
+    public void setMarkedQuestionsSet(String markedQuestionSet){
+        this.mMarkedQuestionSet = markedQuestionSet;
     }
 }

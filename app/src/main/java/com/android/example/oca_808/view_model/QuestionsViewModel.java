@@ -143,30 +143,30 @@ public class QuestionsViewModel extends ViewModel {
     public String getUserAnswer() {
 
         if (mUserAnswerArray.size() > mWhereWeAt) { // if loading a question that's already been answered
-            Log.w(LOG_TAG, "Question answered. getUserAnswer return = " + mUserAnswerArray.get(mWhereWeAt));
+//            Log.w(LOG_TAG, "Question answered. getUserAnswer return = " + mUserAnswerArray.get(mWhereWeAt));
             return mUserAnswerArray.get(mWhereWeAt); // return the answer
         } else {
-            Log.w(LOG_TAG, "getUserAnswer = Unanswered");
+//            Log.w(LOG_TAG, "getUserAnswer = Unanswered");
             mUserAnswer.delete(0, mUserAnswer.length());
             return ""; // otherwise, return the current user answer
         }
     }
 
     public void collectUserAnswer(char userAnswer, boolean checkState) {
-        Log.i(LOG_TAG, "1. VM uAnswersArray: " + mUserAnswerArray.toString());
+//        Log.i(LOG_TAG, "1. VM uAnswersArray: " + mUserAnswerArray.toString());
         if (mCurrentQuestion.type == 1) {
             if (mUserAnswer.length() == 1) mUserAnswer.deleteCharAt(0);
             mUserAnswer.append(userAnswer);
         } else if (mCurrentQuestion.type == 0 && checkState) {
             if (!mUserAnswer.toString().contains(String.valueOf(userAnswer)))
                 mUserAnswer.append(userAnswer);
-            Log.i(LOG_TAG, "added to mUserAnswer: " + mUserAnswer);
+//            Log.i(LOG_TAG, "added to mUserAnswer: " + mUserAnswer);
         } else if (mCurrentQuestion.type == 0) {
             mUserAnswer.deleteCharAt(mUserAnswer.indexOf(String.valueOf(userAnswer)));
-            Log.i(LOG_TAG, "removed from mUserAnswer: " + mUserAnswer);
+//            Log.i(LOG_TAG, "removed from mUserAnswer: " + mUserAnswer);
         }
         mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
-        Log.i(LOG_TAG, "2. VM uAnswersArray: " + mUserAnswerArray.toString());
+//        Log.i(LOG_TAG, "2. VM uAnswersArray: " + mUserAnswerArray.toString());
     }
 
     public void setmWhereWeAt(int i) {
@@ -238,11 +238,11 @@ public class QuestionsViewModel extends ViewModel {
         } else {
             mMarkedQuestions = new ArrayList<>(Arrays.asList((sb2.toString()).split(", ")));
         }
-        Log.i(LOG_TAG, "marked q array length: " + mMarkedQuestions.size());
+//        Log.i(LOG_TAG, "marked q array length: " + mMarkedQuestions.size());
 
         // add null at index 0 so question/index numbers align
         if (!mMarkedQuestions.get(0).equals("null")) mMarkedQuestions.add(0, null);
-        Log.w(LOG_TAG, "mUserAnswer array init: " + mMarkedQuestions.toString());
+//        Log.w(LOG_TAG, "mUserAnswer array init: " + mMarkedQuestions.toString());
     }
 
     public ArrayList<QuestionEntity> setQuestionsList() {
@@ -396,7 +396,12 @@ public class QuestionsViewModel extends ViewModel {
                 --mMin;
             }
 
-            timeRemaining = "" + mHour + ":" + mMin;
+            if(mMin < 10){
+                timeRemaining = "" + mHour + ":" + "0" + mMin;
+            } else {
+                timeRemaining = "" + mHour + ":" + mMin;
+            }
+
 
             mTimeRemaining.setValue(timeRemaining);
 //            Log.i(LOG_TAG, "LiveData value: " + mTimeRemaining.getValue());

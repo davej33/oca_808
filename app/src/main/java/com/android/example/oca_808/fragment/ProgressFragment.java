@@ -31,11 +31,11 @@ public class ProgressFragment extends Fragment {
 
     private QuestionsViewModel mViewModel;
     private TextView mProgressQuestionNumberDisplay;
-    private static TextView mTimeRemainingTV;
+//    private static TextView mTimeRemainingTV;
     private ToggleButton mMarkButton;
     private static String mTimeRemaining;
 
-    private ProgressBar mBar;
+
 
 
     private OnFragmentInteractionListener mListener;
@@ -66,27 +66,13 @@ public class ProgressFragment extends Fragment {
 //            mViewModel = ViewModelProviders.of(this, new QuestionViewModelFactory(getActivity().getApplication())).get(QuestionsViewModel.class);
         }
 
-        mTimeRemainingTV = view.findViewById(R.id.textClock);
-
         int mQuestionNumber = mViewModel.getmWhereWeAt();
         int mQuestionCount = mViewModel.getQuestionCount() - 1;
-
-//        mBar = view.findViewById(R.id.progressBar);
-//        mBar.setMax(mQuestionCount);
-//        mBar.setProgress(mQuestionNumber);
 
         mProgressQuestionNumberDisplay = view.findViewById(R.id.question_number_prog);
         TextView mQuestionCountDisplay = view.findViewById(R.id.question_count_prog);
         mProgressQuestionNumberDisplay.setText(String.valueOf(mQuestionNumber));
         mQuestionCountDisplay.setText(String.valueOf(mQuestionCount));
-        TextView mPreviousButton = view.findViewById(R.id.previous_question_view);
-        if(mQuestionNumber == 1) mPreviousButton.setVisibility(View.INVISIBLE);
-        mPreviousButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.loadPreviousQuestion();
-            }
-        });
 
         subscribe();
 
@@ -98,8 +84,6 @@ public class ProgressFragment extends Fragment {
         final Observer<Integer> questionObserver = new Observer<Integer>() {
             @Override
             public void onChanged(@Nullable Integer qNum) {
-//                mBar.setProgress(qNum);
-
                 mProgressQuestionNumberDisplay.setText(String.valueOf(qNum));
             }
         };
@@ -121,10 +105,6 @@ public class ProgressFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    public static void setTimeRemainingFrag(String timeRemaining){
-        mTimeRemainingTV.setText(timeRemaining);
     }
 
     /**

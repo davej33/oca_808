@@ -45,7 +45,7 @@ public class QuestionsViewModel extends ViewModel {
     private static boolean mInitiated;
     // Timer vars
     private static final int ONE_MINUTE = 60000;
-    private static final int TEST_START_DURATION = 9000000;
+    private static long mMillisecondRemaining = 9000000;
     private static MutableLiveData<String> mTimeRemaining = new MutableLiveData<>();
     private static TestCountdownTimer mTimer;
     private static int mMin = 30;   // TODO add to test object
@@ -95,12 +95,12 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     public void startTimer() {
-        if (mTimer == null) mTimer = new TestCountdownTimer(TEST_START_DURATION, ONE_MINUTE);
+        if (mTimer == null) mTimer = new TestCountdownTimer(mMillisecondRemaining, ONE_MINUTE);
         mTimer.start();
     }
 
     public void stopTimer() {
-
+        mTimer.cancel();
     }
 
     public void nextQuestion() {
@@ -204,10 +204,22 @@ public class QuestionsViewModel extends ViewModel {
             mCurrentQuestion = mQuestionsList.get(mWhereWeAt);
         }
 
-        // TODO: should only do this if resuming test
+        // set time remaining
+        if (mCurrentTest.elapsedTestTime > 0) {
+            mMillisecondRemaining = ONE_MINUTE * (mCurrentTest.elapsedTestTime);
+            long remainingTime = mCurrentTest.elapsedTestTime;
+            if (remainingTime >= 120) {
+                mHour = 2;
+                mMin = (int) remainingTime - 120;
+            } else if (remainingTime < 120 && remainingTime >= 60) {
+                mHour = 1;
+                mMin = (int) remainingTime - 60;
+            } else {
+                mHour = 0;
+                mMin = (int) remainingTime;
+            }
+        }
         // convert answer list to StringBuilder to remove brackets then to List
-
-
         // store answers in stringbuilder
         StringBuilder sb = new StringBuilder(mCurrentTest.answerSet);
         Log.i(LOG_TAG, "*** sb = " + sb);
@@ -415,14 +427,13 @@ public class QuestionsViewModel extends ViewModel {
                 timeRemaining = "" + mHour + ":" + mMin;
             }
 
-
             mTimeRemaining.setValue(timeRemaining);
-//            Log.i(LOG_TAG, "LiveData value: " + mTimeRemaining.getValue());
+
         }
 
         @Override
         public void onFinish() {
-
+            // TODO dialogue: time has expired. start score frag
         }
     }
 
@@ -440,10 +451,12 @@ public class QuestionsViewModel extends ViewModel {
         mCurrentTest.setAnswerSet(mUserAnswerArray.toString());
         mCurrentTest.setResumeQuestionNum(mWhereWeAt);
         mCurrentTest.setProgress(calculateProgress());
-
+        mCurrentTest.setElapsedTestTime((mHour * 60) + mMin + 1);
+        Log.i(LOG_TAG, "time remaining: " + ((mHour * 60) + mMin + 1));
         int updateCheck = mDb.testsDao().updateTestResults(mCurrentTest);
 //        Log.w(LOG_TAG, "^^^^^^^^^ update check: " + updateCheck);
     }
+
 
 }
 

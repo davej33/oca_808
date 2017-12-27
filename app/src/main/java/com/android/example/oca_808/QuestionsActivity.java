@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -71,18 +72,32 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
         Toast.makeText(this, mViewModel.getTestTitle(), Toast.LENGTH_SHORT).show();
         // Hide the status bar.
-        View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
+//        View decorView = getWindow().getDecorView();
+//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+//        decorView.setSystemUiVisibility(uiOptions);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
             actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorBlack, null)));
 
-        displayQuestion();
+        if(mViewModel.getCurrentQuestion() == null){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    displayQuestion();
 
-        mViewModel.startTimer();
+                    mViewModel.startTimer();
 
-        subscribe();
+                    subscribe();
+                }
+            }, 1000);
+        } else {
+            displayQuestion();
+
+            mViewModel.startTimer();
+
+            subscribe();
+        }
+
     }
 
     private void displayQuestion() {

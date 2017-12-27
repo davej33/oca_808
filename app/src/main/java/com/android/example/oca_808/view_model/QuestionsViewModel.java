@@ -166,7 +166,7 @@ public class QuestionsViewModel extends ViewModel {
 //            Log.i(LOG_TAG, "removed from mUserAnswer: " + mUserAnswer);
         }
         mUserAnswerArray.set(mWhereWeAt, mUserAnswer.toString());
-//        Log.i(LOG_TAG, "2. VM uAnswersArray: " + mUserAnswerArray.toString());
+        Log.i(LOG_TAG, "Test ID: " + mCurrentTest._id + ". uAnswersArray: " + mUserAnswerArray.toString());
     }
 
     public void setmWhereWeAt(int i) {
@@ -177,29 +177,28 @@ public class QuestionsViewModel extends ViewModel {
     // ---------------------------------- get and set test --------------------
     public void getTest(int testId) {
 
-//        clearVars();
+        clearVars();
 
         // get TestEntity
         Log.i(LOG_TAG, "current test id: " + testId);
         mCurrentTest = mDb.testsDao().fetchTest(testId);
         Log.i(LOG_TAG, "current test title: " + mCurrentTest.title);
 
-        if (!mInitiated) {
-            mInitiated = true;
-            setTestAttributes();
-        }
+//        if (!mInitiated) {
+//            mInitiated = true;
+        setTestAttributes();
+//        }
 
     }
 
     private void setTestAttributes() {
-//TODO: add timer fetch and set
+        //TODO: add timer fetch and set
         // get questions
         // set the questions list
         mQuestionsList = setQuestionsList();
 
+        // set user answer to ""
         mUserAnswer = new StringBuilder();
-//        startTimer();
-//        int index = mQuestionsList.indexOf(mCurrentQuestion);
 
         // set starting point
         if (mQuestionNumber == null) {
@@ -214,20 +213,44 @@ public class QuestionsViewModel extends ViewModel {
 
         // TODO: should only do this if resuming test
         // convert answer list to StringBuilder to remove brackets then to List
+
+
+        // store answers in stringbuilder
         StringBuilder sb = new StringBuilder(mCurrentTest.answerSet);
+        Log.i(LOG_TAG, "*** sb = " + sb);
+
+        // remove brackets
         sb.deleteCharAt(sb.length() - 1).deleteCharAt(0);
-        if (sb.length() < 1) {
+        Log.i(LOG_TAG, "*** sb = " + sb);
+
+        if (sb.length() > 0) { // if userAnswerList has been initialized
+            // convert string to list
+            mUserAnswerArray = new ArrayList<>(Arrays.asList((sb.toString()).split(", ")));
+            Log.w(LOG_TAG, "user answer array init: " + mUserAnswerArray.toString());
+
+            // if the users Answer list is smaller than the number of test questions [plus 1 to account for the added null at index 0]
+            if (mUserAnswerArray.size() < mCurrentTest.questionCount + 1) {
+
+                // add an empty string until the answer list size equals the number questions
+                for (int i = mUserAnswerArray.size(); i < mCurrentTest.questionCount + 1; i++) {
+                    mUserAnswerArray.add("");
+                }
+
+                Log.w(LOG_TAG, "user answer array init final: " + mUserAnswerArray.toString());
+            }
+        } else {
             mUserAnswerArray = new ArrayList<>();
+
+            // add an empty string until the answer list size equals the number questions
             for (int i = 0; i < mCurrentTest.questionCount; i++) {
                 mUserAnswerArray.add("");
             }
-        } else {
-            mUserAnswerArray = new ArrayList<>(Arrays.asList((sb.toString()).split(", ")));
+            // add null at index 0 so question/index numbers align
+//            if (!mUserAnswerArray.get(0).equals("null"))
+            mUserAnswerArray.add(0, null);
+            Log.w(LOG_TAG, "user answer array init: " + mUserAnswerArray.toString());
         }
 
-        // add null at index 0 so question/index numbers align
-        if (!mUserAnswerArray.get(0).equals("null")) mUserAnswerArray.add(0, null);
-        Log.w(LOG_TAG, "user answer array init: " + mUserAnswerArray.toString());
 
         // convert answer list to StringBuilder to remove brackets then to List
         StringBuilder sb2 = new StringBuilder(mCurrentTest.mMarkedQuestionSet);
@@ -251,6 +274,9 @@ public class QuestionsViewModel extends ViewModel {
 
         // get question list from the TestEntity, remove brackets, then convert to List
         StringBuilder questionsStringBuilder = new StringBuilder(mCurrentTest.questionSet);
+        Log.i(LOG_TAG, "^^^Current test questionList: " + mCurrentTest.questionSet);
+
+
         questionsStringBuilder.deleteCharAt(questionsStringBuilder.length() - 1).deleteCharAt(0);
         String questionsString = questionsStringBuilder.toString();
         List<String> qIdListAsStrings = Arrays.asList(questionsString.split(", "));
@@ -265,14 +291,6 @@ public class QuestionsViewModel extends ViewModel {
         return mQuestionsList;
     }
 
-    public void saveDataToDb() {
-        mCurrentTest.setAnswerSet(mUserAnswerArray.toString());
-        mCurrentTest.setResumeQuestionNum(mWhereWeAt);
-        mCurrentTest.setProgress(calculateProgress());
-
-        int updateCheck = mDb.testsDao().updateTestResults(mCurrentTest);
-//        Log.w(LOG_TAG, "^^^^^^^^^ update check: " + updateCheck);
-    }
 
     private int calculateProgress() {
         if (mUserAnswerArray.size() > 0) {
@@ -398,7 +416,7 @@ public class QuestionsViewModel extends ViewModel {
                 --mMin;
             }
 
-            if(mMin < 10){
+            if (mMin < 10) {
                 timeRemaining = "" + mHour + ":" + "0" + mMin;
             } else {
                 timeRemaining = "" + mHour + ":" + mMin;
@@ -414,5 +432,25 @@ public class QuestionsViewModel extends ViewModel {
 
         }
     }
+
+    public void clearVars() {
+        if (mCurrentTest != null) {
+            mCurrentTest = null;
+            mQuestionsList = null;
+            mCurrentQuestion = null;
+            mUserAnswerArray = null;
+            mUserAnswer = null;
+        }
+    }
+
+    public void saveDataToDb() {
+        mCurrentTest.setAnswerSet(mUserAnswerArray.toString());
+        mCurrentTest.setResumeQuestionNum(mWhereWeAt);
+        mCurrentTest.setProgress(calculateProgress());
+
+        int updateCheck = mDb.testsDao().updateTestResults(mCurrentTest);
+//        Log.w(LOG_TAG, "^^^^^^^^^ update check: " + updateCheck);
+    }
+
 }
 

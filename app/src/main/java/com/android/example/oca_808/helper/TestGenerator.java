@@ -37,6 +37,9 @@ public final class TestGenerator {
 
     public static void createTestSim(Context context, int testType) {
 
+        // get db
+        mDb = AppDatabase.getDb(context);
+
         // get questions
         String testTitle = createTestTitle(context, testType); // Test sim = 1, practice test = 0
 
@@ -52,7 +55,7 @@ public final class TestGenerator {
 
         // create list for storing time elapsed on each question
         String elapsedQuestionTimeList = new ArrayList<>(questionList.size()).toString();
-        Log.i(LOG_TAG, " ********* elapsedTime: " + elapsedQuestionTimeList.length());
+        Log.i(LOG_TAG, "*** ");
 
         // get local time in milliseconds
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -96,7 +99,7 @@ public final class TestGenerator {
         return title;
     }
 
-    public static void addQs(Context context) {
+    public static boolean addQs(Context context) {
         mDb = AppDatabase.getDb(context);
         if (mQuestions == null) {
             mQuestions = new ArrayList<>();
@@ -122,19 +125,11 @@ public final class TestGenerator {
 
 
 
-
-
-
-
-
-
-
-
-
-
             long[] x = TestGenerator.mDb.questionsDao().insertQuestions(mQuestions);
             Log.w(LOG_TAG, "insert count: " + x.length);
 
+
         }
+        return true;
     }
 }

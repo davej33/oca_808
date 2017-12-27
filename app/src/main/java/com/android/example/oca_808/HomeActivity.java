@@ -44,12 +44,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private ConstraintLayout mMainLayout;
     private LayoutInflater mLayoutInflater;
     private TestHistoryAdapter mTestHistoryAdapter;
-    private QuestionsViewModel mQuestionViewModel;
+    private QuestionsViewModel mViewModel;
     private static int mTestType;
     private Button mTestButton;
     private Button mPracticeButton;
     private Button mTrainButton;
     private Button mStatsButton;
+    private boolean mQuestionsAdded;
 
     private static final String[] OBJECTIVES = {"z", "1. Java Basics",
             "2. Data Types", "3. Operators and Decision Constructs",
@@ -63,26 +64,28 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        mQuestionViewModel = ViewModelProviders.of(this, new QuestionViewModelFactory(this.getApplication())).get(QuestionsViewModel.class);
-        mQuestionViewModel.setQVM(mQuestionViewModel);
+        mViewModel = ViewModelProviders.of(this, new QuestionViewModelFactory(this.getApplication())).get(QuestionsViewModel.class);
+        mViewModel.setQVM(mViewModel);
 
         // instantiate objects
-        mDb = mQuestionViewModel.getDb();
+        mDb = mViewModel.getDb();
         mMainLayout = findViewById(R.id.home_activity);
         mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         mContext = this;
 
         setupSharedPref();
-
-        TestGenerator.addQs(mContext); // TODO: only run once
+//        List l = mDb.questionsDao().getQuestionIds();
+        //  only run once
+        if (mDb.questionsDao().getQuestionIds().size() == 0) {
+            mQuestionsAdded = TestGenerator.addQs(mContext);
+            Log.i(LOG_TAG, "@@@ Questions added");
+        }
 
         // get buttons and set onClickListener
         mTestButton = findViewById(R.id.test_button);
         mPracticeButton = findViewById(R.id.title_background);
         mTrainButton = findViewById(R.id.train_button);
         mStatsButton = findViewById(R.id.stats_button);
-
-
         mTestButton.setOnClickListener(this);
         mPracticeButton.setOnClickListener(this);
         mTrainButton.setOnClickListener(this);
@@ -125,7 +128,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     testId = shPref.getInt(this.getResources().getString(R.string.sp_resume_practice_test), -1);
                 }
                 if (testId > 0) {
-                    mQuestionViewModel.getTest(testId);
+                    mViewModel.getTest(testId);
                     startActivity(new Intent(this, QuestionsActivity.class));
                 } else {
                     Log.e(LOG_TAG, "Test resume error");

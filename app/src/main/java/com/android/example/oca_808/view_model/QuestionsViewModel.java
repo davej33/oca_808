@@ -60,8 +60,6 @@ public class QuestionsViewModel extends ViewModel {
         if (mDb == null) {
             mDb = AppDatabase.getDb(mApplication);
         }
-
-        ;
     }
 
 
@@ -180,15 +178,10 @@ public class QuestionsViewModel extends ViewModel {
         clearVars();
 
         // get TestEntity
-        Log.i(LOG_TAG, "current test id: " + testId);
         mCurrentTest = mDb.testsDao().fetchTest(testId);
         Log.i(LOG_TAG, "current test title: " + mCurrentTest.title);
 
-//        if (!mInitiated) {
-//            mInitiated = true;
         setTestAttributes();
-//        }
-
     }
 
     private void setTestAttributes() {

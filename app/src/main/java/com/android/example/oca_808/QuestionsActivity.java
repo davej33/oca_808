@@ -79,7 +79,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         if (actionBar != null)
             actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorBlack, null)));
 
-        if(mViewModel.getCurrentQuestion() == null){
+        if (mViewModel.getCurrentQuestion() == null) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -162,14 +162,21 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
     @Override
     public void loadNextQuestion() {
-        mViewModel.setmMarkedQuestion(mQuestionIsMarked);
-        mWrongAnswers = mViewModel.checkAnswer();
-        Log.i(LOG_TAG,"loadNextQuestion");
-        // if showAnswer = false or the explanation view is visible then go to next question
-        if (!mShowAnswer || (mExplanationContainer.getVisibility() == View.VISIBLE)) {
-            mViewModel.nextQuestion();
+        // go to test results if on last question
+        int wwa = mViewModel.getmWhereWeAt();
+        int qCount = mViewModel.getQuestionCount();
+        if (qCount == wwa + 1) {
+            startActivity(new Intent(this, TestReviewActivity.class));
         } else {
-            displayExplanation();
+            mViewModel.setmMarkedQuestion(mQuestionIsMarked);
+            mWrongAnswers = mViewModel.checkAnswer();
+            Log.i(LOG_TAG, "loadNextQuestion");
+            // if showAnswer = false or the explanation view is visible then go to next question
+            if (!mShowAnswer || (mExplanationContainer.getVisibility() == View.VISIBLE)) {
+                mViewModel.nextQuestion();
+            } else {
+                displayExplanation();
+            }
         }
     }
 

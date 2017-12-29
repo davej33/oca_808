@@ -110,7 +110,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.test_button:
                 mTestType = TEST_SIM;
-                inflateTestPopUp(v);
+                if (shPref.getInt(this.getResources().getString(R.string.sp_test_num_key), -1) < 1) {
+                    if (mTestType == TEST_SIM) {
+                        TestGenerator.createTestSim(this, TEST_SIM);
+                    } else {
+                        TestGenerator.createTestSim(this, PRACTICE_TEST);
+                    }
+                    startActivity(new Intent(getApplicationContext(), QuestionsActivity.class));
+                } else {
+                    inflateTestPopUp(v);
+                }
                 break;
             case R.id.new_test_tv:
                 if (mTestType == TEST_SIM) {
@@ -249,6 +258,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
-        mPopUpWindow.dismiss();
+        if(mPopUpWindow != null) mPopUpWindow.dismiss();
     }
 }

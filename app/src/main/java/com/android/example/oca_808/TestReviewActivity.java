@@ -10,14 +10,19 @@ import com.android.example.oca_808.fragment.ScoreFragment;
 import com.android.example.oca_808.fragment.TestReviewFragment;
 
 public class TestReviewActivity extends AppCompatActivity implements TestReviewFragment.OnFragmentInteractionListener,
-        ScoreFragment.OnFragmentInteractionListener{
+        ScoreFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_review);
 
-        getSupportFragmentManager().beginTransaction().add(R.id.review_frag_container, new TestReviewFragment()).commit();
+        boolean testExpired = getIntent().hasExtra("expired");
+        if(testExpired){
+            getSupportFragmentManager().beginTransaction().replace(R.id.review_frag_container, new ScoreFragment()).commit();
+        } else {
+            getSupportFragmentManager().beginTransaction().add(R.id.review_frag_container, new TestReviewFragment()).commit();
+        }
     }
 
     @Override

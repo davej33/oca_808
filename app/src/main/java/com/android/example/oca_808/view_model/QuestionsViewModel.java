@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.android.example.oca_808.QuestionsActivity;
 import com.android.example.oca_808.db.AppDatabase;
 import com.android.example.oca_808.db.entity.QuestionEntity;
 import com.android.example.oca_808.db.entity.TestEntity;
@@ -42,16 +43,18 @@ public class QuestionsViewModel extends ViewModel {
     private static StringBuilder mUserAnswer;
     private static List<String> mMarkedQuestions;
 
-    private static boolean mInitiated;
     // Timer vars
     private static final int ONE_MINUTE = 60000;
-    private static long mMillisecondRemaining = 9000000;
+    private static long mMillisecondAtStart = 9000000;
+    private static long mMillisecondRemain;
     private static MutableLiveData<String> mTimeRemaining = new MutableLiveData<>();
     private static TestCountdownTimer mTimer;
-    private static int mMin = 30;   // TODO add to test object
+    private static int mMin = 30;
     private static int mHour = 2;
-    private static int mLoadTestId;
     private static QuestionsViewModel mQuestionViewModel;
+    private static String mStringTimeRemaining;
+    private static String mElapsedTime;
+
 
     // constructor
     public QuestionsViewModel(Application mApplication) {
@@ -95,7 +98,7 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     public void startTimer() {
-        if (mTimer == null) mTimer = new TestCountdownTimer(mMillisecondRemaining, ONE_MINUTE);
+        if (mTimer == null) mTimer = new TestCountdownTimer(mMillisecondAtStart, ONE_MINUTE);
         mTimer.start();
     }
 
@@ -135,7 +138,7 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     public int getQuestionCount() {
-        return mQuestionsList.size();
+        return mQuestionsList.size() - 1;
     }
 
     public String getUserAnswer() {
@@ -206,7 +209,7 @@ public class QuestionsViewModel extends ViewModel {
 
         // set time remaining
         if (mCurrentTest.elapsedTestTime > 0) {
-            mMillisecondRemaining = ONE_MINUTE * (mCurrentTest.elapsedTestTime);
+            mMillisecondAtStart = ONE_MINUTE * (mCurrentTest.elapsedTestTime);
             long remainingTime = mCurrentTest.elapsedTestTime;
             if (remainingTime >= 120) {
                 mHour = 2;
@@ -389,53 +392,6 @@ public class QuestionsViewModel extends ViewModel {
         return mTimeRemaining;
     }
 
-    public static class TestCountdownTimer extends CountDownTimer {
-
-        /**
-         * @param millisInFuture    The number of millis in the future from the call
-         * to {@link #start()} until the countdown is done and {@link #onFinish()}
-         * is called.
-         * @param countDownInterval The interval along the way to receive
-         * {@link #onTick(long)} callbacks.
-         */
-
-
-        String timeRemaining;
-
-        public TestCountdownTimer(long millisInFuture, long countDownInterval) {
-            super(millisInFuture, countDownInterval);
-            timeRemaining = "" + mHour + ":" + mMin;
-            mTimeRemaining.setValue(timeRemaining);
-        }
-
-        @Override
-        public void onTick(long millisUntilFinished) {
-
-            if (mMin == 0 && mHour == 2) {
-                mMin = 59;
-                mHour = 1;
-            } else if (mMin == 0 && mHour == 1) {
-                mMin = 59;
-                mHour = 0;
-            } else {
-                --mMin;
-            }
-
-            if (mMin < 10) {
-                timeRemaining = "" + mHour + ":" + "0" + mMin;
-            } else {
-                timeRemaining = "" + mHour + ":" + mMin;
-            }
-
-            mTimeRemaining.setValue(timeRemaining);
-
-        }
-
-        @Override
-        public void onFinish() {
-            // TODO dialogue: time has expired. start score frag
-        }
-    }
 
     public void clearVars() {
         if (mCurrentTest != null) {
@@ -457,6 +413,67 @@ public class QuestionsViewModel extends ViewModel {
 //        Log.w(LOG_TAG, "^^^^^^^^^ update check: " + updateCheck);
     }
 
+    public static class TestCountdownTimer extends CountDownTimer {
 
+        /**
+         * @param millisInFuture    The number of millis in the future from the call
+         *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
+         *                          is called.
+         * @param countDownInterval The interval along the way to receive
+         *                          {@link #onTick(long)} callbacks.
+         */
+
+
+        public TestCountdownTimer(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+            mStringTimeRemaining = "" + mHour + ":" + mMin;
+            mTimeRemaining.setValue(mStringTimeRemaining);
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+
+            mMillisecondRemain = millisUntilFinished;
+
+            if (mMin == 0 && mHour == 2) {
+                mMin = 59;
+                mHour = 1;
+            } else if (mMin == 0 && mHour == 1) {
+                mMin = 59;
+                mHour = 0;
+            } else {
+                --mMin;
+            }
+
+            if (mMin < 10) {
+                mStringTimeRemaining = "" + mHour + ":" + "0" + mMin;
+            } else {
+                mStringTimeRemaining = "" + mHour + ":" + mMin;
+            }
+
+            mTimeRemaining.setValue(mStringTimeRemaining);
+        }
+
+        @Override
+        public void onFinish() {
+        }
+    }
+
+    public String getmElapsedTime() {
+
+        // minutes elapsed
+        long elapsedT = (mMillisecondAtStart - mMillisecondRemain) / 60000;
+
+        int elMin = (int) elapsedT % 60;
+        int elHou = (int) elapsedT / 60;
+
+        if (elMin < 10) {
+            mElapsedTime = "" + elHou + ":" + "0" + elMin;
+        } else {
+            mElapsedTime = "" + elHou + ":" + elMin;
+        }
+
+        return mElapsedTime;
+    }
 }
 

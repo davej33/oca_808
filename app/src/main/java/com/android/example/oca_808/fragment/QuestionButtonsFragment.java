@@ -55,6 +55,7 @@ public class QuestionButtonsFragment extends Fragment implements View.OnClickLis
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question_buttons, container, false);
 
+        // get viewModel and views
         if (mViewModel == null) mViewModel = QuestionsViewModel.getQVM();
         mPreviousQuestion = view.findViewById(R.id.previous_question_view);
         mNextQuestion = view.findViewById(R.id.next_question_view);
@@ -112,7 +113,7 @@ public class QuestionButtonsFragment extends Fragment implements View.OnClickLis
                 }
                 break;
             case R.id.next_question_view:
-                if (mLastQuestion) {
+                if (mViewModel.getQuestionCount() == mViewModel.getmWhereWeAt()) {
                     startActivity(new Intent(getContext(), TestReviewActivity.class));
                 } else {
                     mListener.loadNextQuestion();

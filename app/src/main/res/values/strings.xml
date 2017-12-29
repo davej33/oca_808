@@ -100,4 +100,6 @@
     <string name="previous_q">PREV</string>
     <string name="submit">Submit</string>
     <string name="next">NEXT</string>
+    <string name="time_expired">Time Expired!</string>
+    <string name="results">Results</string>
 </resources>

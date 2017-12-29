@@ -123,6 +123,11 @@ public final class TestGenerator {
                     "'None' is incorrect because two answers evaluate to &", DIFF_MED));
 
 
+            mQuestions.add(new QuestionEntity(4107, 0, "Given the following array, which statements evaluate to '&'?\n\nchar[] foo = {‘X’,’1’,’Y’,’2’,’Z,’&’};", "foo[6];", "foo[5];",
+                    "foo[foo.length()];", "foo[foo.length()-1];", "Does not compile", "None of the above", "bd", "Key Points:\n - Array indices begin at 0\n - Array length begins at 1\n\n       index =   0   1   2   3   4  5\n " +
+                    "char[] foo = {‘X’,’A’,’Y’,’B’,’Z,’&’};\n       length =   1   2   3   4   5  6\n\nfoo[6] tries to access index 6 which doesn’t exist so it will throw an ArrayIndexOutOfBoundsException\n " +
+                    "foo[5] is correct\nfoo[foo.length()]  tries to access index 6 which doesn’t exist so it will throw an ArrayIndexOutOfBoundsException.\nfoo[foo.length() - 1] is correct\nDoes not compile is incorrect\n" +
+                    "'None' is incorrect because two answers evaluate to &", DIFF_MED));
 
 
             long[] x = TestGenerator.mDb.questionsDao().insertQuestions(mQuestions);

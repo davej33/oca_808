@@ -1,5 +1,6 @@
 package com.android.example.oca_808.fragment;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -8,9 +9,12 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -32,8 +36,8 @@ public class ProgressFragment extends Fragment {
     private QuestionsViewModel mViewModel;
     private TextView mProgressQuestionNumberDisplay;
 //    private static TextView mTimeRemainingTV;
-    private ToggleButton mMarkButton;
-    private static String mTimeRemaining;
+    private ImageView mDifficultyImg;
+    private TextView mQuestionScore;
 
 
 
@@ -67,12 +71,15 @@ public class ProgressFragment extends Fragment {
         }
 
         int mQuestionNumber = mViewModel.getmWhereWeAt();
-        int mQuestionCount = mViewModel.getQuestionCount() - 1;
+        int mQuestionCount = mViewModel.getQuestionCount();
 
         mProgressQuestionNumberDisplay = view.findViewById(R.id.question_number_prog);
         TextView mQuestionCountDisplay = view.findViewById(R.id.question_count_prog);
         mProgressQuestionNumberDisplay.setText(String.valueOf(mQuestionNumber));
         mQuestionCountDisplay.setText(String.valueOf(mQuestionCount));
+
+        mDifficultyImg = view.findViewById(R.id.difficult_icon);
+        mQuestionScore = view.findViewById(R.id.q_score_status);
 
         subscribe();
 
@@ -85,9 +92,48 @@ public class ProgressFragment extends Fragment {
             @Override
             public void onChanged(@Nullable Integer qNum) {
                 mProgressQuestionNumberDisplay.setText(String.valueOf(qNum));
+                setDiffAndScore();
             }
         };
         mViewModel.newQuestion().observe(this, questionObserver);
+    }
+
+    private void setDiffAndScore() {
+
+        switch(mViewModel.getCurrentQuestion().difficulty){
+            case 1:
+                mDifficultyImg.setImageDrawable(getContext().getResources().getDrawable(R.drawable.easy_q_icon));
+                break;
+            case 2:
+                mDifficultyImg.setImageDrawable(getContext().getResources().getDrawable(R.drawable.med_q_icon));
+                break;
+            case 3:
+                mDifficultyImg.setImageDrawable(getContext().getResources().getDrawable(R.drawable.hard_q_icon));
+                break;
+                default:
+                    Log.e("ProgressFrag", "Error matching difficulty");
+        }
+
+        switch (mViewModel.getCurrentQuestion().getStatus()){
+            case -1:
+                mQuestionScore.setText("-");
+                mQuestionScore.setTextColor(getContext().getResources().getColor(R.color.colorAccent));
+                break;
+            case 0:
+                mQuestionScore.setText("0");
+                mQuestionScore.setTextColor(getContext().getResources().getColor(R.color.colorGray));
+                break;
+            case 1:
+                mQuestionScore.setText("+");
+                mQuestionScore.setTextColor(getContext().getResources().getColor(R.color.colorGreen));
+                break;
+            case 2:
+                mQuestionScore.setText("++");
+                mQuestionScore.setTextColor(getContext().getResources().getColor(R.color.colorGreen));
+                break;
+            default:
+                Log.e("ProgressFrag", "Error matching question score");
+        }
     }
 
     @Override

@@ -368,12 +368,25 @@ public class QuestionsViewModel extends ViewModel {
             String sol = getSortedString(mQuestionsList.get(i).answer.toCharArray());
 
             Log.i(LOG_TAG, "user / sol ---- " + userAnswer + " / " + sol);
+            Log.i(LOG_TAG,"qScore pre set: " + mQuestionsList.get(i).status);
+            // get question score
+            int qScore = mQuestionsList.get(i).status;
             if (userAnswer.equals(sol)) {
+
+                // increase score if correct
                 score++;
-                Log.i(LOG_TAG, "score: " + score);
+
+                // set new question score
+                mQuestionsList.get(i).setStatus((qScore == 0 || qScore == -1) ? 1 : 2);
+            } else {
+
+                // set new question score
+                mQuestionsList.get(i).setStatus(-1);
             }
+            Log.i(LOG_TAG,"qScore post set: " + mQuestionsList.get(i).status);
         }
         Log.i(LOG_TAG, "score2: " + score);
+        saveDataToDb();
         return score;
     }
 
@@ -408,9 +421,17 @@ public class QuestionsViewModel extends ViewModel {
         mCurrentTest.setResumeQuestionNum(mWhereWeAt);
         mCurrentTest.setProgress(calculateProgress());
         mCurrentTest.setElapsedTestTime((mHour * 60) + mMin + 1);
-        Log.i(LOG_TAG, "time remaining: " + ((mHour * 60) + mMin + 1));
+//        Log.i(LOG_TAG, "time remaining: " + ((mHour * 60) + mMin + 1));
         int updateCheck = mDb.testsDao().updateTestResults(mCurrentTest);
-//        Log.w(LOG_TAG, "^^^^^^^^^ update check: " + updateCheck);
+
+        // remove null at index 0 so db can update with list
+        mQuestionsList.remove(0);
+        int qUpdateCheck = mDb.questionsDao().updateQuestions(mQuestionsList);
+        Log.w(LOG_TAG, "^^^^^^^^^ update check: " + updateCheck);
+        Log.w(LOG_TAG, "^^^^ question update check: " + qUpdateCheck);
+
+        // add null back to index
+        mQuestionsList.add(0, null);
     }
 
     public static class TestCountdownTimer extends CountDownTimer {

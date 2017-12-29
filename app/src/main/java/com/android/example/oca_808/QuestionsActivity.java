@@ -157,7 +157,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             public void onChanged(@Nullable String s) {
 
                 mTimer.setText(s);
-                if(s.equals("0:00")){
+                if (s.equals("0:00")) {
                     mViewModel.stopTimer();
                     timeExpired();
                 }
@@ -185,15 +185,15 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 //        if (qCount == wwa + 1) {
 //            startActivity(new Intent(this, TestReviewActivity.class));
 //        } else {
-            mViewModel.setmMarkedQuestion(mQuestionIsMarked);
-            mWrongAnswers = mViewModel.checkAnswer();
-            Log.i(LOG_TAG, "loadNextQuestion");
-            // if showAnswer = false or the explanation view is visible then go to next question
-            if (!mShowAnswer || (mExplanationContainer.getVisibility() == View.VISIBLE)) {
-                mViewModel.nextQuestion();
-            } else {
-                displayExplanation();
-            }
+        mViewModel.setmMarkedQuestion(mQuestionIsMarked);
+        mWrongAnswers = mViewModel.checkAnswer();
+        Log.i(LOG_TAG, "loadNextQuestion");
+        // if showAnswer = false or the explanation view is visible then go to next question
+        if (!mShowAnswer || (mExplanationContainer.getVisibility() == View.VISIBLE)) {
+            mViewModel.nextQuestion();
+        } else {
+            displayExplanation();
+        }
 //        }
     }
 
@@ -218,6 +218,12 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         switch (item.getItemId()) {
             case R.id.end_session:
                 startActivity(new Intent(this, TestReviewActivity.class));
+                break;
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
+            default:
+                Log.e(LOG_TAG, "No menu select match");
         }
         return super.onOptionsItemSelected(item);
     }

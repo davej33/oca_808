@@ -6,6 +6,7 @@ import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -46,7 +47,7 @@ import java.util.ArrayList;
 
 public class QuestionsActivity extends AppCompatActivity implements QuestionFragment.OnFragmentInteractionListener,
         ProgressFragment.OnFragmentInteractionListener, AnswerFragment.OnFragmentInteractionListener,
-        QuestionButtonsFragment.OnFragmentInteractionListener, ExplanationFragment.OnFragmentInteractionListener {
+        QuestionButtonsFragment.OnFragmentInteractionListener, ExplanationFragment.OnFragmentInteractionListener{
 
     private static final String LOG_TAG = QuestionsActivity.class.getSimpleName();
     private Integer mQuestionNum = 0;
@@ -83,7 +84,6 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         mMainLayout = findViewById(R.id.question_activity);
         mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 
-        Toast.makeText(this, mViewModel.getTestTitle(), Toast.LENGTH_SHORT).show();
         // Hide the status bar.
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
@@ -113,6 +113,18 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
     private void displayQuestion() {
 
         // manage view visibilities
@@ -131,7 +143,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
     private void displayExplanation() {
 
         // manage view visibilities
-        mQuestionContainer.setVisibility(View.GONE);
+        mQuestionContainer.setVisibility(View.INVISIBLE);
         mExplanationContainer.setVisibility(View.VISIBLE);
         mQuestionForSolutionContainer.setVisibility(View.VISIBLE);
 
@@ -274,4 +286,11 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         p.dimAmount = 0.7f;
         wm.updateViewLayout(container, p);
     }
+
+//    @Override
+//    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+//        Log.i(LOG_TAG, "SharedPrefChange run, key: " + key);
+//
+//
+//    }
 }

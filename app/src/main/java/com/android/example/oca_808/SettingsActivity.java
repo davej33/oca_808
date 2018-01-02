@@ -108,12 +108,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // Set the listener to watch for value changes.
 //        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
-        // Trigger the listener immediately with the preference's
-        // current value.
+//         Trigger the listener immediately with the preference's
+//         current value.
 //        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
 //                PreferenceManager
 //                        .getDefaultSharedPreferences(preference.getContext())
-//                        .getString(preference.getKey(), ""));
+//                        .getBoolean(preference.getKey(), true));
     }
 
     @Override
@@ -177,8 +177,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("example_text"));
-            bindPreferenceSummaryToValue(findPreference("example_list"));
+            bindPreferenceSummaryToValue(findPreference("diff_key"));
+            bindPreferenceSummaryToValue(findPreference("q_score_key"));
         }
 
         @Override

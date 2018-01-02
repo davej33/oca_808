@@ -72,13 +72,17 @@ public class QuestionButtonsFragment extends Fragment implements View.OnClickLis
             mMarkButton.setChecked(false);
         }
 
-        // get show answer state
         mShowAnswerButton = view.findViewById(R.id.show_answer);
-        mShowAnswerButton.setOnClickListener(this);
-        if (QuestionsActivity.showAnswer()) {
-            mShowAnswerButton.setChecked(true);
+        if (mViewModel.getmCurrentTest().type == 0) {
+            // get show answer state
+            mShowAnswerButton.setOnClickListener(this);
+            if (QuestionsActivity.showAnswer()) {
+                mShowAnswerButton.setChecked(true);
+            } else {
+                mShowAnswerButton.setChecked(false);
+            }
         } else {
-            mShowAnswerButton.setChecked(false);
+            mShowAnswerButton.setVisibility(View.INVISIBLE);
         }
 
         // make prev button unclickable if on question 1

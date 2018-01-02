@@ -176,6 +176,10 @@ public class QuestionsViewModel extends ViewModel {
     }
 
     // ---------------------------------- get and set test --------------------
+
+    public TestEntity getmCurrentTest(){
+        return mCurrentTest;
+    }
     public void getTest(int testId) {
 
         clearVars();

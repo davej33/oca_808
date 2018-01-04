@@ -1,6 +1,7 @@
 package com.android.example.oca_808.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.ToggleButton;
 
 import com.android.example.oca_808.QuestionsActivity;
 import com.android.example.oca_808.R;
+import com.android.example.oca_808.TestReviewActivity;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 /**
@@ -28,9 +30,10 @@ public class QuestionButtonsFragment extends Fragment implements View.OnClickLis
 
     private static final String LOG_TAG = QuestionButtonsFragment.class.getSimpleName();
     private OnFragmentInteractionListener mListener;
-    private TextView mPreviousQuestion, mNextQuestion;
+    public TextView mPreviousQuestion, mNextQuestion;
     private QuestionsViewModel mViewModel;
     private static ToggleButton mShowAnswerButton, mMarkButton;
+    private boolean mLastQuestion;
 
     public QuestionButtonsFragment() {
         // Required empty public constructor
@@ -52,6 +55,7 @@ public class QuestionButtonsFragment extends Fragment implements View.OnClickLis
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question_buttons, container, false);
 
+        // get viewModel and views
         if (mViewModel == null) mViewModel = QuestionsViewModel.getQVM();
         mPreviousQuestion = view.findViewById(R.id.previous_question_view);
         mNextQuestion = view.findViewById(R.id.next_question_view);
@@ -68,24 +72,24 @@ public class QuestionButtonsFragment extends Fragment implements View.OnClickLis
             mMarkButton.setChecked(false);
         }
 
-        // get show answer state
         mShowAnswerButton = view.findViewById(R.id.show_answer);
-        mShowAnswerButton.setOnClickListener(this);
-        if (QuestionsActivity.showAnswer()) {
-            mShowAnswerButton.setChecked(true);
+        if (mViewModel.getmCurrentTest().type == 0) {
+            // get show answer state
+            mShowAnswerButton.setOnClickListener(this);
+            if (QuestionsActivity.showAnswer()) {
+                mShowAnswerButton.setChecked(true);
+            } else {
+                mShowAnswerButton.setChecked(false);
+            }
         } else {
-            mShowAnswerButton.setChecked(false);
+            mShowAnswerButton.setVisibility(View.INVISIBLE);
         }
 
         // make prev button unclickable if on question 1
         if (mViewModel.getmWhereWeAt() == 1) mPreviousQuestion.setClickable(false);
 
-        // go to test results if on last question
-
-
         return view;
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -113,7 +117,11 @@ public class QuestionButtonsFragment extends Fragment implements View.OnClickLis
                 }
                 break;
             case R.id.next_question_view:
-                mListener.loadNextQuestion();
+                if (mViewModel.getQuestionCount() == mViewModel.getmWhereWeAt()) {
+                    startActivity(new Intent(getContext(), TestReviewActivity.class));
+                } else {
+                    mListener.loadNextQuestion();
+                }
                 break;
             case R.id.mark_button:
                 mListener.markButtonPressed(mMarkButton.isChecked());

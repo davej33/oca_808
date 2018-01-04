@@ -1,25 +1,35 @@
 package com.android.example.oca_808;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
+import android.widget.NumberPicker;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.android.example.oca_808.fragment.AnswerFragment;
 import com.android.example.oca_808.fragment.ExplanationFragment;
@@ -37,7 +47,7 @@ import java.util.ArrayList;
 
 public class QuestionsActivity extends AppCompatActivity implements QuestionFragment.OnFragmentInteractionListener,
         ProgressFragment.OnFragmentInteractionListener, AnswerFragment.OnFragmentInteractionListener,
-        QuestionButtonsFragment.OnFragmentInteractionListener, ExplanationFragment.OnFragmentInteractionListener {
+        QuestionButtonsFragment.OnFragmentInteractionListener, ExplanationFragment.OnFragmentInteractionListener{
 
     private static final String LOG_TAG = QuestionsActivity.class.getSimpleName();
     private Integer mQuestionNum = 0;
@@ -51,6 +61,10 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
     private TextView mTimer;
     private static boolean mShowAnswer;
     private boolean mQuestionIsMarked;
+    private PopupWindow mPopUpWindow;
+    private View mPopUpView;
+    private ConstraintLayout mMainLayout;
+    private LayoutInflater mLayoutInflater;
 
     @TargetApi(Build.VERSION_CODES.M) // TODO: Fix
     @Override
@@ -67,9 +81,9 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         mQuestionContainer = findViewById(R.id.question_container);
         mQuestionForSolutionContainer = findViewById(R.id.question_solution_container);
         mTimer = findViewById(R.id.textClock);
+        mMainLayout = findViewById(R.id.question_activity);
+        mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 
-
-        Toast.makeText(this, mViewModel.getTestTitle(), Toast.LENGTH_SHORT).show();
         // Hide the status bar.
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
@@ -78,11 +92,37 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         if (actionBar != null)
             actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorBlack, null)));
 
-        displayQuestion();
+        if (mViewModel.getCurrentQuestion() == null) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    displayQuestion();
 
-        mViewModel.startTimer();
+                    mViewModel.startTimer();
 
-        subscribe();
+                    subscribe();
+                }
+            }, 1000);
+        } else {
+            displayQuestion();
+
+            mViewModel.startTimer();
+
+            subscribe();
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
     }
 
     private void displayQuestion() {
@@ -103,7 +143,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
     private void displayExplanation() {
 
         // manage view visibilities
-        mQuestionContainer.setVisibility(View.GONE);
+        mQuestionContainer.setVisibility(View.INVISIBLE);
         mExplanationContainer.setVisibility(View.VISIBLE);
         mQuestionForSolutionContainer.setVisibility(View.VISIBLE);
 
@@ -129,6 +169,10 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             public void onChanged(@Nullable String s) {
 
                 mTimer.setText(s);
+                if (s.equals("0:00")) {
+                    mViewModel.stopTimer();
+                    timeExpired();
+                }
             }
         };
         mViewModel.getTimeRemaining().observe(this, timerObserver);
@@ -147,15 +191,22 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
     @Override
     public void loadNextQuestion() {
+        // go to test results if on last question
+        int wwa = mViewModel.getmWhereWeAt();
+        int qCount = mViewModel.getQuestionCount();
+//        if (qCount == wwa + 1) {
+//            startActivity(new Intent(this, TestReviewActivity.class));
+//        } else {
         mViewModel.setmMarkedQuestion(mQuestionIsMarked);
         mWrongAnswers = mViewModel.checkAnswer();
-        Log.i(LOG_TAG,"loadNextQuestion");
+        Log.i(LOG_TAG, "loadNextQuestion");
         // if showAnswer = false or the explanation view is visible then go to next question
         if (!mShowAnswer || (mExplanationContainer.getVisibility() == View.VISIBLE)) {
             mViewModel.nextQuestion();
         } else {
             displayExplanation();
         }
+//        }
     }
 
     @Override
@@ -179,6 +230,12 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         switch (item.getItemId()) {
             case R.id.end_session:
                 startActivity(new Intent(this, TestReviewActivity.class));
+                break;
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
+            default:
+                Log.e(LOG_TAG, "No menu select match");
         }
         return super.onOptionsItemSelected(item);
     }
@@ -186,4 +243,54 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
     public static boolean showAnswer() {
         return mShowAnswer;
     }
+
+    public void timeExpired() {
+
+        // inflate layout
+        mPopUpView = mLayoutInflater.inflate(R.layout.popup_time_expired, (ViewGroup) getWindow().getDecorView().findViewById(android.R.id.content), false);
+
+        // Initialize new instance of popup window
+        mPopUpWindow = new PopupWindow(
+                mPopUpView,
+                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                true
+        );
+
+        // show the popup
+        mPopUpWindow.showAtLocation(mMainLayout, Gravity.CENTER, 0, 0);
+
+        // dim popup background
+        dimBehind(mPopUpWindow);
+
+        // set onClickListener
+        Button resultsButton = mPopUpView.findViewById(R.id.results_button_popup);
+
+        resultsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), TestReviewActivity.class);
+                intent.putExtra("expired", true);
+                startActivity(intent);
+            }
+        });
+
+    }
+
+    public static void dimBehind(PopupWindow popupWindow) {
+        View container = popupWindow.getContentView().getRootView();
+        Context context = popupWindow.getContentView().getContext();
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
+        p.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        p.dimAmount = 0.7f;
+        wm.updateViewLayout(container, p);
+    }
+
+//    @Override
+//    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+//        Log.i(LOG_TAG, "SharedPrefChange run, key: " + key);
+//
+//
+//    }
 }

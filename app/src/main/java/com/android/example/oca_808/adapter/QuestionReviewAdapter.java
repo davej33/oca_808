@@ -77,7 +77,7 @@ public class QuestionReviewAdapter extends RecyclerView.Adapter<QuestionReviewAd
 
     @Override
     public int getItemCount() {
-        return mViewModel.getQuestionCount() - 1;
+        return mViewModel.getQuestionCount();
     }
 
     public class QuestionViewHolder extends RecyclerView.ViewHolder {

@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
-    android:paddingTop="16dp"
     android:theme="@style/NintendoFont"
     tools:context="com.android.example.oca_808.fragment.QuestionButtonsFragment">
 
@@ -14,18 +13,17 @@
         android:id="@+id/previous_question_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
-        android:paddingBottom="8dp"
         android:text="@string/previous_q"
+        android:paddingTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ToggleButton
         android:id="@+id/mark_button"
-        android:layout_width="42dp"
-        android:layout_height="48dp"
+        android:layout_width="30dp"
+        android:layout_height="36dp"
         android:layout_gravity="end"
         android:background="@drawable/toggle_bookmark"
         android:checked="true"
@@ -39,8 +37,8 @@
 
     <ToggleButton
         android:id="@+id/show_answer"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="8dp"
         android:layout_marginStart="48dp"
@@ -59,9 +57,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:paddingBottom="8dp"
         android:text="@string/next"
+        android:paddingTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

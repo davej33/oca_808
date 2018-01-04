@@ -59,6 +59,7 @@ public class ScoreFragment extends Fragment {
         int score = (100 *sc) / qCount;
         Log.i(LOG_TAG,"score = " + score);
 
+        mTimeView.setText(mViewModel.getmElapsedTime());
         String scoreS = String.valueOf(score) + "%";
         mScoreView.setText(scoreS);
 

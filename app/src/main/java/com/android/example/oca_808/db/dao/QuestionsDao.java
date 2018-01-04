@@ -3,6 +3,7 @@ package com.android.example.oca_808.db.dao;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import com.android.example.oca_808.db.entity.QuestionEntity;
 
@@ -25,5 +26,6 @@ public interface QuestionsDao {
     @Query("SELECT q_map_id FROM QuestionEntity")
     List<Integer> getQuestionIds();
 
-//    @Query("SELECT answer FROM QuestionEntity WHERE q_map_id IN")
+    @Update
+    int updateQuestions(List<QuestionEntity> questionEntities);
 }

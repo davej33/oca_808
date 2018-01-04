@@ -16,7 +16,6 @@ public class QuestionEntity {
     @PrimaryKey (autoGenerate = true)
     public int _id;
     public int q_map_id;
-
     public int type; // single or multiple answer
     public String question;
     public String opt_a;

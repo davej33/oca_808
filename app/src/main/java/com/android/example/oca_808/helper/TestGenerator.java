@@ -115,6 +115,26 @@ public final class TestGenerator {
                             "contain ‘!’; ‘$’ and ‘_’ only valid special characters\nE) Case matters; ‘Public’ is valid, ‘public’ is not\nF) Two valid identifiers", DIFF_MED));
 
 
+            // ---------------- Java Basics 1100 -----------------------
+            mQuestions.add(new QuestionEntity(1103, 0, "Given the following class, the code will compile if…\n1:  public class Apple{\n2:\n3:       public void green(boolean isSliced){\n4: \n5:" +
+                    "           if(isSliced){\n6:\n7:        }\n8:   System.out.print(fruit);\n9:\n10:    }\n11: }", "String fruit = \"eat\"; is added on line 2", "String fruit = \"eat\"; is added on line 4",
+                    "String fruit = \"eat\"; is added on line 6", "String fruit = \"eat\"; is added on line 9", "String fruit = \"eat\"; is added on line 10", "None of these options will compile",
+                    "ab", "A) Correct: instance variables are in scope for the life of the object.\nB) Correct: fruit is local to the method in which it is called from in line 8.\nC) Incorrect: " +
+                    "fruit would only be in scope within the if statement.\nD & E) Incorrect: fruit would be declared after the call on line 8, thus out of scope.\n", DIFF_EASY));
+
+
+            // ---------------- Data Types 2100 ---------------------
+
+            mQuestions.add(new QuestionEntity(2103, 1, "What will the following code output?\n1:  public class Cup {\n2:  	private String halfFull;\n3:  	private boolean halfEmpty;\n4:  	" +
+                    "public static void main(String[] args){\n5:  	    Cup cup = new Cup();\n6:        System.out.print(\"Half empty = \" + cup.halfEmpty);\n7:        System.out.print(\", Half full = \" + " +
+                    "cup.halfFull);\n8:  } }", "Half-empty = false, Half full = null", "Half empty = false, Half full =  ", "Half empty = null, Half full = null", "Compile error - line 6", "Compile error - line 7",
+                    "None of the above", "c", "An instance variable defaults to a predetermined value base on its data type when called before being initialized. String defaults to null and boolean defaults to false.", 1));
+
+            mQuestions.add(new QuestionEntity(2104, 0, "Select all lines that generate a compile error.\n4:  String apples = \"Delicious\";\n5:  short numApples = 9;\n6:  int weight = 12.4;\n7:  numApples.length();\n8:  " +
+                    "weight.length();\n9:  apples.length();", "Line 4", "Line 5", "Line 6", "Line 7", "Line 8", "Line 9", "cde", "C) Error: can not cast a floating-point data type into an int data type.\nD & E) Error: " +
+                    "primitive types can not have methods called on them.", DIFF_EASY));
+
+
             // ---------------- Arrays 4100 -----------------------
             mQuestions.add(new QuestionEntity(4106, 0, "Given the following array, which statements evaluate to '&'?\n\nchar[] foo = {‘X’,’1’,’Y’,’2’,’Z,’&’};", "foo[6];", "foo[5];",
                     "foo[foo.length()];", "foo[foo.length()-1];", "Does not compile", "None of the above", "bd", "Key Points:\n - Array indices begin at 0\n - Array length begins at 1\n\n       index =   0   1   2   3   4  5\n " +

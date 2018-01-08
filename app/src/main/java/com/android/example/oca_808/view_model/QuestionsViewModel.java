@@ -180,6 +180,7 @@ public class QuestionsViewModel extends ViewModel {
     public TestEntity getmCurrentTest(){
         return mCurrentTest;
     }
+
     public void getTest(int testId) {
 
         clearVars();
@@ -214,6 +215,8 @@ public class QuestionsViewModel extends ViewModel {
         // set time remaining
         if (mCurrentTest.elapsedTestTime > 0) {
             mMillisecondAtStart = ONE_MINUTE * (mCurrentTest.elapsedTestTime);
+            Log.i(LOG_TAG,"test time remaining in millisec: " + mMillisecondAtStart);
+
             long remainingTime = mCurrentTest.elapsedTestTime;
             if (remainingTime >= 120) {
                 mHour = 2;
@@ -425,14 +428,12 @@ public class QuestionsViewModel extends ViewModel {
         mCurrentTest.setResumeQuestionNum(mWhereWeAt);
         mCurrentTest.setProgress(calculateProgress());
         mCurrentTest.setElapsedTestTime((mHour * 60) + mMin + 1);
-//        Log.i(LOG_TAG, "time remaining: " + ((mHour * 60) + mMin + 1));
+        Log.i(LOG_TAG, "time remaining: " + ((mHour * 60) + mMin + 1));
         int updateCheck = mDb.testsDao().updateTestResults(mCurrentTest);
 
         // remove null at index 0 so db can update with list
         mQuestionsList.remove(0);
         int qUpdateCheck = mDb.questionsDao().updateQuestions(mQuestionsList);
-        Log.w(LOG_TAG, "^^^^^^^^^ update check: " + updateCheck);
-        Log.w(LOG_TAG, "^^^^ question update check: " + qUpdateCheck);
 
         // add null back to index
         mQuestionsList.add(0, null);

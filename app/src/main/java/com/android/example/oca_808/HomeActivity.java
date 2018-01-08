@@ -74,11 +74,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mContext = this;
 
         setupSharedPref();
-//        List l = mDb.questionsDao().getQuestionIds();
+
         //  only run once
         if (mDb.questionsDao().getQuestionIds().size() == 0) {
             mQuestionsAdded = TestGenerator.addQs(mContext);
-            Log.i(LOG_TAG, "@@@ Questions added");
         }
 
         // get buttons and set onClickListener
@@ -106,7 +105,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-//        Log.w(LOG_TAG, "view id: " + v.getId());
+
         switch (v.getId()) {
             case R.id.test_button:
                 mTestType = TEST_SIM;

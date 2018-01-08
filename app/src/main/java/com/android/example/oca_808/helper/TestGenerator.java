@@ -55,7 +55,6 @@ public final class TestGenerator {
 
         // create list for storing time elapsed on each question
         String elapsedQuestionTimeList = new ArrayList<>(questionList.size()).toString();
-        Log.i(LOG_TAG, "*** ");
 
         // get local time in milliseconds
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

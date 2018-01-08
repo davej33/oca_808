@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,6 +23,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -47,7 +50,7 @@ import java.util.ArrayList;
 
 public class QuestionsActivity extends AppCompatActivity implements QuestionFragment.OnFragmentInteractionListener,
         ProgressFragment.OnFragmentInteractionListener, AnswerFragment.OnFragmentInteractionListener,
-        QuestionButtonsFragment.OnFragmentInteractionListener, ExplanationFragment.OnFragmentInteractionListener{
+        QuestionButtonsFragment.OnFragmentInteractionListener, ExplanationFragment.OnFragmentInteractionListener {
 
     private static final String LOG_TAG = QuestionsActivity.class.getSimpleName();
     private Integer mQuestionNum = 0;
@@ -65,8 +68,10 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
     private View mPopUpView;
     private ConstraintLayout mMainLayout;
     private LayoutInflater mLayoutInflater;
+    private boolean mIsFromTestReview;
+    private boolean mShowSwipeInstructions = true;
 
-    @TargetApi(Build.VERSION_CODES.M) // TODO: Fix
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +95,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         decorView.setSystemUiVisibility(uiOptions);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
-            actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorBlack, null)));
+            actionBar.setBackgroundDrawable(getDrawable(R.drawable.black_background));
 
         if (mViewModel.getCurrentQuestion() == null) {
             new Handler().postDelayed(new Runnable() {
@@ -111,6 +116,28 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             subscribe();
         }
 
+        // determine if receiving intent from test review adapter
+        mIsFromTestReview = getIntent().getBooleanExtra("review", false);
+        Log.i(LOG_TAG, "mIsFromTestReview = " + mIsFromTestReview);
+
+        if(mIsFromTestReview && mShowSwipeInstructions){
+
+        }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        int action = event.getActionMasked();
+        switch (action) {
+            case MotionEvent.ACTION_UP:
+                Log.i(LOG_TAG, "action up: ");
+                if (mIsFromTestReview) startActivity(new Intent(this, TestReviewActivity.class));
+                return true;
+            default:
+                Log.i(LOG_TAG, "No match for touch event");
+        }
+        return super.onTouchEvent(event);
     }
 
     @Override

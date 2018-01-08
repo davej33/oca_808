@@ -1,5 +1,6 @@
 package com.android.example.oca_808;
 
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
@@ -29,6 +30,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -39,6 +41,7 @@ import com.android.example.oca_808.fragment.ExplanationFragment;
 import com.android.example.oca_808.fragment.ProgressFragment;
 import com.android.example.oca_808.fragment.QuestionButtonsFragment;
 import com.android.example.oca_808.fragment.QuestionFragment;
+import com.android.example.oca_808.fragment.SwipeInstructionsFragment;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 import java.util.ArrayList;
@@ -50,7 +53,7 @@ import java.util.ArrayList;
 
 public class QuestionsActivity extends AppCompatActivity implements QuestionFragment.OnFragmentInteractionListener,
         ProgressFragment.OnFragmentInteractionListener, AnswerFragment.OnFragmentInteractionListener,
-        QuestionButtonsFragment.OnFragmentInteractionListener, ExplanationFragment.OnFragmentInteractionListener {
+        QuestionButtonsFragment.OnFragmentInteractionListener, SwipeInstructionsFragment.OnFragmentInteractionListener, ExplanationFragment.OnFragmentInteractionListener {
 
     private static final String LOG_TAG = QuestionsActivity.class.getSimpleName();
     private Integer mQuestionNum = 0;
@@ -60,16 +63,17 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
     private FrameLayout mExplanationContainer;
     private FrameLayout mQuestionContainer;
     private FrameLayout mQuestionForSolutionContainer;
+    private FrameLayout mSwipeInstructionsContainer;
     private ArrayList<String> mWrongAnswers;
     private TextView mTimer;
     private static boolean mShowAnswer;
     private boolean mQuestionIsMarked;
-    private PopupWindow mPopUpWindow;
-    private View mPopUpView;
     private ConstraintLayout mMainLayout;
-    private LayoutInflater mLayoutInflater;
     private boolean mIsFromTestReview;
     private boolean mShowSwipeInstructions = true;
+    private PopupWindow mPopUpWindow;
+    private View mPopUpView;
+    private LayoutInflater mLayoutInflater;
 
 
     @Override
@@ -88,6 +92,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         mTimer = findViewById(R.id.textClock);
         mMainLayout = findViewById(R.id.question_activity);
         mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        mSwipeInstructionsContainer = findViewById(R.id.swipe_instructions);
 
         // Hide the status bar.
         View decorView = getWindow().getDecorView();
@@ -121,9 +126,18 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         Log.i(LOG_TAG, "mIsFromTestReview = " + mIsFromTestReview);
 
         if(mIsFromTestReview && mShowSwipeInstructions){
-
+            mSwipeInstructionsContainer.setVisibility(View.VISIBLE);
+            getSupportFragmentManager().beginTransaction().add(R.id.swipe_instructions, new SwipeInstructionsFragment()).commit();
+            mSwipeInstructionsContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mSwipeInstructionsContainer.setVisibility(View.INVISIBLE);
+                }
+            });
         }
     }
+
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

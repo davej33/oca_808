@@ -1,41 +1,37 @@
 package com.android.example.oca_808.fragment;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.android.example.oca_808.R;
-import com.android.example.oca_808.adapter.QuestionReviewAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link TestReviewFragment.OnFragmentInteractionListener} interface
+ * {@link SwipeInstructionsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link TestReviewFragment#newInstance} factory method to
+ * Use the {@link SwipeInstructionsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TestReviewFragment extends Fragment {
-
-    private RecyclerView mRecyclerView;
-    private QuestionReviewAdapter mAdapter;
-
+public class SwipeInstructionsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public TestReviewFragment() {
+    public SwipeInstructionsFragment() {
         // Required empty public constructor
     }
 
 
-    public static TestReviewFragment newInstance() {
-        return new TestReviewFragment();
+    public static SwipeInstructionsFragment newInstance(String param1, String param2) {
+        return new SwipeInstructionsFragment();
+
     }
 
     @Override
@@ -46,20 +42,19 @@ public class TestReviewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_test_review, container, false);
+        View view = inflater.inflate(R.layout.fragment_swipe_instructions, container, false);
 
-        // setup adapter
-        mRecyclerView = view.findViewById(R.id.test_review_rv);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        mAdapter = new QuestionReviewAdapter(getContext());
-        mRecyclerView.setAdapter(mAdapter);
+        ImageView robot = view.findViewById(R.id.swipe_instr_robot);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(robot, "y", 600);
+        animator.setRepeatMode(animator.REVERSE);
+        animator.setRepeatCount(1);
+        animator.setDuration(2000);
+        animator.start();
 
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -83,8 +78,18 @@ public class TestReviewFragment extends Fragment {
         mListener = null;
     }
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
     public interface OnFragmentInteractionListener {
-
+        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }

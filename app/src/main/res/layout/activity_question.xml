@@ -7,6 +7,8 @@
     android:layout_height="match_parent"
     android:background="#fff">
 
+
+
     <FrameLayout
         android:id="@+id/progress_container"
         android:layout_width="0dp"
@@ -37,7 +39,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progress_container" >
+        app:layout_constraintTop_toBottomOf="@+id/progress_container">
 
         <FrameLayout
             android:id="@+id/question_solution_container"
@@ -57,8 +59,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progress_container">
-    </FrameLayout>
+        app:layout_constraintTop_toBottomOf="@+id/progress_container"/>
 
     <ScrollView
         android:id="@+id/explanation_scrollview"
@@ -74,9 +75,9 @@
             android:id="@+id/explanation_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            />
+            android:layout_marginBottom="8dp" />
     </ScrollView>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -85,8 +86,8 @@
         android:background="@color/colorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/answer_container"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-     />
+        app:layout_constraintStart_toStartOf="parent" />
+
     <FrameLayout
         android:id="@+id/answer_container"
         android:layout_width="match_parent"
@@ -99,4 +100,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/swipe_instructions"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </android.support.constraint.ConstraintLayout>

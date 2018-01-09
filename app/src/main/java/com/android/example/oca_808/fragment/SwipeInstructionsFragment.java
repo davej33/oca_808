@@ -1,6 +1,7 @@
 package com.android.example.oca_808.fragment;
 
 import android.animation.ObjectAnimator;
+import android.animation.TimeInterpolator;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,9 +9,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.android.example.oca_808.R;
+
+import static android.animation.ValueAnimator.REVERSE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,7 +25,7 @@ import com.android.example.oca_808.R;
  * create an instance of this fragment.
  */
 public class SwipeInstructionsFragment extends Fragment {
-
+    private Button mGotItButton;
     private OnFragmentInteractionListener mListener;
 
     public SwipeInstructionsFragment() {
@@ -29,7 +33,7 @@ public class SwipeInstructionsFragment extends Fragment {
     }
 
 
-    public static SwipeInstructionsFragment newInstance(String param1, String param2) {
+    public static SwipeInstructionsFragment newInstance() {
         return new SwipeInstructionsFragment();
 
     }
@@ -47,18 +51,19 @@ public class SwipeInstructionsFragment extends Fragment {
 
         ImageView robot = view.findViewById(R.id.swipe_instr_robot);
         ObjectAnimator animator = ObjectAnimator.ofFloat(robot, "y", 600);
-        animator.setRepeatMode(animator.REVERSE);
+        animator.setRepeatMode(REVERSE);
         animator.setRepeatCount(1);
         animator.setDuration(2000);
         animator.start();
 
+        mGotItButton = view.findViewById(R.id.got_it_button);
+        mGotItButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.showSwipeInstructions();
+            }
+        });
         return view;
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -89,7 +94,6 @@ public class SwipeInstructionsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void showSwipeInstructions();
     }
 }

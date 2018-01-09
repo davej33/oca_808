@@ -94,13 +94,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setupSharedPref() {
         shPref = PreferenceManager.getDefaultSharedPreferences(this);
-        int checkSP = shPref.getInt(getResources().getString(R.string.sp_test_num_key), -9);
-        if (checkSP < 0) {
-            SharedPreferences.Editor editor = shPref.edit();
-            editor.putInt(getResources().getString(R.string.sp_test_num_key), 0);
-            editor.apply();
-        }
 
+        // setup test number for resuming last test
+        int checkSP = shPref.getInt(getResources().getString(R.string.sp_test_num_key), -9);
+        SharedPreferences.Editor editor = shPref.edit();
+
+        // track swipe instructions state
+        boolean check = shPref.getBoolean(getResources().getString(R.string.sp_show_swipe_test_review), true);
+        if (check) editor.putBoolean(getResources().getString(R.string.sp_show_swipe_test_review), true);
+
+        editor.apply();
     }
 
     @Override

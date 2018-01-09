@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
@@ -70,9 +71,11 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
     private boolean mQuestionIsMarked;
     private ConstraintLayout mMainLayout;
     private boolean mIsFromTestReview;
-    private boolean mShowSwipeInstructions = true;
+    private static boolean mShowSwipeInstructions = true;
     private PopupWindow mPopUpWindow;
     private View mPopUpView;
+    private SharedPreferences mShPref;
+
     private LayoutInflater mLayoutInflater;
 
 
@@ -121,11 +124,15 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             subscribe();
         }
 
+        // get shared preferences
+        mShPref = PreferenceManager.getDefaultSharedPreferences(this);
+
         // determine if receiving intent from test review adapter
         mIsFromTestReview = getIntent().getBooleanExtra("review", false);
-        Log.i(LOG_TAG, "mIsFromTestReview = " + mIsFromTestReview);
 
-        if(mIsFromTestReview && mShowSwipeInstructions){
+        // determine if user has been informed to swipe up to return to test review
+
+        if (mIsFromTestReview && mShPref.getBoolean(getResources().getString(R.string.sp_show_swipe_test_review), true)) {
             mSwipeInstructionsContainer.setVisibility(View.VISIBLE);
             getSupportFragmentManager().beginTransaction().add(R.id.swipe_instructions, new SwipeInstructionsFragment()).commit();
             mSwipeInstructionsContainer.setOnClickListener(new View.OnClickListener() {
@@ -134,9 +141,9 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
                     mSwipeInstructionsContainer.setVisibility(View.INVISIBLE);
                 }
             });
+
         }
     }
-
 
 
     @Override
@@ -326,6 +333,21 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         p.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         p.dimAmount = 0.7f;
         wm.updateViewLayout(container, p);
+    }
+
+    @Override
+    public void showSwipeInstructions() {
+        // hide swipe instruction frangment
+        mSwipeInstructionsContainer.setVisibility(View.GONE);
+
+        // update  show-swipe-instruction state
+        SharedPreferences.Editor editor = mShPref.edit();
+        editor.putBoolean(getResources().getString(R.string.sp_show_swipe_test_review), false);
+        editor.apply();
+
+
+
+        Log.i(LOG_TAG, "show instructions: " + mShPref.getBoolean(getResources().getString(R.string.sp_show_swipe_test_review), true));
     }
 
 //    @Override

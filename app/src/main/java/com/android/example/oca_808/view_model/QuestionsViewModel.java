@@ -19,6 +19,7 @@ import com.android.example.oca_808.db.entity.TestEntity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
 
 /**
  * Created by charlotte on 11/21/17.
@@ -63,6 +64,8 @@ public class QuestionsViewModel extends ViewModel {
         if (mDb == null) {
             mDb = AppDatabase.getDb(mApplication);
         }
+
+
     }
 
 
@@ -177,7 +180,7 @@ public class QuestionsViewModel extends ViewModel {
 
     // ---------------------------------- get and set test --------------------
 
-    public TestEntity getmCurrentTest(){
+    public TestEntity getmCurrentTest() {
         return mCurrentTest;
     }
 
@@ -187,15 +190,14 @@ public class QuestionsViewModel extends ViewModel {
 
         // get TestEntity
         mCurrentTest = mDb.testsDao().fetchTest(testId);
-        Log.i(LOG_TAG, "current test title: " + mCurrentTest.title);
+//        Log.i(LOG_TAG, "current test title: " + mCurrentTest.title);
 
         setTestAttributes();
     }
 
     private void setTestAttributes() {
         //TODO: add timer fetch and set
-        // get questions
-        // set the questions list
+        // get and set questions list
         mQuestionsList = setQuestionsList();
 
         // set user answer to ""
@@ -215,7 +217,7 @@ public class QuestionsViewModel extends ViewModel {
         // set time remaining
         if (mCurrentTest.elapsedTestTime > 0) {
             mMillisecondAtStart = ONE_MINUTE * (mCurrentTest.elapsedTestTime);
-            Log.i(LOG_TAG,"test time remaining in millisec: " + mMillisecondAtStart);
+            Log.i(LOG_TAG, "test time remaining in millisec: " + mMillisecondAtStart);
 
             long remainingTime = mCurrentTest.elapsedTestTime;
             if (remainingTime >= 120) {
@@ -229,19 +231,13 @@ public class QuestionsViewModel extends ViewModel {
                 mMin = (int) remainingTime;
             }
         }
-        // convert answer list to StringBuilder to remove brackets then to List
-        // store answers in stringbuilder
-        StringBuilder sb = new StringBuilder(mCurrentTest.answerSet);
-        Log.i(LOG_TAG, "*** sb = " + sb);
 
-        // remove brackets
-        sb.deleteCharAt(sb.length() - 1).deleteCharAt(0);
-        Log.i(LOG_TAG, "*** sb = " + sb);
+        // ----- CREATE ANSWER LIST -------
+        StringBuilder sb = new StringBuilder(mCurrentTest.answerSet);// convert answer list to StringBuilder to remove brackets then to List
+        sb.deleteCharAt(sb.length() - 1).deleteCharAt(0); // remove brackets
 
-        if (sb.length() > 0) { // if userAnswerList has been initialized
-            // convert string to list
-            mUserAnswerArray = new ArrayList<>(Arrays.asList((sb.toString()).split(", ")));
-            Log.w(LOG_TAG, "user answer array init: " + mUserAnswerArray.toString());
+        if (sb.length() > 0) { // if userAnswerList is empty
+            mUserAnswerArray = new ArrayList<>(Arrays.asList((sb.toString()).split(", "))); // convert string to list
 
             // if the users Answer list is smaller than the number of test questions [plus 1 to account for the added null at index 0]
             if (mUserAnswerArray.size() < mCurrentTest.questionCount + 1) {
@@ -250,59 +246,39 @@ public class QuestionsViewModel extends ViewModel {
                 for (int i = mUserAnswerArray.size(); i < mCurrentTest.questionCount + 1; i++) {
                     mUserAnswerArray.add("");
                 }
-
-                Log.w(LOG_TAG, "user answer array init final: " + mUserAnswerArray.toString());
             }
         } else {
-            mUserAnswerArray = new ArrayList<>();
-
-            // add an empty string until the answer list size equals the number questions
-            for (int i = 0; i < mCurrentTest.questionCount; i++) {
-                mUserAnswerArray.add("");
-            }
-            // add null at index 0 so question/index numbers align
-//            if (!mUserAnswerArray.get(0).equals("null"))
-            mUserAnswerArray.add(0, null);
-            Log.w(LOG_TAG, "user answer array init: " + mUserAnswerArray.toString());
+            mUserAnswerArray = new ArrayList<>(); // create new list
+            for (int i = 0; i < mCurrentTest.questionCount; i++) mUserAnswerArray.add("");   // add an empty string for each question
+            mUserAnswerArray.add(0, null); // add null at index 0 so question/index numbers align
         }
 
-
-        // convert answer list to StringBuilder to remove brackets then to List
-        StringBuilder sb2 = new StringBuilder(mCurrentTest.mMarkedQuestionSet);
+        // ------ CREATE MARKED LIST ----------
+        StringBuilder sb2 = new StringBuilder(mCurrentTest.mMarkedQuestionSet); // convert answer list to StringBuilder to remove brackets
         sb2.deleteCharAt(sb2.length() - 1).deleteCharAt(0);
-        if (sb2.length() < 1) {
-            mMarkedQuestions = new ArrayList<>();
-            for (int i = 0; i < mCurrentTest.questionCount; i++) {
-                mMarkedQuestions.add("");
-            }
+        if (sb2.length() < 1) { // if markedList is empty
+            mMarkedQuestions = new ArrayList<>(); // create new list
+            for (int i = 0; i < mCurrentTest.questionCount; i++) mMarkedQuestions.add("0"); // add empty string for each question
         } else {
-            mMarkedQuestions = new ArrayList<>(Arrays.asList((sb2.toString()).split(", ")));
+            mMarkedQuestions = new ArrayList<>(Arrays.asList((sb2.toString()).split(", "))); // otherwise, delimit and add to list
         }
-//        Log.i(LOG_TAG, "marked q array length: " + mMarkedQuestions.size());
+        if (!mMarkedQuestions.get(0).equals("null")) mMarkedQuestions.add(0, null); // add null at index 0 so question/index numbers align
 
-        // add null at index 0 so question/index numbers align
-        if (!mMarkedQuestions.get(0).equals("null")) mMarkedQuestions.add(0, null);
-//        Log.w(LOG_TAG, "mUserAnswer array init: " + mMarkedQuestions.toString());
     }
 
     public ArrayList<QuestionEntity> setQuestionsList() {
 
         // get question list from the TestEntity, remove brackets, then convert to List
         StringBuilder questionsStringBuilder = new StringBuilder(mCurrentTest.questionSet);
-        Log.i(LOG_TAG, "^^^Current test questionList: " + mCurrentTest.questionSet);
-
-
         questionsStringBuilder.deleteCharAt(questionsStringBuilder.length() - 1).deleteCharAt(0);
         String questionsString = questionsStringBuilder.toString();
         List<String> qIdListAsStrings = Arrays.asList(questionsString.split(", "));
 
         // fetch questions from db and store
         mQuestionsList = (ArrayList<QuestionEntity>) mDb.questionsDao().getQuestions(qIdListAsStrings);
-        Log.i(LOG_TAG, "questionList count: " + mQuestionsList.size());
 
         // add null at index 0 so question number matches indexed position
         mQuestionsList.add(0, null);
-        Log.i(LOG_TAG, "questionList count with null added: " + mQuestionsList.size());
         return mQuestionsList;
     }
 
@@ -345,6 +321,7 @@ public class QuestionsViewModel extends ViewModel {
 
     // get and set marked questions
     public void setmMarkedQuestion(boolean b) {
+        Log.i(LOG_TAG, "bool = " + b);
         if (b) {
             mMarkedQuestions.set(mWhereWeAt, "1");
         } else {
@@ -375,7 +352,7 @@ public class QuestionsViewModel extends ViewModel {
             String sol = getSortedString(mQuestionsList.get(i).answer.toCharArray());
 
             Log.i(LOG_TAG, "user / sol ---- " + userAnswer + " / " + sol);
-            Log.i(LOG_TAG,"qScore pre set: " + mQuestionsList.get(i).status);
+            Log.i(LOG_TAG, "qScore pre set: " + mQuestionsList.get(i).status);
             // get question score
             int qScore = mQuestionsList.get(i).status;
             if (userAnswer.equals(sol)) {
@@ -390,7 +367,7 @@ public class QuestionsViewModel extends ViewModel {
                 // set new question score
                 mQuestionsList.get(i).setStatus(-1);
             }
-            Log.i(LOG_TAG,"qScore post set: " + mQuestionsList.get(i).status);
+            Log.i(LOG_TAG, "qScore post set: " + mQuestionsList.get(i).status);
         }
         Log.i(LOG_TAG, "score2: " + score);
         saveDataToDb();
@@ -412,7 +389,6 @@ public class QuestionsViewModel extends ViewModel {
         return mTimeRemaining;
     }
 
-
     public void clearVars() {
         if (mCurrentTest != null) {
             mCurrentTest = null;
@@ -425,6 +401,7 @@ public class QuestionsViewModel extends ViewModel {
 
     public void saveDataToDb() {
         mCurrentTest.setAnswerSet(mUserAnswerArray.toString());
+        mCurrentTest.setMarkedQuestionsSet(mMarkedQuestions.toString());
         mCurrentTest.setResumeQuestionNum(mWhereWeAt);
         mCurrentTest.setProgress(calculateProgress());
         mCurrentTest.setElapsedTestTime((mHour * 60) + mMin + 1);

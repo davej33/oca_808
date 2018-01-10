@@ -19,10 +19,11 @@ public class TestReviewActivity extends AppCompatActivity implements TestReviewF
         setContentView(R.layout.activity_test_review);
 
         boolean testExpired = getIntent().hasExtra("expired");
-        if(testExpired){
-            getSupportFragmentManager().beginTransaction().replace(R.id.review_frag_container, new ScoreFragment()).commit();
+        if (testExpired) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.review_frag_container, ScoreFragment.newInstance()).commit();
         } else {
-            getSupportFragmentManager().beginTransaction().add(R.id.review_frag_container, new TestReviewFragment()).commit();
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.review_frag_container, TestReviewFragment.newInstance()).commit();
         }
     }
 

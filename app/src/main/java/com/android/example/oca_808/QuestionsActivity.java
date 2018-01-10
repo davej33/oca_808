@@ -124,6 +124,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             subscribe();
         }
 
+        Toast.makeText(this, mViewModel.getTestTitle(), Toast.LENGTH_SHORT).show();
         // get shared preferences
         mShPref = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -153,6 +154,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         switch (action) {
             case MotionEvent.ACTION_UP:
                 Log.i(LOG_TAG, "action up: ");
+                mViewModel.saveDataToDb();
                 if (mIsFromTestReview) startActivity(new Intent(this, TestReviewActivity.class));
                 return true;
             default:
@@ -245,7 +247,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 //        if (qCount == wwa + 1) {
 //            startActivity(new Intent(this, TestReviewActivity.class));
 //        } else {
-        mViewModel.setmMarkedQuestion(mQuestionIsMarked);
+//        mViewModel.setmMarkedQuestion(mQuestionIsMarked);
         mWrongAnswers = mViewModel.checkAnswer();
         Log.i(LOG_TAG, "loadNextQuestion");
         // if showAnswer = false or the explanation view is visible then go to next question
@@ -259,8 +261,10 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
     @Override
     public void markButtonPressed(boolean b) {
-        mQuestionIsMarked = b;
+//        mQuestionIsMarked = b;
+        mViewModel.setmMarkedQuestion(b);
     }
+
 
     @Override
     public void showAnswerButtonPressed(boolean b) {

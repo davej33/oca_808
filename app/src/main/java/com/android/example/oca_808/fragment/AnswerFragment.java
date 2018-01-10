@@ -451,7 +451,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onStop() {
         super.onStop();
-//        Log.i(LOG_TAG, "onStop run");
+        Log.i(LOG_TAG, "onStop run");
         mViewModel.saveDataToDb();
     }
 

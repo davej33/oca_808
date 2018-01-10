@@ -124,6 +124,7 @@ public class QuestionButtonsFragment extends Fragment implements View.OnClickLis
                 }
                 break;
             case R.id.mark_button:
+                Log.i(LOG_TAG,"marked button is checked: " + mMarkButton.isChecked());
                 mListener.markButtonPressed(mMarkButton.isChecked());
                 break;
             case R.id.show_answer:

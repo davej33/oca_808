@@ -190,7 +190,7 @@ public class QuestionsViewModel extends ViewModel {
 
         // get TestEntity
         mCurrentTest = mDb.testsDao().fetchTest(testId);
-//        Log.i(LOG_TAG, "current test title: " + mCurrentTest.title);
+        Log.i(LOG_TAG, "current test title: " + mCurrentTest.title);
 
         setTestAttributes();
     }

@@ -5,9 +5,8 @@
     android:id="@+id/question_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/AppTheme"
     android:background="#fff">
-
-
 
     <FrameLayout
         android:id="@+id/progress_container"

@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-<item
-    android:id="@+id/action_settings"
-    android:title="@string/title_activity_settings"
-    app:showAsAction="never"
-    />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_settings"
+        android:title="SETTINGS"
+        app:showAsAction="never" />
     <item
         android:id="@+id/end_session"
         android:icon="@android:drawable/btn_dialog"
-        android:title="End Session"
+        android:title="END TEST"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/to_main_menu"
+        android:title="MAIN MENU"
+        app:showAsAction="never"
+        />
 </menu>

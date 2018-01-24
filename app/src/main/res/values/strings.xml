@@ -40,7 +40,7 @@
         <item>-1</item>
     </string-array>
 
-     <!-- Example settings for Data & Sync -->
+    <!-- Example settings for Data & Sync -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
@@ -105,4 +105,10 @@
     <string name="results">Results</string>
     <string name="got_it">GOT IT!</string>
     <string name="swipe_up_n_nto_return_to_n_ntest_review">Swipe up\n\nto return to\n\ntest review</string>
+    <string name="title_activity_navigation_drawer">NavigationDrawer</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 </resources>

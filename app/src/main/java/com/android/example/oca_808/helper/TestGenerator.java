@@ -69,6 +69,7 @@ public final class TestGenerator {
         TestEntity newTest = new TestEntity(testType, testTitle, questionListString, answerArrayList,
                 elapsedQuestionTimeList, false, 0, mStartTime, 0, 0, 0, 1, questionList.size(), 1);
         long insertTest = mDb.testsDao().insertNewTest(newTest);
+        Log.i(LOG_TAG, "insertTest: " + insertTest);
         QuestionsViewModel.getQVM().getTest(mTestNum);
 
     }
@@ -85,12 +86,12 @@ public final class TestGenerator {
 
     private static String createTestTitle(Context context, int type) {
         shPref = PreferenceManager.getDefaultSharedPreferences(context);
-        mTestNum = shPref.getInt(context.getResources().getString(R.string.sp_test_num_key), -1);
+        mTestNum = shPref.getInt(context.getResources().getString(R.string.sp_test_num_key), 0);
         SharedPreferences.Editor editor = shPref.edit();
         editor.putInt(context.getResources().getString(R.string.sp_test_num_key), ++mTestNum);
         editor.apply();
         String title = "";
-        if (type == 1) {
+        if (type == 1) { // determines test type
             title = TEST_NUM_TEXT + String.valueOf(mTestNum);
         } else {
             title = PRACTICE_NUM_TEXT + String.valueOf(mTestNum);

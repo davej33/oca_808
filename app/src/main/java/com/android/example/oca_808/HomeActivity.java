@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -89,6 +90,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mPracticeButton.setOnClickListener(this);
         mTrainButton.setOnClickListener(this);
         mStatsButton.setOnClickListener(this);
+
 
     }
 

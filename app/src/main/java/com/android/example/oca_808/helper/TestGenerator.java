@@ -109,7 +109,7 @@ public final class TestGenerator {
                             "Java identifiers:\nA) Can start with and contain ‘$’ or ‘_’\nB) Can contain numbers, but not at the beginning\nC) Can start with and contain ‘$’ or ‘_’\nD) Can not "
                             + "use a keyword as an identifier\nE) Case matters. ‘True’ is valid, ‘true’ is not\nF) Can contain numbers, not at the beginning\n", DIFF_EASY));
 
-
+            mQuestions.add(new QuestionEntity(9902, 1, "What is the output?", "", "b", "c", "d", "e", "f", "answer", "explanation", 1));
             mQuestions.add(new QuestionEntity(9906, 0, "Select all the valid identifiers.", "public", "foo.bar", "keyword", "Valid!", "pump_it_up", "No valid options", "ce",
                             "A) Can not use a reserved word\nB) Can not contain ‘.’; ‘$’ and ‘_’ only valid special characters\nC) ’keyword’ is valid; not a reserved keyword\nD) Can not " +
                             "contain ‘!’; ‘$’ and ‘_’ only valid special characters\nE) Case matters; ‘Public’ is valid, ‘public’ is not\nF) Two valid identifiers", DIFF_MED));

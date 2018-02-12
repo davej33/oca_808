@@ -341,7 +341,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
     @Override
     public void showSwipeInstructions() {
-        // hide swipe instruction frangment
+        // hide swipe instruction fragment
         mSwipeInstructionsContainer.setVisibility(View.GONE);
 
         // update  show-swipe-instruction state

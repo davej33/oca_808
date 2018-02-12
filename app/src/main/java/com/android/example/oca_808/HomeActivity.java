@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.PopupWindow;
@@ -53,10 +54,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Button mStatsButton;
     private boolean mQuestionsAdded;
 
-    private static final String[] OBJECTIVES = {"z", "1. Java Basics",
+    private static final String[] OBJECTIVES = { "z","1. Java Basics",
             "2. Data Types", "3. Operators and Decision Constructs",
             "4. Arrays", "5. Loop Constructs", "6. Methods and Encapsulation",
-            "7. Inheritance", "8. Handling Exceptions", "9. Java API Classes"};
+            "7. Inheritance", "8. Handling Exceptions", "9. Java API Classes","[All Objectives]"};
+
     private SharedPreferences shPref;
 
 
@@ -161,19 +163,31 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void inflateTrainingPopup(View v) {
         mPopUpView = mLayoutInflater.inflate(R.layout.popup_training, (ViewGroup) v.getRootView(), false);
-        Spinner spinner = mPopUpView.findViewById(R.id.objectives_spinner);
+//        Spinner spinner = mPopUpView.findViewById(R.id.objectives_spinner);
 
-        List<Objective> objList = new ArrayList<>();
+//        List<Objective> objList = new ArrayList<>();
+//
+//        for (int i = 0; i < OBJECTIVES.length; i++) {
+//            Objective obj = new Objective(i, OBJECTIVES[i]);
+//            objList.add(obj);
+//        }
+//
+//        ObjectiveAdapter adapter = new ObjectiveAdapter(this, 0, objList);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        for (int i = 0; i < OBJECTIVES.length; i++) {
-            Objective obj = new Objective(i, OBJECTIVES[i]);
-            objList.add(obj);
-        }
-
-        ObjectiveAdapter adapter = new ObjectiveAdapter(this, 0, objList);
-
-        spinner.setAdapter(adapter);
-
+//        spinner.setAdapter(adapter);
+//        spinner.setSelection(adapter.getCount()-1);
+//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
         // Initialize new instance of popup window
         mPopUpWindow = new PopupWindow(
                 mPopUpView,
@@ -241,6 +255,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
+
 
     public static void dimBehind(PopupWindow popupWindow) {
         View container = popupWindow.getContentView().getRootView();

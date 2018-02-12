@@ -2,34 +2,20 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/question_activity"
+    android:id="@+id/training_activity_theory_terms"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
     android:theme="@style/AppTheme">
 
     <FrameLayout
-        android:id="@+id/progress_container"
+        android:id="@+id/progress_container_tatt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textClock"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:paddingTop="8dp"
-        android:theme="@style/NintendoFont"
-        app:layout_constraintBottom_toTopOf="@+id/question_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/progress_container"
-        tools:text="2:30" />
 
     <ScrollView
         android:id="@+id/explanation_scrollview_question"
@@ -38,7 +24,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progress_container">
+        app:layout_constraintTop_toBottomOf="@+id/progress_container_tatt">
 
         <FrameLayout
             android:id="@+id/question_solution_container"
@@ -58,25 +44,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progress_container" />
+        app:layout_constraintTop_toBottomOf="@+id/progress_container_tatt" />
 
-    <ScrollView
-        android:id="@+id/explanation_scrollview"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/answer_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/explanation_scrollview_question">
-
-        <FrameLayout
-            android:id="@+id/explanation_container"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" />
-    </ScrollView>
 
     <TextView
         android:layout_width="match_parent"

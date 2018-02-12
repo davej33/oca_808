@@ -1,7 +1,5 @@
 package com.android.example.oca_808.fragment;
 
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,7 +13,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.android.example.oca_808.R;
-import com.android.example.oca_808.view_model.QuestionViewModelFactory;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 import java.util.ArrayList;
@@ -82,7 +79,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
 
 
-        View view = inflater.inflate(R.layout.fragment_answer, container, false);
+        View view = inflater.inflate(R.layout.fragment_test_answer, container, false);
         mQuestionType = mViewModel.getCurrentQuestion().getType();
         mCorrectAnswers = mViewModel.getCurrentQuestion().answer;
         mUserAnswer = mViewModel.getUserAnswer();

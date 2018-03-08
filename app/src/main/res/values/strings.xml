@@ -13,6 +13,7 @@
     <string name="sp_resume_test">resumeTest</string>
     <string name="sp_resume_practice_test">resumePractice</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="sp_show_swipe_test_review">swipe</string>
 
     <!-- Strings related to Settings -->
 
@@ -102,4 +103,17 @@
     <string name="next">NEXT</string>
     <string name="time_expired">Time Expired!</string>
     <string name="results">Results</string>
+    <string name="got_it">GOT IT!</string>
+    <string name="swipe_up_n_nto_return_to_n_ntest_review">Swipe up\n\nto return to\n\ntest review</string>
+    <string name="title_activity_navigation_drawer">NavigationDrawer</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="mix_it_up">Mix it up!</string>
+    <string name="does_it_compile">Does it compile?</string>
+    <string name="terms">Terms</string>
+    <string name="theory">Theory</string>
+    <string name="select_objectives">Select objectives...</string>
 </resources>

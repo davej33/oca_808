@@ -30,7 +30,7 @@ public class QuestionButtonsFragment extends Fragment implements View.OnClickLis
 
     private static final String LOG_TAG = QuestionButtonsFragment.class.getSimpleName();
     private OnFragmentInteractionListener mListener;
-    public TextView mPreviousQuestion, mNextQuestion;
+    public static TextView mPreviousQuestion, mNextQuestion;
     private QuestionsViewModel mViewModel;
     private static ToggleButton mShowAnswerButton, mMarkButton;
     private boolean mLastQuestion;
@@ -124,6 +124,7 @@ public class QuestionButtonsFragment extends Fragment implements View.OnClickLis
                 }
                 break;
             case R.id.mark_button:
+                Log.i(LOG_TAG,"marked button is checked: " + mMarkButton.isChecked());
                 mListener.markButtonPressed(mMarkButton.isChecked());
                 break;
             case R.id.show_answer:
@@ -135,16 +136,6 @@ public class QuestionButtonsFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         void loadPreviousQuestion();
 

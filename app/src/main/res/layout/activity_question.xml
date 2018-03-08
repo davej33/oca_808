@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/question_activity"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/question_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="0dp"
-    android:background="#fff">
+    android:background="#fff"
+    android:theme="@style/AppTheme">
 
     <FrameLayout
         android:id="@+id/progress_container"
@@ -24,26 +24,31 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:paddingTop="8dp"
-        android:text="2:30"
         android:theme="@style/NintendoFont"
         app:layout_constraintBottom_toTopOf="@+id/question_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/progress_container" />
+        app:layout_constraintTop_toTopOf="@+id/progress_container"
+        tools:text="2:30" />
 
-    <FrameLayout
-        android:id="@+id/question_solution_container"
-        android:layout_width="0dp"
+    <ScrollView
+        android:id="@+id/explanation_scrollview_question"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progress_container" />
+        app:layout_constraintTop_toBottomOf="@+id/progress_container">
+
+        <FrameLayout
+            android:id="@+id/question_solution_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            />
+    </ScrollView>
 
     <FrameLayout
         android:id="@+id/question_container"
@@ -53,32 +58,52 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progress_container">
+        app:layout_constraintTop_toBottomOf="@+id/progress_container" />
 
-    </FrameLayout>
+    <ScrollView
+        android:id="@+id/explanation_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/answer_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/explanation_scrollview_question">
 
+        <FrameLayout
+            android:id="@+id/explanation_container"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp" />
+    </ScrollView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/answer_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <FrameLayout
         android:id="@+id/answer_container"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/buttons_container"
         app:layout_constraintHorizontal_bias="1.0" />
 
     <FrameLayout
-        android:id="@+id/explanation_container"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/answer_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/question_solution_container"/>
-
-    <FrameLayout
         android:id="@+id/buttons_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-     />
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/swipe_instructions"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 </android.support.constraint.ConstraintLayout>

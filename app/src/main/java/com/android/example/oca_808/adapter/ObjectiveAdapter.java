@@ -61,7 +61,7 @@ public class ObjectiveAdapter extends ArrayAdapter<Objective> {
 
         holder.mCheckBox.setText(mObjList.get(position).getmObjTitle());
 
-        // To check weather checked event fire from getview() or user input
+        // To check whether checked event fire from getview() or user input
         isFromView = true;
         holder.mCheckBox.setChecked(mObjList.get(position).ismSelected());
         isFromView = false;

@@ -5,19 +5,19 @@
         android:defaultValue="true"
         android:key="diff_key"
         android:summary="Displays difficulty of each question"
-        android:title="Show question difficulty" />
+        android:title="Q DIFFICULTY" />
 
     <SwitchPreference
         android:defaultValue="true"
         android:key="q_score_key"
         android:summary="Displays result of last attempt for each question"
-        android:title="Show question score" />
+        android:title="Q SCORE" />
 
     <SwitchPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="disable_twice_correct"
-        android:summary="Exclude questions correctly answered twice or more."
-        android:title="Exclude correctly answered questions" />
+        android:summary="Include questions answered correctly twice or more"
+        android:title="ANSWERED QUESTIONS" />
 
 
 </PreferenceScreen>

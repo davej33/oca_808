@@ -35,8 +35,9 @@ public class QuestionReviewAdapter extends RecyclerView.Adapter<QuestionReviewAd
 
     @Override
     public void onBindViewHolder(QuestionViewHolder holder, int position) {
-        // get question number
-        final int qNumInt = holder.getAdapterPosition() + 1;
+
+        // get question number.
+        final int qNumInt = holder.getAdapterPosition() + 1; // +1 accounts for null value at index 0
         String qNum;
 
         if (qNumInt < 10) {
@@ -70,7 +71,9 @@ public class QuestionReviewAdapter extends RecyclerView.Adapter<QuestionReviewAd
             @Override
             public void onClick(View v) {
             mViewModel.setmWhereWeAt(qNumInt);
-            mContext.startActivity(new Intent(mContext, QuestionsActivity.class));
+            Intent intent = new Intent(mContext, QuestionsActivity.class);
+            intent.putExtra("review", true);
+            mContext.startActivity(intent);
             }
         });
     }

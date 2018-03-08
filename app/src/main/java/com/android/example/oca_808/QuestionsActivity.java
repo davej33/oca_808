@@ -1,5 +1,6 @@
 package com.android.example.oca_808;
 
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
@@ -12,8 +13,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,11 +25,13 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -36,6 +42,7 @@ import com.android.example.oca_808.fragment.ExplanationFragment;
 import com.android.example.oca_808.fragment.ProgressFragment;
 import com.android.example.oca_808.fragment.QuestionButtonsFragment;
 import com.android.example.oca_808.fragment.QuestionFragment;
+import com.android.example.oca_808.fragment.SwipeInstructionsFragment;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 import java.util.ArrayList;
@@ -47,7 +54,7 @@ import java.util.ArrayList;
 
 public class QuestionsActivity extends AppCompatActivity implements QuestionFragment.OnFragmentInteractionListener,
         ProgressFragment.OnFragmentInteractionListener, AnswerFragment.OnFragmentInteractionListener,
-        QuestionButtonsFragment.OnFragmentInteractionListener, ExplanationFragment.OnFragmentInteractionListener{
+        QuestionButtonsFragment.OnFragmentInteractionListener, SwipeInstructionsFragment.OnFragmentInteractionListener, ExplanationFragment.OnFragmentInteractionListener {
 
     private static final String LOG_TAG = QuestionsActivity.class.getSimpleName();
     private Integer mQuestionNum = 0;
@@ -57,16 +64,21 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
     private FrameLayout mExplanationContainer;
     private FrameLayout mQuestionContainer;
     private FrameLayout mQuestionForSolutionContainer;
+    private FrameLayout mSwipeInstructionsContainer;
     private ArrayList<String> mWrongAnswers;
     private TextView mTimer;
     private static boolean mShowAnswer;
     private boolean mQuestionIsMarked;
+    private ConstraintLayout mMainLayout;
+    private boolean mIsFromTestReview;
+    private static boolean mShowSwipeInstructions = true;
     private PopupWindow mPopUpWindow;
     private View mPopUpView;
-    private ConstraintLayout mMainLayout;
+    private SharedPreferences mShPref;
+
     private LayoutInflater mLayoutInflater;
 
-    @TargetApi(Build.VERSION_CODES.M) // TODO: Fix
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +95,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         mTimer = findViewById(R.id.textClock);
         mMainLayout = findViewById(R.id.question_activity);
         mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        mSwipeInstructionsContainer = findViewById(R.id.swipe_instructions);
 
         // Hide the status bar.
         View decorView = getWindow().getDecorView();
@@ -90,7 +103,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         decorView.setSystemUiVisibility(uiOptions);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
-            actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorBlack, null)));
+            actionBar.setBackgroundDrawable(getDrawable(R.drawable.black_background));
 
         if (mViewModel.getCurrentQuestion() == null) {
             new Handler().postDelayed(new Runnable() {
@@ -111,6 +124,43 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             subscribe();
         }
 
+        Toast.makeText(this, mViewModel.getTestTitle(), Toast.LENGTH_SHORT).show();
+        // get shared preferences
+        mShPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // determine if receiving intent from test review adapter
+        mIsFromTestReview = getIntent().getBooleanExtra("review", false);
+
+        // determine if user has been informed to swipe up to return to test review
+
+        if (mIsFromTestReview && mShPref.getBoolean(getResources().getString(R.string.sp_show_swipe_test_review), true)) {
+            mSwipeInstructionsContainer.setVisibility(View.VISIBLE);
+            getSupportFragmentManager().beginTransaction().add(R.id.swipe_instructions, new SwipeInstructionsFragment()).commit();
+            mSwipeInstructionsContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mSwipeInstructionsContainer.setVisibility(View.INVISIBLE);
+                }
+            });
+
+        }
+    }
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        int action = event.getActionMasked();
+        switch (action) {
+            case MotionEvent.ACTION_UP:
+                Log.i(LOG_TAG, "action up: ");
+                mViewModel.saveDataToDb();
+                if (mIsFromTestReview) startActivity(new Intent(this, TestReviewActivity.class));
+                return true;
+            default:
+                Log.i(LOG_TAG, "No match for touch event");
+        }
+        return super.onTouchEvent(event);
     }
 
     @Override
@@ -197,7 +247,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 //        if (qCount == wwa + 1) {
 //            startActivity(new Intent(this, TestReviewActivity.class));
 //        } else {
-        mViewModel.setmMarkedQuestion(mQuestionIsMarked);
+//        mViewModel.setmMarkedQuestion(mQuestionIsMarked);
         mWrongAnswers = mViewModel.checkAnswer();
         Log.i(LOG_TAG, "loadNextQuestion");
         // if showAnswer = false or the explanation view is visible then go to next question
@@ -211,8 +261,10 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
     @Override
     public void markButtonPressed(boolean b) {
-        mQuestionIsMarked = b;
+//        mQuestionIsMarked = b;
+        mViewModel.setmMarkedQuestion(b);
     }
+
 
     @Override
     public void showAnswerButtonPressed(boolean b) {
@@ -285,6 +337,21 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         p.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         p.dimAmount = 0.7f;
         wm.updateViewLayout(container, p);
+    }
+
+    @Override
+    public void showSwipeInstructions() {
+        // hide swipe instruction fragment
+        mSwipeInstructionsContainer.setVisibility(View.GONE);
+
+        // update  show-swipe-instruction state
+        SharedPreferences.Editor editor = mShPref.edit();
+        editor.putBoolean(getResources().getString(R.string.sp_show_swipe_test_review), false);
+        editor.apply();
+
+
+
+        Log.i(LOG_TAG, "show instructions: " + mShPref.getBoolean(getResources().getString(R.string.sp_show_swipe_test_review), true));
     }
 
 //    @Override

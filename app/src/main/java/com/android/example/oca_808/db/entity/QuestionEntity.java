@@ -16,9 +16,9 @@ public class QuestionEntity {
     @PrimaryKey (autoGenerate = true)
     public int _id;
     public int q_map_id;
-
     public int type; // single or multiple answer
     public String question;
+    public String question_code;
     public String opt_a;
     public String opt_b;
     public String opt_c;
@@ -31,11 +31,12 @@ public class QuestionEntity {
     public String explanation;
     public int difficulty;
 
-    public QuestionEntity(int qid, int type, String question, String a, String b, String c, String d, String e, String f,
+    public QuestionEntity(int qid, int type, String question, String question_code, String a, String b, String c, String d, String e, String f,
                           String answer, String explanation, int difficulty){
         q_map_id = qid;
         this.type = type;
         this.question = question;
+        this.question_code = question_code;
         opt_a = a;
         opt_b = b;
         opt_c = c;

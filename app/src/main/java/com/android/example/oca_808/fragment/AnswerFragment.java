@@ -1,7 +1,5 @@
 package com.android.example.oca_808.fragment;
 
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,7 +13,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.android.example.oca_808.R;
-import com.android.example.oca_808.view_model.QuestionViewModelFactory;
 import com.android.example.oca_808.view_model.QuestionsViewModel;
 
 import java.util.ArrayList;
@@ -38,7 +35,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     private static String mCorrectAnswers;
     private static int mQuestionType;
     private int i = 0;
-
+    private int mBlack;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String WRONG_ANSWERS = "display";
     private static final String USER_ANSWER = "user_answer";
@@ -82,13 +79,13 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
 
 
-        View view = inflater.inflate(R.layout.fragment_answer, container, false);
+        View view = inflater.inflate(R.layout.fragment_test_answer, container, false);
         mQuestionType = mViewModel.getCurrentQuestion().getType();
         mCorrectAnswers = mViewModel.getCurrentQuestion().answer;
         mUserAnswer = mViewModel.getUserAnswer();
 
         getViews(view);
-
+        mBlack = getResources().getColor(R.color.colorBlack);
         // set answers based on type of question
         if (mQuestionType == 1) {
             setRadioViewValues();
@@ -117,27 +114,27 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     private void showAnswers() {
         disableRadioButtons();
         disableCheckboxes();
-        final int GREEN = getResources().getColor(R.color.colorGreen);
+        final int CORRECT = getResources().getColor(R.color.colorPrimary);
         final int RED = getResources().getColor(R.color.colorAccent);
         if (mQuestionType == 1) {
             switch (mCorrectAnswers.charAt(0)) {
                 case 'a':
-                    radio_a.setTextColor(GREEN);
+                    radio_a.setTextColor(CORRECT);
                     break;
                 case 'b':
-                    radio_b.setTextColor(GREEN);
+                    radio_b.setTextColor(CORRECT);
                     break;
                 case 'c':
-                    radio_c.setTextColor(GREEN);
+                    radio_c.setTextColor(CORRECT);
                     break;
                 case 'd':
-                    radio_d.setTextColor(GREEN);
+                    radio_d.setTextColor(CORRECT);
                     break;
                 case 'e':
-                    radio_e.setTextColor(GREEN);
+                    radio_e.setTextColor(CORRECT);
                     break;
                 case 'f':
-                    radio_f.setTextColor(GREEN);
+                    radio_f.setTextColor(CORRECT);
                     break;
                 default:
                     Log.e(LOG_TAG, "Radio question answer-match error");
@@ -175,22 +172,22 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
             for (int i = 0; i < mCorrectAnswers.length(); i++) {
                 switch (mCorrectAnswers.charAt(i)) {
                     case 'a':
-                        checkbox_a.setTextColor(GREEN);
+                        checkbox_a.setTextColor(CORRECT);
                         break;
                     case 'b':
-                        checkbox_b.setTextColor(GREEN);
+                        checkbox_b.setTextColor(CORRECT);
                         break;
                     case 'c':
-                        checkbox_c.setTextColor(GREEN);
+                        checkbox_c.setTextColor(CORRECT);
                         break;
                     case 'd':
-                        checkbox_d.setTextColor(GREEN);
+                        checkbox_d.setTextColor(CORRECT);
                         break;
                     case 'e':
-                        checkbox_e.setTextColor(GREEN);
+                        checkbox_e.setTextColor(CORRECT);
                         break;
                     case 'f':
-                        checkbox_f.setTextColor(GREEN);
+                        checkbox_f.setTextColor(CORRECT);
                         break;
                     default:
                         Log.e(LOG_TAG, "Checkbox question correct-answer-match error");
@@ -354,12 +351,13 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         checkbox_f.setChecked(false);
 
         // set text color
-        checkbox_a.setTextColor(getResources().getColor(R.color.colorBlack));
-        checkbox_b.setTextColor(getResources().getColor(R.color.colorBlack));
-        checkbox_c.setTextColor(getResources().getColor(R.color.colorBlack));
-        checkbox_d.setTextColor(getResources().getColor(R.color.colorBlack));
-        checkbox_e.setTextColor(getResources().getColor(R.color.colorBlack));
-        checkbox_f.setTextColor(getResources().getColor(R.color.colorBlack));
+
+        checkbox_a.setTextColor(mBlack);
+        checkbox_b.setTextColor(mBlack);
+        checkbox_c.setTextColor(mBlack);
+        checkbox_d.setTextColor(mBlack);
+        checkbox_e.setTextColor(mBlack);
+        checkbox_f.setTextColor(mBlack);
 
 
     }
@@ -387,12 +385,12 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
         radio_e.setText(cbE);
         radio_f.setText(cbF);
 
-        radio_a.setTextColor(getResources().getColor(R.color.colorBlack));
-        radio_b.setTextColor(getResources().getColor(R.color.colorBlack));
-        radio_c.setTextColor(getResources().getColor(R.color.colorBlack));
-        radio_d.setTextColor(getResources().getColor(R.color.colorBlack));
-        radio_e.setTextColor(getResources().getColor(R.color.colorBlack));
-        radio_f.setTextColor(getResources().getColor(R.color.colorBlack));
+        radio_a.setTextColor(mBlack);
+        radio_b.setTextColor(mBlack);
+        radio_c.setTextColor(mBlack);
+        radio_d.setTextColor(mBlack);
+        radio_e.setTextColor(mBlack);
+        radio_f.setTextColor(mBlack);
 
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -450,7 +448,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onStop() {
         super.onStop();
-//        Log.i(LOG_TAG, "onStop run");
+        Log.i(LOG_TAG, "onStop run");
         mViewModel.saveDataToDb();
     }
 
@@ -499,7 +497,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
                 mViewModel.collectUserAnswer(c, true);
             }
         }
-        if(answer != 'z'){
+        if (answer != 'z') {
             mViewModel.collectUserAnswer(answer, vIsChecked);
         } else {
             Log.e(LOG_TAG, "ERROR matching checkbox selection");
@@ -507,7 +505,7 @@ public class AnswerFragment extends Fragment implements View.OnClickListener {
 
 
         StringBuilder sb = new StringBuilder(mUserAnswer);
-        if(vIsChecked){
+        if (vIsChecked) {
             sb.append(answer);
         } else {
             sb.deleteCharAt(sb.indexOf(String.valueOf(answer)));

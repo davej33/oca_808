@@ -12,4 +12,21 @@
         <item name="android:fontFamily">@font/press_start_2p</item>
     </style>
 
+    <style name="menuText" parent="@android:style/Widget.ActionBar.TabText">
+        <item name="android:textAppearance">@font/press_start_2p</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="defaultFontFamily">
+        <item name="android:fontFamily">@font/plain_text</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

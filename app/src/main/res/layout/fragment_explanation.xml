@@ -12,13 +12,8 @@
         android:layout_marginRight="8dp"
         android:scrollbarThumbVertical="@color/colorPrimary"
         android:gravity="center_vertical"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="center"
+        tools:text="sodhfs"
          />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
-        android:background="@color/colorPrimary"
-        android:layout_gravity="bottom"/>
+
 </FrameLayout>

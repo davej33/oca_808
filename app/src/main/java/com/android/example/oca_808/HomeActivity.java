@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.PopupWindow;
@@ -52,10 +54,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Button mStatsButton;
     private boolean mQuestionsAdded;
 
-    private static final String[] OBJECTIVES = {"z", "1. Java Basics",
+    private static final String[] OBJECTIVES = { "z","1. Java Basics",
             "2. Data Types", "3. Operators and Decision Constructs",
             "4. Arrays", "5. Loop Constructs", "6. Methods and Encapsulation",
-            "7. Inheritance", "8. Handling Exceptions", "9. Java API Classes"};
+            "7. Inheritance", "8. Handling Exceptions", "9. Java API Classes","[All Objectives]"};
+
     private SharedPreferences shPref;
 
 
@@ -74,11 +77,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mContext = this;
 
         setupSharedPref();
-//        List l = mDb.questionsDao().getQuestionIds();
+
         //  only run once
         if (mDb.questionsDao().getQuestionIds().size() == 0) {
             mQuestionsAdded = TestGenerator.addQs(mContext);
-            Log.i(LOG_TAG, "@@@ Questions added");
         }
 
         // get buttons and set onClickListener
@@ -91,22 +93,26 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mTrainButton.setOnClickListener(this);
         mStatsButton.setOnClickListener(this);
 
+
     }
 
     private void setupSharedPref() {
         shPref = PreferenceManager.getDefaultSharedPreferences(this);
-        int checkSP = shPref.getInt(getResources().getString(R.string.sp_test_num_key), -9);
-        if (checkSP < 0) {
-            SharedPreferences.Editor editor = shPref.edit();
-            editor.putInt(getResources().getString(R.string.sp_test_num_key), 0);
-            editor.apply();
-        }
 
+        // setup test number for resuming last test
+        int checkSP = shPref.getInt(getResources().getString(R.string.sp_test_num_key), -9);
+        SharedPreferences.Editor editor = shPref.edit();
+
+        // track swipe instructions state
+        boolean check = shPref.getBoolean(getResources().getString(R.string.sp_show_swipe_test_review), true);
+        if (check) editor.putBoolean(getResources().getString(R.string.sp_show_swipe_test_review), true);
+
+        editor.apply();
     }
 
     @Override
     public void onClick(View v) {
-//        Log.w(LOG_TAG, "view id: " + v.getId());
+
         switch (v.getId()) {
             case R.id.test_button:
                 mTestType = TEST_SIM;
@@ -157,19 +163,31 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void inflateTrainingPopup(View v) {
         mPopUpView = mLayoutInflater.inflate(R.layout.popup_training, (ViewGroup) v.getRootView(), false);
-        Spinner spinner = mPopUpView.findViewById(R.id.objectives_spinner);
+//        Spinner spinner = mPopUpView.findViewById(R.id.objectives_spinner);
 
-        List<Objective> objList = new ArrayList<>();
+//        List<Objective> objList = new ArrayList<>();
+//
+//        for (int i = 0; i < OBJECTIVES.length; i++) {
+//            Objective obj = new Objective(i, OBJECTIVES[i]);
+//            objList.add(obj);
+//        }
+//
+//        ObjectiveAdapter adapter = new ObjectiveAdapter(this, 0, objList);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        for (int i = 0; i < OBJECTIVES.length; i++) {
-            Objective obj = new Objective(i, OBJECTIVES[i]);
-            objList.add(obj);
-        }
-
-        ObjectiveAdapter adapter = new ObjectiveAdapter(this, 0, objList);
-
-        spinner.setAdapter(adapter);
-
+//        spinner.setAdapter(adapter);
+//        spinner.setSelection(adapter.getCount()-1);
+//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
         // Initialize new instance of popup window
         mPopUpWindow = new PopupWindow(
                 mPopUpView,
@@ -237,6 +255,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
+
 
     public static void dimBehind(PopupWindow popupWindow) {
         View container = popupWindow.getContentView().getRootView();
